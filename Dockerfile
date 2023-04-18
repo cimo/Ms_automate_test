@@ -3,10 +3,12 @@ FROM node:18.13.0
 ARG VERSION_TAG
 ARG ENV_NAME
 ARG DOMAIN
+ARG MS_AT_SERVER_PORT
 
 ENV VERSION_TAG=${VERSION_TAG}
 ENV ENV_NAME=${ENV_NAME}
 ENV DOMAIN=${DOMAIN}
+ENV MS_AT_SERVER_PORT=${MS_AT_SERVER_PORT}
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NOWARNINGS=yes
@@ -14,7 +16,6 @@ ENV TZ="Asia/Tokyo"
 
 COPY ./ /home/root/
 
-# Base resource => 1 replica / cpu: 500m / memory: 2Gi
 RUN cd ~ \
     # No root
     && mkdir -p /home/root/ \
