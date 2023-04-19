@@ -3,12 +3,12 @@ FROM node:18.13.0
 ARG VERSION_TAG
 ARG ENV_NAME
 ARG DOMAIN
-ARG MS_AT_SERVER_PORT
+
+ARG SERVER_PORT
 
 ENV VERSION_TAG=${VERSION_TAG}
 ENV ENV_NAME=${ENV_NAME}
 ENV DOMAIN=${DOMAIN}
-ENV MS_AT_SERVER_PORT=${MS_AT_SERVER_PORT}
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NOWARNINGS=yes
@@ -22,7 +22,10 @@ RUN cd ~ \
     && chown -R node:node /home/root/ /usr/local/lib/node_modules/ \
     && chmod 775 /home/root/ /usr/local/lib/node_modules/ \
     # Apt
-    #&& apt-get update && apt-get install -y \
+    && apt-get update && apt-get install -y \
+    ca-certificates \
+    # Certificate
+    && update-ca-certificates \
     # Clean
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y \
@@ -37,4 +40,4 @@ RUN npm install && npm run build
 
 CMD node /home/root/dist/Controller/Server.js
 
-EXPOSE ${MS_AT_SERVER_PORT}
+EXPOSE ${SERVER_PORT}
