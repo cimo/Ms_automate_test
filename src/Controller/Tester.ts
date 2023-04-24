@@ -11,7 +11,7 @@ export const execute = (app: Express.Express): void => {
         void (async () => {
             const input = `${ControllerHelper.PATH_FILE_INPUT}Test.side`;
             exec(
-                `selenium-side-runner -c "browserName=chrome goog:chromeOptions.args=[--headless, --no-sandbox, --disable-extensions, --whitelisted-ips=]" ${input}`,
+                `selenium-side-runner --proxy-type=system -c "browserName=chrome goog:chromeOptions.args=[--headless, --no-sandbox, --disable-extensions, --whitelisted-ips=]" ${input}`,
                 (error, stdout, stderr) => {
                     if (stdout !== "" && stderr === "") {
                         ControllerHelper.writeLog("Tester.ts - exec('selenium-side-runner... - stdout", stdout);
