@@ -12,8 +12,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NOWARNINGS=yes
 ENV TZ="Asia/Tokyo"
 
-COPY ./file/chrome.deb /home/root/file/chrome.deb
-
 RUN cd ~ \
     # No root
     && mkdir -p /home/root/ \
