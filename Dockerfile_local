@@ -28,7 +28,7 @@ RUN cd ~ \
     && apt-get update && apt-get install -y google-chrome-stable \
     # Chrome - Driver
     && VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE") \
-    && wget -q -O /home/root/file/chromedriver_linux64.zip "/home/root/file/chromedriver_linux64.zip https://chromedriver.storage.googleapis.com/${VERSION}/chromedriver_linux64.zip" \
+    && wget -q -O /home/root/file/chromedriver_linux64.zip "https://chromedriver.storage.googleapis.com/${VERSION}/chromedriver_linux64.zip" \
     && unzip /home/root/file/chromedriver_linux64.zip -d /usr/bin/ \
     && chmod +x /usr/bin/chromedriver \
     && rm /home/root/file/chromedriver_linux64.zip \
@@ -43,7 +43,6 @@ USER node
 WORKDIR /home/root/
 
 CMD npm install -g selenium-side-runner@4.0.0-alpha.46 \
-    && npm install -g chromedriver@112.0.0 \
     && npm install && npm run execute
 
 EXPOSE ${SERVER_PORT}
