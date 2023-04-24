@@ -9,7 +9,7 @@ export const execute = (app: Express.Express): void => {
     app.post("/msautomatetest/execute", (request: Express.Request, response: Express.Response) => {
         // eslint-disable-next-line @typescript-eslint/require-await
         void (async () => {
-            const input = `${ControllerHelper.PATH_FILE_INPUT}Test.side`;
+            const input = `${ControllerHelper.PATH_FILE_INPUT}*.side`;
             exec(
                 `selenium-side-runner -c "browserName=chrome acceptInsecureCerts=true goog:chromeOptions.args=[--headless, --no-sandbox, --disable-extensions]" ${input}`,
                 (error, stdout, stderr) => {
