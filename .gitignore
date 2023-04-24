@@ -18,7 +18,6 @@ certificate/*
 !certificate/.gitkeep
 dist/*
 file/*
-!file/.gitkeep
 !file/input/.gitkeep
 log/*
 !log/.gitkeep
