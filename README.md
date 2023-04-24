@@ -1,6 +1,6 @@
 # Ms_automate_test
 
-Microservice automate test.
+Microservice automate frontend test.
 
 Depend from Ms_cronjob (use the volume "ms_cronjob-volume" for share the certificate).
 

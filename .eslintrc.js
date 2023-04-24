@@ -13,7 +13,7 @@ module.exports = {
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
         "prettier"
     ],
-    ignorePatterns: ["dist", "node_modules", "public"],
+    ignorePatterns: ["dist", "node_modules", "public", "file"],
     root: true,
     rules: {
         "no-console": "error",
