@@ -17,6 +17,8 @@ export const DOMAIN = checkEnv("DOMAIN", process.env.DOMAIN);
 export const DEBUG = checkEnv("MS_AT_DEBUG", process.env.MS_AT_DEBUG);
 export const CORS_ORIGIN_URL = checkEnv("MS_AT_CORS_ORIGIN_URL", process.env.MS_AT_CORS_ORIGIN_URL);
 export const SERVER_PORT = checkEnv("MS_AT_SERVER_PORT", process.env.MS_AT_SERVER_PORT);
+export const MIME_TYPE = checkEnv("MS_A_MIME_TYPE", process.env.MS_A_MIME_TYPE);
+export const FILE_SIZE_MB = checkEnv("MS_A_FILE_SIZE_MB", process.env.MS_A_FILE_SIZE_MB);
 export const TOKEN = checkEnv("MS_AT_TOKEN", process.env.MS_AT_TOKEN);
 export const PATH_STATIC = checkEnv("MS_AT_PATH_STATIC", process.env.MS_AT_PATH_STATIC);
 export const PATH_LOG = checkEnv("MS_AT_PATH_LOG", process.env.MS_AT_PATH_LOG);
@@ -24,7 +26,7 @@ export const PATH_FILE_INPUT = checkEnv("MS_AT_PATH_FILE_INPUT", process.env.MS_
 export const PATH_CERTIFICATE_FILE_KEY = checkEnv("MS_AT_PATH_CERTIFICATE_FILE_KEY", process.env.MS_AT_PATH_CERTIFICATE_FILE_KEY);
 export const PATH_CERTIFICATE_FILE_CRT = checkEnv("MS_AT_PATH_CERTIFICATE_FILE_CRT", process.env.MS_AT_PATH_CERTIFICATE_FILE_CRT);
 
-const circularReplacer = (): ModelHelper.circularReplacer => {
+const circularReplacer = (): ModelHelper.IcircularReplacer => {
     const seen = new WeakSet();
 
     return (key: string, value: string): string | null => {
@@ -132,6 +134,24 @@ export const fileRemove = (path: string): Promise<NodeJS.ErrnoException | boolea
 
 export const checkToken = (value: string): boolean => {
     if (TOKEN && TOKEN === value) {
+        return true;
+    }
+
+    return false;
+};
+
+export const checkMymeType = (value: string): boolean => {
+    if (MIME_TYPE && MIME_TYPE.includes(value)) {
+        return true;
+    }
+
+    return false;
+};
+
+export const checkFileSize = (value: string): boolean => {
+    const fileSizeMb = parseInt(FILE_SIZE_MB ? FILE_SIZE_MB : "0") * 1024 * 1024;
+
+    if (fileSizeMb >= parseInt(value)) {
         return true;
     }
 

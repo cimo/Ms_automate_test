@@ -9,7 +9,7 @@ import * as ControllerHelper from "../Controller/Helper";
 import * as ControllerTester from "../Controller/Tester";
 import * as ModelServer from "../Model/Server";
 
-const corsOption: ModelServer.Cors = {
+const corsOption: ModelServer.Icors = {
     originList: ControllerHelper.CORS_ORIGIN_URL,
     methodList: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
     preflightContinue: false,

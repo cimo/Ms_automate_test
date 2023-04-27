@@ -20,6 +20,7 @@ RUN cd ~ \
     # Apt
     && apt-get update && apt-get install -y \
     ca-certificates \
+    xvfb \
     # Certificate
     && update-ca-certificates \
     # Chrome - Browser
