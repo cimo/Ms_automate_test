@@ -8,27 +8,26 @@ import * as ModelHelper from "../Model/Helper";
 
 const run = (): Promise<ModelHelper.IresponseExecute> => {
     return new Promise((resolve, reject) => {
-        const input = `${ControllerHelper.PATH_FILE_INPUT}*.side`;
+        const input = `${ControllerHelper.PATH_FILE_INPUT}*.spec.js`;
+        const windowWidth = "1920";
+        const windowHeight = "1080";
 
-        //acceptInsecureCerts=true
-        exec(
-            `xvfb-run --server-args="-screen 0, 1920x1080x24" selenium-side-runner -c "browserName=chrome goog:chromeOptions.args=[--no-sandbox, --ignore-certificate-errors, --disable-dev-shm-usage, --window-size=1920,1080]" ${input}`,
-            (error, stdout, stderr) => {
-                if (stdout !== "" && stderr === "") {
-                    ControllerHelper.writeLog("Tester.ts - 'run = ()' - stdout", stdout);
+        //xvfb-run -a --server-args="-screen 0, ${windowWidth}x${windowHeight}x24" selenium-side-runner -c "browserName=chrome goog:chromeOptions.args=[--no-sandbox, --ignore-certificate-errors, --disable-dev-shm-usage, --window-size=${windowWidth},${windowHeight}]" ${input}
+        exec(`xvfb-run -a --server-args="-screen 0, ${windowWidth}x${windowHeight}x24" npx mocha ${input}`, (error, stdout, stderr) => {
+            if (stdout !== "" && stderr === "") {
+                ControllerHelper.writeLog("Tester.ts - 'run = ()' - stdout", stdout);
 
-                    resolve({ response: { stdout, stderr } });
-                } else if (stdout === "" && stderr !== "") {
-                    ControllerHelper.writeLog("Tester.ts - 'run = ()' - stderr", stderr);
+                resolve({ response: { stdout, stderr } });
+            } else if (stdout === "" && stderr !== "") {
+                ControllerHelper.writeLog("Tester.ts - 'run = ()' - stderr", stderr);
 
-                    reject({ response: { stdout, stderr } });
-                } else {
-                    ControllerHelper.writeLog("Tester.ts - 'run = ()' - stdout & stderr", ControllerHelper.objectOutput({ stdout, stderr }));
+                reject({ response: { stdout, stderr } });
+            } else {
+                ControllerHelper.writeLog("Tester.ts - 'run = ()' - stdout & stderr", ControllerHelper.objectOutput({ stdout, stderr }));
 
-                    resolve({ response: { stdout, stderr } });
-                }
+                resolve({ response: { stdout, stderr } });
             }
-        );
+        });
     });
 };
 
