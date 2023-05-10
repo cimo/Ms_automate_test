@@ -19,8 +19,9 @@ certificate/*
 dist/*
 file/*
 !file/**/
-file/input/*
-!file/input/.gitkeep
+!file/input/*
+file/output/*
+!file/output/.gitkeep
 log/*
 !log/.gitkeep
 public/*

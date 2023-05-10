@@ -4,6 +4,8 @@ export interface IcircularReplacer {
 
 export interface IrequestBody {
     token_api: string;
+    mode: string;
+    browser: string;
 }
 
 export interface IresponseExecute {

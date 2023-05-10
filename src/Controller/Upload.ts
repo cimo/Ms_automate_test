@@ -80,7 +80,7 @@ export const execute = (request: Express.Request): Promise<ModelHelper.Iresponse
                                 })
                                 .catch((error: Error) => {
                                     ControllerHelper.writeLog(
-                                        "Upload.ts - ControllerHelper.fileWriteStream - catch error",
+                                        "Upload.ts - ControllerHelper.fileWriteStream() - catch: ",
                                         ControllerHelper.objectOutput(error)
                                     );
                                 });
@@ -95,6 +95,8 @@ export const execute = (request: Express.Request): Promise<ModelHelper.Iresponse
         });
 
         request.on("error", (error: Error) => {
+            ControllerHelper.writeLog("Upload.ts - execute() - error: ", ControllerHelper.objectOutput(error));
+
             reject(error);
         });
     });

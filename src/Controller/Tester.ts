@@ -1,64 +1,91 @@
 import Express from "express";
 import { exec } from "child_process";
+import Path from "path";
 
 // Source
 import * as ControllerHelper from "../Controller/Helper";
 import * as ControllerUpload from "../Controller/Upload";
 import * as ModelHelper from "../Model/Helper";
 
-const run = (): Promise<ModelHelper.IresponseExecute> => {
-    return new Promise((resolve, reject) => {
-        const input = `${ControllerHelper.PATH_FILE_INPUT}*.spec.js`;
-        const windowWidth = "1920";
-        const windowHeight = "1080";
-
-        //xvfb-run -a --server-args="-screen 0, ${windowWidth}x${windowHeight}x24" selenium-side-runner -c "browserName=chrome goog:chromeOptions.args=[--no-sandbox, --ignore-certificate-errors, --disable-dev-shm-usage, --window-size=${windowWidth},${windowHeight}]" ${input}
-        exec(`xvfb-run -a --server-args="-screen 0, ${windowWidth}x${windowHeight}x24" npx mocha ${input}`, (error, stdout, stderr) => {
-            if (stdout !== "" && stderr === "") {
-                ControllerHelper.writeLog("Tester.ts - 'run = ()' - stdout", stdout);
-
-                resolve({ response: { stdout, stderr } });
-            } else if (stdout === "" && stderr !== "") {
-                ControllerHelper.writeLog("Tester.ts - 'run = ()' - stderr", stderr);
-
-                reject({ response: { stdout, stderr } });
-            } else {
-                ControllerHelper.writeLog("Tester.ts - 'run = ()' - stdout & stderr", ControllerHelper.objectOutput({ stdout, stderr }));
-
-                resolve({ response: { stdout, stderr } });
-            }
-        });
-    });
-};
-
-export const execute = (app: Express.Express): void => {
+export const execute = (app: Express.Express) => {
     app.post("/msautomatetest/upload", (request: Express.Request, response: Express.Response) => {
         void (async () => {
             await ControllerUpload.execute(request)
                 .then((result) => {
-                    const input = result.response.stdout;
+                    const fileName = Path.basename(result.response.stdout);
+                    const fileExtension = Path.extname(result.response.stdout);
+                    const folder = fileExtension === ".side" ? "side/" : "specjs";
 
-                    ControllerHelper.writeLog("Tester.ts - '/msautomatetest/upload'", input);
+                    exec(
+                        `mv ${ControllerHelper.PATH_FILE_INPUT}${fileName} ${ControllerHelper.PATH_FILE_INPUT}${folder}${fileName}`,
+                        (error, stdout, stderr) => {
+                            if (stdout !== "" && stderr === "") {
+                                response.status(200).send({ response: { stdout, stderr } });
+                            } else if (stdout === "" && stderr !== "") {
+                                ControllerHelper.writeLog("Tester.ts - exec(`mv ... - stderr: ", stderr);
 
-                    response.status(200).send({ stdout: result.response.stdout, stderr: result.response.stderr });
+                                response.status(500).send({ response: { stdout, stderr } });
+                            } else {
+                                response.status(200).send({ response: { stdout, stderr } });
+                            }
+                        }
+                    );
                 })
                 .catch((result: ModelHelper.IresponseExecute) => {
-                    ControllerHelper.writeLog("Tester.ts - '/msautomatetest/upload'", "Upload failed.");
+                    ControllerHelper.writeLog("Tester.ts - /msautomatetest/upload - stderr: ", result.response.stderr);
 
-                    response.status(500).send({ stdout: result.response.stdout, stderr: result.response.stderr });
+                    response.status(500).send({
+                        stdout: result.response.stdout,
+                        stderr: result.response.stderr
+                    });
                 });
         })();
     });
 
     app.post("/msautomatetest/run", (request: Express.Request, response: Express.Response) => {
-        void (async () => {
-            await run()
-                .then((result) => {
-                    response.status(200).send({ stdout: result.response.stdout, stderr: result.response.stderr });
-                })
-                .catch((result: ModelHelper.IresponseExecute) => {
-                    response.status(500).send({ stdout: result.response.stdout, stderr: result.response.stderr });
-                });
-        })();
+        const requestBody = request.body as ModelHelper.IrequestBody;
+
+        const checkToken = ControllerHelper.checkToken(requestBody.token_api);
+        const browser = requestBody.browser;
+        const mode = requestBody.mode;
+
+        if (checkToken) {
+            let browserOption = "";
+            let command = "";
+
+            const windowWidth = "1920";
+            const windowHeight = "1080";
+
+            if (browser === "chrome") {
+                browserOption = `goog:chromeOptions.args=[--no-sandbox, --ignore-certificate-errors, --disable-dev-shm-usage, --window-size=${windowWidth},${windowHeight}] browserName=chrome`;
+            } else if (browser === "edge") {
+                browserOption = `browserName=edge`;
+            }
+
+            if (mode === "side") {
+                command = `xvfb-run -a --server-args="-screen 0, ${windowWidth}x${windowHeight}x24 -dpi 96" npx selenium-side-runner -c "${browserOption}" ${ControllerHelper.PATH_FILE_INPUT}${mode}/*.side`;
+            } else if (mode === "specjs") {
+                command = `xvfb-run -a --server-args="-screen 0, ${windowWidth}x${windowHeight}x24 -dpi 96" npx mocha ${ControllerHelper.PATH_FILE_INPUT}${mode}/*.spec.js`;
+            }
+
+            exec(command, (error, stdout, stderr) => {
+                if (stdout !== "" && stderr === "") {
+                    response.status(200).send({ response: { stdout, stderr } });
+                } else if (stdout === "" && stderr !== "") {
+                    ControllerHelper.writeLog("Tester.ts - exec(`xvfb-run ... - stderr: ", stderr);
+
+                    response.status(500).send({ response: { stdout, stderr } });
+                } else {
+                    response.status(200).send({ response: { stdout, stderr } });
+                }
+            });
+        } else {
+            ControllerHelper.writeLog("Tester.ts - /msautomatetest/run - tokenWrong: ", requestBody.token_api);
+
+            response.status(500).send({
+                stdout: "",
+                stderr: `tokenWrong: ${requestBody.token_api}`
+            });
+        }
     });
 };

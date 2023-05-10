@@ -22,7 +22,8 @@
         "express": "4.18.1",
         "selenium-side-runner": "4.0.0-alpha.46",
         "selenium-webdriver": "4.9.0",
-        "chromedriver": "112.0.0",
+        "chromedriver": "latest",
+        "msedgedriver": "latest",
         "mocha": "10.2.0"
     },
     "devDependencies": {
