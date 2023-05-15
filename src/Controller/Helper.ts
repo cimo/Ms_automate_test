@@ -1,3 +1,4 @@
+import Express from "express";
 import Fs from "fs";
 
 // Source
@@ -156,4 +157,10 @@ export const checkFileSize = (value: string): boolean => {
     }
 
     return false;
+};
+
+export const responseBody = (stdoutValue: string, stderrValue: string | Error, response: Express.Response, mode: number) => {
+    const responseBody: ModelHelper.IresponseBody = { response: { stdout: stdoutValue, stderr: stderrValue } };
+
+    response.status(mode).send(responseBody);
 };

@@ -1,11 +1,11 @@
 /* eslint-disable no-undef */
-const { Browser, Builder, By } = require("selenium-webdriver");
+const { Builder, Browser, By } = require("selenium-webdriver");
 const Chrome = require("selenium-webdriver/chrome");
-//const Edge = require("selenium-webdriver/edge");
+const Edge = require("selenium-webdriver/edge");
 const Fs = require("fs");
 
 const ChromeOptionList = new Chrome.Options();
-//const EdgeOptionList = new Edge.Options();
+const EdgeOptionList = new Edge.Options();
 
 describe("Test suite", function () {
     this.timeout(30000);
@@ -18,10 +18,10 @@ describe("Test suite", function () {
         ChromeOptionList.addArguments("--window-size=1920,1080");
         driver = await new Builder().forBrowser(Browser.CHROME).setChromeOptions(ChromeOptionList).build();
 
-        //EdgeOptionList.addArguments("--no-sandbox");
-        //EdgeOptionList.addArguments("--ignore-certificate-errors");
-        //EdgeOptionList.addArguments("--disable-dev-shm-usage");
-        //EdgeOptionList.addArguments("--window-size=1920,1080");
+        EdgeOptionList.addArguments("--no-sandbox");
+        EdgeOptionList.addArguments("--ignore-certificate-errors");
+        EdgeOptionList.addArguments("--disable-dev-shm-usage");
+        EdgeOptionList.addArguments("--window-size=1920,1080");
         //driver = await new Builder().forBrowser(Browser.EDGE).setEdgeOptions(EdgeOptionList).build();
     });
 
@@ -29,7 +29,7 @@ describe("Test suite", function () {
         await driver.quit();
     });
 
-    it("test_1", async function () {
+    it("Test_1", async function () {
         // Insert here the test exported from selenium ide
         await driver.get("https://google.com");
         await driver.findElement(By.linkText("Gmail")).click();

@@ -21,7 +21,7 @@
         "cors": "2.8.5",
         "express": "4.18.1",
         "selenium-side-runner": "4.0.0-alpha.46",
-        "selenium-webdriver": "4.9.0",
+        "selenium-webdriver": "4.9.2",
         "chromedriver": "latest",
         "msedgedriver": "latest",
         "mocha": "10.2.0"

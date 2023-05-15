@@ -4,7 +4,7 @@ services:
     container_name: cimo_ms_automate_test
     build:
       context: ./
-      dockerfile: ./docker/Dockerfile_local
+      dockerfile: ./docker/Dockerfile_local_proxy
       args:
         SERVER_PORT: ${MS_AT_SERVER_PORT}
     env_file:

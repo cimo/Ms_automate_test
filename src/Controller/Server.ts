@@ -43,7 +43,7 @@ server.listen(ControllerHelper.SERVER_PORT, () => {
     ControllerHelper.writeLog("Server.ts - server.listen", `Port ${ControllerHelper.SERVER_PORT || ""} - Time: ${serverTime}`);
 
     app.get("/", (request: Express.Request, response: Express.Response) => {
-        response.status(200).send("ms_automate_test");
+        ControllerHelper.responseBody("ms_automate_test", "", response, 200);
     });
 
     ControllerTester.execute(app);

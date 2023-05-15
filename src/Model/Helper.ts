@@ -4,13 +4,13 @@ export interface IcircularReplacer {
 
 export interface IrequestBody {
     token_api: string;
-    mode: string;
-    browser: string;
+    mode?: string;
+    browser?: string;
 }
 
-export interface IresponseExecute {
+export interface IresponseBody {
     response: {
         stdout: string;
-        stderr: string;
+        stderr: string | Error;
     };
 }
