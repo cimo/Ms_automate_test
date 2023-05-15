@@ -13,6 +13,7 @@ ENV DEBCONF_NOWARNINGS=yes
 ENV TZ="Asia/Tokyo"
 
 COPY ./certificate/zscaler/* /usr/local/share/ca-certificates/
+COPY ./docker/.npmrc /root/.npmrc
 COPY ./docker/.wgetrc /root/.wgetrc
 
 RUN cd ~ \
