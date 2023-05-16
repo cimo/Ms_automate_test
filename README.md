@@ -18,8 +18,9 @@ docker compose -f docker-compose_local.yaml --env-file ./env/local.env up -d --b
 
 ```
 form-data
----
+
 key             value
+---             ---
 token_api       1234
 file_name       test.spec.js
 file            "upload field"
@@ -29,10 +30,11 @@ file            "upload field"
 
 ```
 raw
----
+
 {
     "token_api": "1234",
     "browser": "chrome",
-    "mode": "specjs"
+    "mode": "specjs",
+    "name": "test"
 }
 ```

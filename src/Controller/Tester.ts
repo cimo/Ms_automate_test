@@ -5,7 +5,7 @@ import Path from "path";
 // Source
 import * as ControllerHelper from "../Controller/Helper";
 import * as ControllerUpload from "../Controller/Upload";
-import * as ModelHelper from "../Model/Helper";
+import * as ModelTester from "../Model/Tester";
 
 export const execute = (app: Express.Express) => {
     app.post("/msautomatetest/upload", (request: Express.Request, response: Express.Response) => {
@@ -38,11 +38,12 @@ export const execute = (app: Express.Express) => {
     });
 
     app.post("/msautomatetest/run", (request: Express.Request, response: Express.Response) => {
-        const requestBody = request.body as ModelHelper.IrequestBody;
+        const requestBody = request.body as ModelTester.Irequest;
 
         const checkToken = ControllerHelper.checkToken(requestBody.token_api);
         const browser = requestBody.browser;
         const mode = requestBody.mode;
+        const name = requestBody.name;
 
         if (checkToken) {
             let browserOption = "";
@@ -60,7 +61,7 @@ export const execute = (app: Express.Express) => {
             if (mode === "side") {
                 command = `xvfb-run -a --server-args="-screen 0, ${windowWidth}x${windowHeight}x24 -dpi 96" npx selenium-side-runner -c "${browserOption}" ${ControllerHelper.PATH_FILE_INPUT}${mode}/*.side`;
             } else if (mode === "specjs") {
-                command = `xvfb-run -a --server-args="-screen 0, ${windowWidth}x${windowHeight}x24 -dpi 96" npx mocha ${ControllerHelper.PATH_FILE_INPUT}${mode}/*.spec.js`;
+                command = `xvfb-run -a --server-args="-screen 0, ${windowWidth}x${windowHeight}x24 -dpi 96" npx mocha ${ControllerHelper.PATH_FILE_INPUT}${mode}/${name}.spec.js`;
             }
 
             exec(command, (error, stdout, stderr) => {
