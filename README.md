@@ -9,7 +9,13 @@ Depend from Ms_cronjob (use the volume "ms_cronjob-volume" for share the certifi
 1. Wrinte on terminal:
 
 ```
-docker compose -f docker-compose_local.yaml --env-file ./env/local.env up -d --build
+docker compose -f docker-compose.yaml --env-file ./env/local.env up -d --build
+```
+
+2. If you have a proxy edit the file ".curlrc, .npmrc, .wgetrc" in the "docker" folder with your setting and wrinte on terminal:
+
+```
+DOCKERFILE="Dockerfile_local_proxy" docker compose -f docker-compose.yaml --env-file ./env/local.env up -d --build
 ```
 
 ## API (Postman)

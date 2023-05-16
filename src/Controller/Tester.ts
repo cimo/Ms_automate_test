@@ -59,9 +59,9 @@ export const execute = (app: Express.Express) => {
             const windowHeight = "1080";
 
             if (mode === "side") {
-                command = `xvfb-run -a --server-args="-screen 0, ${windowWidth}x${windowHeight}x24 -dpi 96" npx selenium-side-runner -c "${browserOption}" ${ControllerHelper.PATH_FILE_INPUT}${mode}/*.side`;
+                command = `xvfb-run -a --server-args="-screen 0, ${windowWidth}x${windowHeight}x24 -dpi 96" npx selenium-side-runner -c "${browserOption}" "${ControllerHelper.PATH_FILE_INPUT}${mode}/*.side"`;
             } else if (mode === "specjs") {
-                command = `xvfb-run -a --server-args="-screen 0, ${windowWidth}x${windowHeight}x24 -dpi 96" npx mocha ${ControllerHelper.PATH_FILE_INPUT}${mode}/${name}.spec.js`;
+                command = `xvfb-run -a --server-args="-screen 0, ${windowWidth}x${windowHeight}x24 -dpi 96" npx mocha "${ControllerHelper.PATH_FILE_INPUT}${mode}/${name}.spec.js"`;
             }
 
             exec(command, (error, stdout, stderr) => {
