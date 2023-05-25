@@ -1,52 +1,44 @@
-FROM node:18.13.0
+FROM ubuntu:20.04
 
-ARG ENV_NAME
-ARG DOMAIN
+ARG _ENV_NAME
+ARG _DOMAIN
+ARG _TIMEZONE
+ARG _EXPOSE_PORT
 
-ARG SERVER_PORT
-
-ENV ENV_NAME=${ENV_NAME}
-ENV DOMAIN=${DOMAIN}
+ENV ENV_NAME=${_ENV_NAME}
+ENV DOMAIN=${_DOMAIN}
+ENV TZ=${_TIMEZONE}
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NOWARNINGS=yes
-ENV TZ="Asia/Tokyo"
+ENV SUDO_FORCE_REMOVE=yes
+
+COPY ./docker/nodejs_18_setup.sh /home/nodejs_18_setup.sh
 
 RUN cd ~ \
+    # NodeJs
+    && bash /home/nodejs_18_setup.sh \
+    && apt-get update && apt-get install -y nodejs \
     # No root
-    && mkdir -p /home/root/ \
-    && chown -R node:node /home/root/ /usr/local/lib/node_modules/ /root/.npm/ /usr/local/bin/ \
-    && chmod 775 /home/root/ /usr/local/lib/node_modules/ /root/.npm/ /usr/local/bin/ \
+    && groupadd -g 1000 node \
+    && useradd -d /home/root/ -s /bin/bash -u 1000 -g 1000 node \
+    && mkdir -p /home/root/ /usr/local/lib/node_modules/ \
+    && chown -R node:node /home/root/ /usr/local/lib/node_modules/ /usr/local/bin/ \
+    && chmod 775 /home/root/ /usr/local/lib/node_modules/ /usr/local/bin/ \
     # Apt
     && apt-get update && apt-get install -y \
     ca-certificates \
-    xvfb \
-    fonts-noto \
-    fonts-noto-cjk \
+    sudo \
     # Certificate
     && update-ca-certificates \
-    # Browser - Chrome
-    && wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmour -o /usr/share/keyrings/google_linux_signing_key.gpg \
-    && bash -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google_linux_signing_key.gpg] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google.list' \
-    && apt-get update && apt-get install -y google-chrome-stable \
-    # Webdriver - Chrome
-    && MAJOR_VERSION=$(google-chrome --version | sed -E "s/.* ([0-9]+).*/\1/") \
-    && VERSION=$(wget -q -O - "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${MAJOR_VERSION}") \
-    && wget -q -O /home/chromedriver_linux64.zip "https://chromedriver.storage.googleapis.com/${VERSION}/chromedriver_linux64.zip" \
-    && unzip /home/chromedriver_linux64.zip -d /usr/bin/ \
-    && chmod +x /usr/bin/chromedriver \
-    && rm /home/chromedriver_linux64.zip \
-    # Browser - Edge
-    && wget -q -O - https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmour -o /usr/share/keyrings/microsoft_linux_signing_key.gpg \
-    && bash -c 'echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft_linux_signing_key.gpg] https://packages.microsoft.com/repos/edge stable main" > /etc/apt/sources.list.d/microsoft.list' \
-    && apt-get update && apt-get install -y microsoft-edge-stable \
-    # Webdriver - Edge
-    && MAJOR_VERSION=$(microsoft-edge --version | sed -E "s/.* ([0-9]+).*/\1/") \
-    && VERSION=$(wget -q -O - "https://msedgedriver.azureedge.net/LATEST_RELEASE_${MAJOR_VERSION}" | tr -cd "\11\12\15\40-\176" | tr -d "\r") \
-    && wget -q -O /home/edgedriver_linux64.zip "https://msedgedriver.azureedge.net/${VERSION}/edgedriver_linux64.zip" \
-    && unzip /home/edgedriver_linux64.zip -d /usr/bin/ \
-    && chmod +x /usr/bin/msedgedriver \
-    && rm /home/edgedriver_linux64.zip \
+    # Playwright
+    && echo "node ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
+    && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
+    && npx playwright install chrome --with-deps \
+    && npx playwright install msedge --with-deps \
+    && npx playwright install firefox --with-deps \
+    && npx playwright install webkit --with-deps \
+    && apt-get remove --purge -y sudo \
     # Clean
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y \
@@ -59,4 +51,4 @@ WORKDIR /home/root/
 
 CMD npm install && npm run execute
 
-EXPOSE ${SERVER_PORT}
+EXPOSE ${_EXPOSE_PORT}

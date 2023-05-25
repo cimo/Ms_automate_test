@@ -24,6 +24,7 @@ export const TOKEN = checkEnv("MS_AT_TOKEN", process.env.MS_AT_TOKEN);
 export const PATH_STATIC = checkEnv("MS_AT_PATH_STATIC", process.env.MS_AT_PATH_STATIC);
 export const PATH_LOG = checkEnv("MS_AT_PATH_LOG", process.env.MS_AT_PATH_LOG);
 export const PATH_FILE_INPUT = checkEnv("MS_AT_PATH_FILE_INPUT", process.env.MS_AT_PATH_FILE_INPUT);
+export const PATH_FILE_OUTPUT = checkEnv("MS_AT_PATH_FILE_OUTPUT", process.env.MS_AT_PATH_FILE_OUTPUT);
 export const PATH_CERTIFICATE_FILE_KEY = checkEnv("MS_AT_PATH_CERTIFICATE_FILE_KEY", process.env.MS_AT_PATH_CERTIFICATE_FILE_KEY);
 export const PATH_CERTIFICATE_FILE_CRT = checkEnv("MS_AT_PATH_CERTIFICATE_FILE_CRT", process.env.MS_AT_PATH_CERTIFICATE_FILE_CRT);
 
@@ -47,9 +48,9 @@ export const objectOutput = (obj: unknown): string => {
     return JSON.stringify(obj, circularReplacer(), 2);
 };
 
-export const writeLog = (tag: string, value: string): void => {
+export const writeLog = (tag: string, value: string | boolean): void => {
     if (DEBUG === "true" && PATH_LOG) {
-        Fs.appendFile(`${PATH_LOG}debug.log`, `${tag}: ${value}\n`, () => {
+        Fs.appendFile(`${PATH_LOG}debug.log`, `${tag}: ${value.toString()}\n`, () => {
             // eslint-disable-next-line no-console
             console.log(`WriteLog => ${tag}: `, value);
         });

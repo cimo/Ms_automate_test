@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.8"
 services:
   cimo_ms_automate_test:
     container_name: cimo_ms_automate_test
@@ -6,7 +6,13 @@ services:
       context: ./
       dockerfile: ./docker/${DOCKERFILE}
       args:
-        SERVER_PORT: ${MS_AT_SERVER_PORT}
+        _ENV_NAME: ${ENV_NAME}
+        _DOMAIN: ${DOMAIN}
+        _TIMEZONE: ${MS_AT_TIMEZONE}
+        _EXPOSE_PORT: ${MS_AT_SERVER_PORT}
+        _PROXY_HTTP: ${MS_AT_PROXY_HTTP}
+        _PROXY_HTTPS: ${MS_AT_PROXY_HTTPS}
+        _PROXY_CERTIFICATE: ${MS_AT_PROXY_CERTIFICATE}
     env_file:
       - ./env/local.env
     ports:
