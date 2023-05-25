@@ -5,7 +5,7 @@ import * as ControllerHelper from "./Controller/Helper";
 
 export default defineConfig({
     testDir: ControllerHelper.PATH_FILE_INPUT,
-    outputDir: ControllerHelper.PATH_FILE_OUTPUT,
+    outputDir: `${ControllerHelper.PATH_FILE_OUTPUT}/evidence/`,
     fullyParallel: true,
     reporter: "line",
     use: {

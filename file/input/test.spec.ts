@@ -1,18 +1,28 @@
 import { test } from "@playwright/test";
 
 test("Test 1", async ({ page }) => {
-    await page.goto("https://devtest.kit.kpmg.co.jp/cms/signIn");
+    // Change only the url
+    await page.goto("https://google.com");
+
     await page.waitForLoadState("networkidle");
 
-    await page.locator("[name=username]").click();
-    await page.locator("[name=username]").fill("superuser@jp.kpmg.com");
-    await page.locator("[name=password]").click();
-    await page.locator("[name=password]").fill("test");
-    await page.locator(".MuiFormControl-root:nth-child(3) .MuiButton-label").click();
-    await page.locator(".MuiButtonBase-root:nth-child(2) > .MuiButton-label").click();
-    await page.locator(".MuiIconButton-colorInherit:nth-child(1) .MuiSvgIcon-root").click();
-    await page.locator(".labelLogout").click();
-    await page.locator(".content > img").waitFor();
+    // Your test here
+    await page.getByText("Gmail").click();
+    await page.locator(".feature__chapter__button .laptop-desktop-only").click();
+    await page.locator("#firstName").click();
+    await page.locator("#firstName").fill("test");
+    await page.locator("#lastName").click();
+    await page.locator("#lastName").fill("test");
+    await page.locator("#username").click();
+    await page.locator("#username").fill("test");
+    await page.locator("[name=Passwd]").click();
+    await page.locator("[name=Passwd]").fill("test");
+    await page.locator("[name=ConfirmPasswd]").click();
+    await page.locator("[name=ConfirmPasswd]").fill("test");
+    await page.locator(".VfPpkd-muHVFf-bMcfAe").click({ force: true });
+    await page.locator(".FliLIb.DL0QTb").click();
+    // Your test here
 
+    await page.waitForTimeout(1000);
     await page.close();
 });

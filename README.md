@@ -47,3 +47,16 @@ raw / JSON
     "browser": "desktop_chrome", // -> "desktop_edge" - "desktop_firefox" - "desktop_safari" - "mobile_android" - "mobile_ios"
 }
 ```
+
+3. Download
+
+```
+url = https://localhost:1002/msautomatetest/download
+
+raw / JSON
+
+{
+    "token_api": "1234",
+    "name": "Test 1"
+}
+```

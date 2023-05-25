@@ -60,7 +60,7 @@ export const execute = (app: Express.Express) => {
         const name = requestBody.name ? requestBody.name.replace(/[ _]/, "-") : "";
 
         if (checkToken) {
-            exec(`find file/output/test-${name}* -name "*video*"`, (error, stdout, stderr) => {
+            exec(`find file/output/evidence/test-${name}* -name "*video*"`, (error, stdout, stderr) => {
                 if (stdout !== "" && stderr === "") {
                     const filePath = stdout.replace("\n", "");
 
