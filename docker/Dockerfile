@@ -3,7 +3,7 @@ FROM ubuntu:20.04
 ARG _ENV_NAME
 ARG _DOMAIN
 ARG _TIMEZONE
-ARG _EXPOSE_PORT
+ARG _SERVER_PORT
 ARG _VERSION_TAG
 
 ENV ENV_NAME=${_ENV_NAME}
@@ -56,4 +56,4 @@ RUN npm install && npm run build
 
 CMD node /home/root/dist/Controller/Server.js
 
-EXPOSE ${_EXPOSE_PORT}
+EXPOSE ${_SERVER_PORT}

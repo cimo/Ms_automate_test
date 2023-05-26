@@ -15,12 +15,12 @@ export const checkEnv = (key: string, value: string | undefined): string => {
 
 export const ENV_NAME = checkEnv("ENV_NAME", process.env.ENV_NAME);
 export const DOMAIN = checkEnv("DOMAIN", process.env.DOMAIN);
+export const SERVER_PORT = checkEnv("SERVER_PORT", process.env.SERVER_PORT);
 export const DEBUG = checkEnv("MS_AT_DEBUG", process.env.MS_AT_DEBUG);
 export const CORS_ORIGIN_URL = checkEnv("MS_AT_CORS_ORIGIN_URL", process.env.MS_AT_CORS_ORIGIN_URL);
-export const SERVER_PORT = checkEnv("MS_AT_SERVER_PORT", process.env.MS_AT_SERVER_PORT);
+export const TOKEN = checkEnv("MS_AT_TOKEN", process.env.MS_AT_TOKEN);
 export const MIME_TYPE = checkEnv("MS_AT_MIME_TYPE", process.env.MS_AT_MIME_TYPE);
 export const FILE_SIZE_MB = checkEnv("MS_AT_FILE_SIZE_MB", process.env.MS_AT_FILE_SIZE_MB);
-export const TOKEN = checkEnv("MS_AT_TOKEN", process.env.MS_AT_TOKEN);
 export const PATH_STATIC = checkEnv("MS_AT_PATH_STATIC", process.env.MS_AT_PATH_STATIC);
 export const PATH_LOG = checkEnv("MS_AT_PATH_LOG", process.env.MS_AT_PATH_LOG);
 export const PATH_FILE_INPUT = checkEnv("MS_AT_PATH_FILE_INPUT", process.env.MS_AT_PATH_FILE_INPUT);
