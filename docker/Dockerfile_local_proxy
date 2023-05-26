@@ -22,7 +22,6 @@ ENV SUDO_FORCE_REMOVE=yes
 COPY ./docker/nodejs_18_setup.sh /home/nodejs_18_setup.sh
 COPY ./certificate/zscaler/* /usr/local/share/ca-certificates/
 
-# System
 RUN cd ~ \
     # NodeJs
     && bash /home/nodejs_18_setup.sh \
