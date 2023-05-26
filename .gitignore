@@ -15,9 +15,7 @@ pnpm-debug.log*
 
 # cimo +
 .cache/*
-.config/*
 .npm/*
-.pki/*
 certificate/*
 !certificate/.gitkeep
 dist/*
