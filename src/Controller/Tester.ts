@@ -57,10 +57,10 @@ export const execute = (app: Express.Express) => {
         const requestBody = request.body as ModelTester.Irequest;
 
         const checkToken = ControllerHelper.checkToken(requestBody.token_api);
-        const name = requestBody.name ? requestBody.name.replace(/[ _]/, "-") : "";
+        const name = requestBody.name ? requestBody.name.replace(/[_]/, "-") : "";
 
         if (checkToken) {
-            exec(`find file/output/evidence/test-${name}* -name "*video*"`, (error, stdout, stderr) => {
+            exec(`find file/output/evidence/*${name}* -name "*video*"`, (error, stdout, stderr) => {
                 if (stdout !== "" && stderr === "") {
                     const filePath = stdout.replace("\n", "");
 
