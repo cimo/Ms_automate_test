@@ -57,6 +57,6 @@ raw / JSON
 
 {
     "token_api": "1234",
-    "name": "Test 1"
+    "name": "Test-1"
 }
 ```

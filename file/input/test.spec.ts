@@ -1,6 +1,7 @@
 import { test } from "@playwright/test";
 
-test("Test 1", async ({ page }) => {
+// Only "A-Za-z0-9-" are allowed in the test name.
+test("Test-1", async ({ page }) => {
     // Change only the url
     await page.goto("https://google.com");
 
