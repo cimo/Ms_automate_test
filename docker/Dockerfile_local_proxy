@@ -20,7 +20,7 @@ ENV DEBCONF_NOWARNINGS=yes
 ENV SUDO_FORCE_REMOVE=yes
 
 COPY ./docker/nodejs_18_setup.sh /home/nodejs_18_setup.sh
-COPY ./certificate/zscaler/* /usr/local/share/ca-certificates/
+COPY ./certificate/proxy/* /usr/local/share/ca-certificates/
 
 RUN cd ~ \
     # NodeJs
