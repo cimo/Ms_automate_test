@@ -3,9 +3,9 @@ import { exec } from "child_process";
 import Path from "path";
 
 // Source
-import * as ControllerHelper from "../Controller/Helper";
-import * as ControllerUpload from "../Controller/Upload";
-import * as ModelTester from "../Model/Tester";
+import * as ControllerHelper from "../controller/Helper";
+import * as ControllerUpload from "../controller/Upload";
+import * as ModelTester from "../model/Tester";
 
 export const execute = (app: Express.Express) => {
     app.post("/msautomatetest/upload", (request: Express.Request, response: Express.Response) => {

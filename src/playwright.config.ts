@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 // Source
-import * as ControllerHelper from "./Controller/Helper";
+import * as ControllerHelper from "./controller/Helper";
 
 export default defineConfig({
     testDir: ControllerHelper.PATH_FILE_INPUT,
