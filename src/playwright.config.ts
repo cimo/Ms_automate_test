@@ -6,7 +6,7 @@ import * as ControllerHelper from "./controller/Helper";
 export default defineConfig({
     testDir: ControllerHelper.PATH_FILE_INPUT,
     outputDir: `${ControllerHelper.PATH_FILE_OUTPUT}/evidence/`,
-    fullyParallel: true,
+    fullyParallel: false,
     reporter: "line",
     use: {
         ignoreHTTPSErrors: true,
