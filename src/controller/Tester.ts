@@ -1,6 +1,5 @@
 import Express from "express";
 import { exec } from "child_process";
-import Path from "path";
 
 // Source
 import * as ControllerHelper from "../controller/Helper";
@@ -10,9 +9,15 @@ import * as ModelTester from "../model/Tester";
 export const execute = (app: Express.Express) => {
     app.post("/msautomatetest/upload", (request: Express.Request, response: Express.Response) => {
         void (async () => {
-            await ControllerUpload.execute(request)
-                .then((result) => {
-                    const fileName = Path.parse(result).name;
+            await ControllerUpload.execute(request, false)
+                .then((resultList) => {
+                    let fileName = "";
+
+                    for (const value of resultList) {
+                        if (value.name === "file" && value.filename) {
+                            fileName = value.filename;
+                        }
+                    }
 
                     ControllerHelper.responseBody(fileName, "", response, 200);
                 })
@@ -29,7 +34,6 @@ export const execute = (app: Express.Express) => {
 
         const checkToken = ControllerHelper.checkToken(requestBody.token_api);
         const name = requestBody.name;
-
         const browser = requestBody.browser.match("^(desktop_chrome|desktop_edge|desktop_firefox|desktop_safari|mobile_android|mobile_ios)$")
             ? requestBody.browser
             : "";
@@ -57,7 +61,7 @@ export const execute = (app: Express.Express) => {
         const requestBody = request.body as ModelTester.Irequest;
 
         const checkToken = ControllerHelper.checkToken(requestBody.token_api);
-        const name = requestBody.name ? requestBody.name.replace(/[_]/, "-") : "";
+        const name = requestBody.name ? requestBody.name.replace(/[ _]/g, "-").replace(/[()]/g, "") : "";
 
         if (checkToken) {
             exec(`find file/output/evidence/*${name}* -name "*video*"`, (error, stdout, stderr) => {

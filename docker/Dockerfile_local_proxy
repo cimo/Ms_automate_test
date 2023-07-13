@@ -38,15 +38,16 @@ RUN cd ~ \
     sudo \
     # Certificate
     && update-ca-certificates \
-    # Playwright
+    # Sudo
     && echo "node ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
-    && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
+    && echo "debconf debconf/frontend select Noninteractive" | debconf-set-selections \
+    # Playwright
     && npx playwright install chrome --with-deps \
     && npx playwright install msedge --with-deps \
     && npx playwright install firefox --with-deps \
     && npx playwright install webkit --with-deps \
-    && apt-get remove --purge -y sudo \
     # Clean
+    && apt-get remove --purge -y sudo \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean -y \
     && apt-get autoclean -y \
