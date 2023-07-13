@@ -22,7 +22,7 @@ export const execute = (app: Express.Express) => {
                     ControllerHelper.responseBody(fileName, "", response, 200);
                 })
                 .catch((error: Error) => {
-                    ControllerHelper.writeLog("Tester.ts - /msautomatetest/upload - catch error: ", ControllerHelper.objectOutput(error));
+                    ControllerHelper.writeLog("Tester.ts - ControllerUpload.execute() - catch error: ", ControllerHelper.objectOutput(error));
 
                     ControllerHelper.responseBody("", error, response, 500);
                 });
@@ -40,14 +40,12 @@ export const execute = (app: Express.Express) => {
 
         if (checkToken) {
             exec(`npx playwright test "${name}" --config=./src/playwright.config.ts --project=${browser}`, (error, stdout, stderr) => {
-                if (stdout !== "" && stderr === "") {
-                    ControllerHelper.responseBody(stdout, "", response, 200);
+                if ((stdout !== "" && stderr === "") || (stdout !== "" && stderr !== "")) {
+                    ControllerHelper.responseBody(stdout, stderr, response, 200);
                 } else if (stdout === "" && stderr !== "") {
                     ControllerHelper.writeLog("Tester.ts - exec(`npx playwright test ... - stderr: ", stderr);
 
                     ControllerHelper.responseBody("", stderr, response, 500);
-                } else {
-                    ControllerHelper.responseBody(stdout, stderr, response, 200);
                 }
             });
         } else {
@@ -65,16 +63,14 @@ export const execute = (app: Express.Express) => {
 
         if (checkToken) {
             exec(`find file/output/evidence/*${name}* -name "*video*"`, (error, stdout, stderr) => {
-                if (stdout !== "" && stderr === "") {
+                if ((stdout !== "" && stderr === "") || (stdout !== "" && stderr !== "")) {
                     const filePath = stdout.replace("\n", "");
 
                     response.download(`./${filePath}`, `${name}.webm`);
                 } else if (stdout === "" && stderr !== "") {
-                    ControllerHelper.writeLog("Tester.ts - exec(`find . -path ... - stderr: ", stderr);
+                    ControllerHelper.writeLog("Tester.ts - exec(`find file/output/... - stderr: ", stderr);
 
                     ControllerHelper.responseBody("", stderr, response, 500);
-                } else {
-                    ControllerHelper.responseBody(stdout, stderr, response, 200);
                 }
             });
         } else {
