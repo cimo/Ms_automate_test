@@ -46,7 +46,7 @@ form-data
 key             value
 ---             ---
 token_api       1234
-file_name       test.spec.js
+file_name       test
 file            "upload field"
 ```
 
@@ -73,6 +73,6 @@ raw / JSON
 
 {
     "token_api": "1234",
-    "name": "Test-1"
+    "name": "Test 1"
 }
 ```
