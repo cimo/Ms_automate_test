@@ -12,6 +12,7 @@
     "extends": ["eslint:recommended", "prettier"],
     "ignorePatterns": [
         "/*",
+        "src/view/cache/**/*",
         "!src",
         "!file",
         "!webpack.execute.js",

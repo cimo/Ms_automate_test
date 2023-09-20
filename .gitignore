@@ -34,7 +34,5 @@ file/output/*
 !file/output/.gitkeep
 log/*
 !log/.gitkeep
-public/*
-!public/.gitkeep
 node_modules
 package-lock.json

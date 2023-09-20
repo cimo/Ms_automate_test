@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            http-equiv="Content-Security-Policy"
+            content="default-src 'self'; script-src 'self'"
+        />
+        <meta
+            http-equiv="X-Content-Security-Policy"
+            content="default-src 'self'; script-src 'self'"
+        />
+        <link rel="icon" href="./image/logo.ico" />
+        <link rel="stylesheet" href="./style/main.css" type="text/css" />
+        <title>ms_automate_test</title>
+    </head>
+    <body>
+        <p>Test list:</p>
+        <ul>
+            {% for key, item in testList %}
+            <li>
+                <p>{{ key + 1 }} - {{ item }}</p>
+                <button class="execute_test_{{ key }}">Execute test</button>
+            </li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>

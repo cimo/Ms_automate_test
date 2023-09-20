@@ -1,8 +1,9 @@
 import Express from "express";
-import * as Fs from "fs";
+import Fs from "fs";
 import * as Https from "https";
 import CookieParser from "cookie-parser";
 import Cors from "cors";
+import { TwingEnvironment, TwingLoaderFilesystem } from "twing";
 
 // Source
 import * as ControllerHelper from "../controller/Helper";
@@ -15,6 +16,12 @@ const corsOption: ModelServer.Icors = {
     preflightContinue: false,
     optionsSuccessStatus: 200
 };
+
+const loader = new TwingLoaderFilesystem("/home/root/src/view/");
+const twing = new TwingEnvironment(loader, {
+    cache: "/home/root/src/view/cache/",
+    auto_reload: ControllerHelper.DEBUG === "true" ? true : false
+});
 
 const app = Express();
 app.use(Express.json());
@@ -43,7 +50,13 @@ server.listen(ControllerHelper.SERVER_PORT, () => {
     ControllerHelper.writeLog("Server.ts - server.listen", `Port ${ControllerHelper.SERVER_PORT || ""} - Time: ${serverTime}`);
 
     app.get("/", (request: Express.Request, response: Express.Response) => {
-        ControllerHelper.responseBody("ms_automate_test", "", response, 200);
+        //ControllerHelper.responseBody("ms_automate_test", "", response, 200);
+
+        const testList = ControllerTester.testList();
+
+        void twing.render("index.twig", { testList: testList }).then((output) => {
+            response.end(output);
+        });
     });
 
     ControllerTester.execute(app);

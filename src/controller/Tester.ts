@@ -1,10 +1,17 @@
 import Express from "express";
 import { exec } from "child_process";
+import Fs from "fs";
 
 // Source
 import * as ControllerHelper from "../controller/Helper";
 import * as ControllerUpload from "../controller/Upload";
 import * as ModelTester from "../model/Tester";
+
+export const testList = () => {
+    const list = Fs.readdirSync(ControllerHelper.PATH_FILE_INPUT);
+
+    return list;
+};
 
 export const execute = (app: Express.Express) => {
     app.post("/msautomatetest/upload", (request: Express.Request, response: Express.Response) => {
