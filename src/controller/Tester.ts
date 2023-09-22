@@ -1,19 +1,25 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 import Express from "express";
 import { exec } from "child_process";
 import Fs from "fs";
+import { SioClient } from "@cimo/websocket";
 
 // Source
 import * as ControllerHelper from "../controller/Helper";
 import * as ControllerUpload from "../controller/Upload";
 import * as ModelTester from "../model/Tester";
 
-export const testList = () => {
-    const list = Fs.readdirSync(ControllerHelper.PATH_FILE_INPUT);
-
-    return list;
-};
-
 export const execute = (app: Express.Express) => {
+    SioClient.execute(`${ControllerHelper.DOMAIN}:1002`, {});
+
+    SioClient.o<ModelTester.Iresponse>("run", (data) => {
+        if ((data.stdout !== "" && data.stderr === "") || (data.stdout !== "" && data.stderr !== "")) {
+            // ok
+        } else if (data.stdout === "" && data.stderr !== "") {
+            ControllerHelper.writeLog("Tester.ts - exec(`npx playwright test ... - stderr: ", data.stderr);
+        }
+    });
+
     app.post("/msautomatetest/upload", (request: Express.Request, response: Express.Response) => {
         void (async () => {
             await ControllerUpload.execute(request, false)
@@ -47,14 +53,10 @@ export const execute = (app: Express.Express) => {
 
         if (checkToken) {
             exec(`npx playwright test "${name}" --config=./src/playwright.config.ts --project=${browser}`, (error, stdout, stderr) => {
-                if ((stdout !== "" && stderr === "") || (stdout !== "" && stderr !== "")) {
-                    ControllerHelper.responseBody(stdout, stderr, response, 200);
-                } else if (stdout === "" && stderr !== "") {
-                    ControllerHelper.writeLog("Tester.ts - exec(`npx playwright test ... - stderr: ", stderr);
-
-                    ControllerHelper.responseBody("", stderr, response, 500);
-                }
+                SioClient.i("run", { stdout: stdout, stderr: stderr });
             });
+
+            ControllerHelper.responseBody("", "", response, 200);
         } else {
             ControllerHelper.writeLog("Tester.ts - /msautomatetest/run - tokenWrong: ", requestBody.token_api);
 
@@ -86,4 +88,10 @@ export const execute = (app: Express.Express) => {
             ControllerHelper.responseBody("", `tokenWrong: ${requestBody.token_api}`, response, 500);
         }
     });
+};
+
+export const testList = () => {
+    const list = Fs.readdirSync(ControllerHelper.PATH_FILE_INPUT);
+
+    return list;
 };

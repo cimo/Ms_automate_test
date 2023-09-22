@@ -14,6 +14,7 @@ ENV VERSION_TAG=${_VERSION_TAG}
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NOWARNINGS=yes
 ENV NODE_OPTIONS=--use-openssl-ca
+ENV NODE_EXTRA_CA_CERTS=${_NODE_EXTRA_CA_CERTS}
 ENV SUDO_FORCE_REMOVE=yes
 
 COPY ./certificate/proxy/ /usr/local/share/ca-certificates/

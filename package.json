@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "@cimo/form-data_parser": "1.1.7",
+        "@cimo/websocket": "file:cimo-websocket-1.0.0.tgz",
         "cookie-parser": "1.4.6",
         "cors": "2.8.5",
         "express": "4.18.1",
@@ -35,6 +36,7 @@
         "eslint-config-prettier": "8.8.0",
         "eslint-plugin-prettier": "4.2.1",
         "prettier": "2.8.7",
+        "prettier-plugin-twig-melody": "0.4.6",
         "sass": "1.57.1",
         "typescript": "4.9.4",
         "nodemon": "2.0.21"

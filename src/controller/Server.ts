@@ -4,6 +4,7 @@ import * as Https from "https";
 import CookieParser from "cookie-parser";
 import Cors from "cors";
 import { TwingEnvironment, TwingLoaderFilesystem } from "twing";
+import { SioServer } from "@cimo/websocket";
 
 // Source
 import * as ControllerHelper from "../controller/Helper";
@@ -20,7 +21,7 @@ const corsOption: ModelServer.Icors = {
 const loader = new TwingLoaderFilesystem("/home/root/src/view/");
 const twing = new TwingEnvironment(loader, {
     cache: "/home/root/src/view/cache/",
-    auto_reload: ControllerHelper.DEBUG === "true" ? true : false
+    auto_reload: ControllerHelper.DEBUG ? true : false
 });
 
 const app = Express();
@@ -44,20 +45,20 @@ const server = Https.createServer(
     app
 );
 
+SioServer.execute(server, {}, "ms_automatetest", ["upload", "run", "download"]);
+
 server.listen(ControllerHelper.SERVER_PORT, () => {
     const serverTime = ControllerHelper.serverTime();
 
     ControllerHelper.writeLog("Server.ts - server.listen", `Port ${ControllerHelper.SERVER_PORT || ""} - Time: ${serverTime}`);
 
-    app.get("/", (request: Express.Request, response: Express.Response) => {
-        //ControllerHelper.responseBody("ms_automate_test", "", response, 200);
+    ControllerTester.execute(app);
 
+    app.get("/", (_request: Express.Request, response: Express.Response) => {
         const testList = ControllerTester.testList();
 
         void twing.render("index.twig", { testList: testList }).then((output) => {
             response.end(output);
         });
     });
-
-    ControllerTester.execute(app);
 });

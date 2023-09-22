@@ -4,3 +4,8 @@ export interface Irequest extends IrequestBody {
     name: string;
     browser: string;
 }
+
+export interface Iresponse {
+    stdout: string;
+    stderr: string;
+}

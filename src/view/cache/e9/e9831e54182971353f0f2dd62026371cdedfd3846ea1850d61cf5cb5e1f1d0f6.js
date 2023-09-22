@@ -17,20 +17,20 @@ module.exports = (TwingTemplate) => {
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <meta
-            http-equiv="Content-Security-Policy"
-            content="default-src 'self'; script-src 'self'"
-        />
-        <meta
-            http-equiv="X-Content-Security-Policy"
-            content="default-src 'self'; script-src 'self'"
-        />
+        <meta http-equiv="Content-Security-Policy"
+            content="default-src 'self'; script-src 'self'" />
+        <meta http-equiv="X-Content-Security-Policy"
+            content="default-src 'self'; script-src 'self'" />
         <link rel="icon" href="./image/logo.ico" />
         <link rel="stylesheet" href="./style/main.css" type="text/css" />
-        <title>ms_automate_test</title>
+        <title>
+            ms_automate_test
+        </title>
     </head>
     <body>
-        <p>Test list:</p>
+        <p>
+            Test list:
+        </p>
         <ul>
             `);
                 context.set('_parent', context.clone());
@@ -63,16 +63,18 @@ module.exports = (TwingTemplate) => {
                 await this.iterate(context.get('_seq'), async (__key__, __value__) => {
                     context.proxy[`key`] = __key__;
                     context.proxy[`item`] = __value__;
-                    outputBuffer.echo(`            <li>
-                <p>`);
-                    outputBuffer.echo(await this.environment.getFilter('escape').traceableCallable(22, this.source)(...[this, ((context.has(`key`) ? context.get(`key`) : null) + 1), `html`, null, true]));
+                    outputBuffer.echo(`                <li class="parent_`);
+                    outputBuffer.echo(await this.environment.getFilter('escape').traceableCallable(21, this.source)(...[this, (context.has(`key`) ? context.get(`key`) : null), `html`, null, true]));
+                    outputBuffer.echo(`">
+                    <p>
+                        `);
+                    outputBuffer.echo(await this.environment.getFilter('escape').traceableCallable(23, this.source)(...[this, ((context.has(`key`) ? context.get(`key`) : null) + 1), `html`, null, true]));
                     outputBuffer.echo(` - `);
-                    outputBuffer.echo(await this.environment.getFilter('escape').traceableCallable(22, this.source)(...[this, (context.has(`item`) ? context.get(`item`) : null), `html`, null, true]));
-                    outputBuffer.echo(`</p>
-                <button class="execute_test_`);
-                    outputBuffer.echo(await this.environment.getFilter('escape').traceableCallable(23, this.source)(...[this, (context.has(`key`) ? context.get(`key`) : null), `html`, null, true]));
-                    outputBuffer.echo(`">Execute test</button>
-            </li>
+                    outputBuffer.echo(await this.environment.getFilter('escape').traceableCallable(23, this.source)(...[this, (context.has(`item`) ? context.get(`item`) : null), `html`, null, true]));
+                    outputBuffer.echo(`
+                    </p>
+                    <button class="execute_test">Execute test</button>
+                </li>
             `);
                     (() => {
                         let loop = context.get('loop');
