@@ -2,16 +2,16 @@
 
 Microservice automate frontend test.
 
-Depend from Ms_cronjob (use the volume "ms_cronjob-volume" for share the certificate).
-
+Depend from Ms_cronjob (use the volume "ms_cronjob-volume" for share the certificate).\
 Rename "/env/local.env.public" in "/env/local.env" and adjust the variable for your environment.
 
-## Setup WSL
+## Installation
 
 1. Wrinte on terminal:
 
 ```
-docker compose -f docker-compose.yaml --env-file ./env/local.env up --detach --build --pull "always"
+docker compose -f docker-compose.yaml --env-file ./env/local.env build --no-cache \
+&& docker compose -f docker-compose.yaml --env-file ./env/local.env up --detach
 ```
 
 ## API (Postman)
@@ -25,7 +25,6 @@ form-data
 
 key             value
 ---             ---
-token_api       1234
 file_name       test
 file            "upload field"
 ```
@@ -38,7 +37,6 @@ url = https://localhost:1002/msautomatetest/run
 raw / JSON
 
 {
-    "token_api": "1234",
     "name": "test.spec.ts"
     "browser": "desktop_chrome", // -> "desktop_edge" - "desktop_firefox" - "desktop_safari" - "mobile_android" - "mobile_ios"
 }
@@ -52,7 +50,12 @@ url = https://localhost:1002/msautomatetest/download
 raw / JSON
 
 {
-    "token_api": "1234",
     "name": "Test 1"
 }
 ```
+
+## UI
+
+1. Wrinte on the browser url:
+
+https://localhost:1002/ui

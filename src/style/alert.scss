@@ -1,0 +1,21 @@
+.alert {
+    .text_wrap {
+        white-space: pre;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .success {
+        background-color: green;
+    }
+
+    .error {
+        background-color: red;
+    }
+
+    button {
+        span {
+            color: white;
+        }
+    }
+}

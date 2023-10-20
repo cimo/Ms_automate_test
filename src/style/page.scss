@@ -1,0 +1,29 @@
+.page_container {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    .header {
+        background: red;
+    }
+
+    .left {
+        width: 30%;
+        height: 100%;
+        display: inline-block;
+        vertical-align: top;
+        position: relative;
+        background-color: blue;
+    }
+
+    .right {
+        width: 70%;
+        height: 100%;
+        display: inline-block;
+        vertical-align: top;
+        position: relative;
+        background-color: green;
+    }
+}

@@ -30,9 +30,13 @@ env/*
 file/*
 !file/**/
 !file/input/*
-file/output/*
-!file/output/.gitkeep
+file/pid/*
+!file/pid/.gitkeep
+src/view/cache/*
+!src/view/cache/.gitkeep
 log/*
 !log/.gitkeep
+public/file/output/*
+!public/file/output/.gitkeep
 node_modules
 package-lock.json

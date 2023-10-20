@@ -1,0 +1,17 @@
+$fontSize: 14px;
+$lineHeight: 1.25;
+
+@font-face {
+    font-family: "roboto-regular";
+    font-weight: 100;
+    font-style: normal;
+    src: url("../font/roboto-regular.ttf") format("truetype"),
+        url("../font/roboto-regular.woff") format("woff"),
+        url("../font/roboto-regular.woff2") format("woff2");
+}
+
+body *:not(.material-icons) {
+    font-family: "roboto-regular" !important;
+    font-size: $fontSize !important;
+    line-height: $lineHeight !important;
+}

@@ -4,10 +4,9 @@ import Fs from "fs";
 // Source
 import * as ModelHelper from "../model/Helper";
 
-export const checkEnv = (key: string, value: string | undefined): string => {
+const checkEnv = (key: string, value: string | undefined): string => {
     if (value === undefined) {
-        // eslint-disable-next-line no-console
-        console.log("Helper.ts - checkEnv - error:", `${key} is not defined!`);
+        writeLog("Helper.ts - checkEnv()", `${key} is not defined!`);
     }
 
     return value as string;
@@ -15,40 +14,23 @@ export const checkEnv = (key: string, value: string | undefined): string => {
 
 export const ENV_NAME = checkEnv("ENV_NAME", process.env.ENV_NAME);
 export const DOMAIN = checkEnv("DOMAIN", process.env.DOMAIN);
+export const TIMEZONE = checkEnv("TIMEZONE", process.env.TIMEZONE);
 export const SERVER_PORT = checkEnv("SERVER_PORT", process.env.SERVER_PORT);
 export const DEBUG = checkEnv("MS_AT_DEBUG", process.env.MS_AT_DEBUG);
+export const NODE_ENV = checkEnv("MS_AT_DEBUG", process.env.MS_AT_NODE_ENV);
 export const CORS_ORIGIN_URL = checkEnv("MS_AT_CORS_ORIGIN_URL", process.env.MS_AT_CORS_ORIGIN_URL);
-export const TOKEN = checkEnv("MS_AT_TOKEN", process.env.MS_AT_TOKEN);
 export const MIME_TYPE = checkEnv("MS_AT_MIME_TYPE", process.env.MS_AT_MIME_TYPE);
 export const FILE_SIZE_MB = checkEnv("MS_AT_FILE_SIZE_MB", process.env.MS_AT_FILE_SIZE_MB);
+export const PATH_CERTIFICATE_KEY = checkEnv("MS_AT_PATH_CERTIFICATE_KEY", process.env.MS_AT_PATH_CERTIFICATE_KEY);
+export const PATH_CERTIFICATE_CRT = checkEnv("MS_AT_PATH_CERTIFICATE_CRT", process.env.MS_AT_PATH_CERTIFICATE_CRT);
 export const PATH_STATIC = checkEnv("MS_AT_PATH_STATIC", process.env.MS_AT_PATH_STATIC);
 export const PATH_LOG = checkEnv("MS_AT_PATH_LOG", process.env.MS_AT_PATH_LOG);
 export const PATH_FILE_INPUT = checkEnv("MS_AT_PATH_FILE_INPUT", process.env.MS_AT_PATH_FILE_INPUT);
 export const PATH_FILE_OUTPUT = checkEnv("MS_AT_PATH_FILE_OUTPUT", process.env.MS_AT_PATH_FILE_OUTPUT);
-export const PATH_CERTIFICATE_FILE_KEY = checkEnv("MS_AT_PATH_CERTIFICATE_FILE_KEY", process.env.MS_AT_PATH_CERTIFICATE_FILE_KEY);
-export const PATH_CERTIFICATE_FILE_CRT = checkEnv("MS_AT_PATH_CERTIFICATE_FILE_CRT", process.env.MS_AT_PATH_CERTIFICATE_FILE_CRT);
+export const PATH_FILE_PID = checkEnv("MS_AT_PATH_FILE_PID", process.env.MS_AT_PATH_FILE_PID);
+export const PUBLIC_FILE_OUTPUT = checkEnv("MS_AT_PUBLIC_FILE_OUTPUT", process.env.MS_AT_PUBLIC_FILE_OUTPUT);
 
-const circularReplacer = (): ModelHelper.IcircularReplacer => {
-    const seen = new WeakSet();
-
-    return (key: string, value: string): string | null => {
-        if (value !== null && typeof value === "object") {
-            if (seen.has(value)) {
-                return null;
-            }
-
-            seen.add(value);
-        }
-
-        return value;
-    };
-};
-
-export const objectOutput = (obj: unknown): string => {
-    return JSON.stringify(obj, circularReplacer(), 2);
-};
-
-export const writeLog = (tag: string, value: string | boolean): void => {
+export const writeLog = (tag: string, value: string | Error) => {
     if (DEBUG === "true" && PATH_LOG) {
         Fs.appendFile(`${PATH_LOG}debug.log`, `${tag}: ${value.toString()}\n`, () => {
             // eslint-disable-next-line no-console
@@ -134,14 +116,6 @@ export const fileRemove = (path: string): Promise<NodeJS.ErrnoException | boolea
     });
 };
 
-export const checkToken = (value: string): boolean => {
-    if (TOKEN && TOKEN === value) {
-        return true;
-    }
-
-    return false;
-};
-
 export const checkMymeType = (value: string): boolean => {
     if (MIME_TYPE && MIME_TYPE.includes(value)) {
         return true;
@@ -164,4 +138,27 @@ export const responseBody = (stdoutValue: string, stderrValue: string | Error, r
     const responseBody: ModelHelper.IresponseBody = { response: { stdout: stdoutValue, stderr: stderrValue } };
 
     response.status(mode).send(responseBody);
+};
+
+export const checkJson = (json: string) => {
+    if (
+        /^[\],:{}\s]*$/.test(
+            json
+                .replace(/\\["\\/bfnrtu]/g, "@")
+                .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\\-]?\d+)?/g, "]")
+                .replace(/(?:^|:|,)(?:\s*\[)+/g, "")
+        )
+    ) {
+        return true;
+    }
+
+    return false;
+};
+
+export const keepProcess = () => {
+    for (const event of ["uncaughtException", "unhandledRejection"]) {
+        process.on(event, (error: Error) => {
+            writeLog("Helper.ts - keepProcess()", `Event: ${event} - Error: ${error.toString()}`);
+        });
+    }
 };

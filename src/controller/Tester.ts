@@ -1,97 +1,108 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import Express from "express";
-import { exec } from "child_process";
 import Fs from "fs";
-import { SioClient } from "@cimo/websocket";
+import { exec } from "child_process";
 
 // Source
 import * as ControllerHelper from "../controller/Helper";
 import * as ControllerUpload from "../controller/Upload";
 import * as ModelTester from "../model/Tester";
 
-export const execute = (app: Express.Express) => {
-    SioClient.execute(`${ControllerHelper.DOMAIN}:1002`, {});
-
-    SioClient.o<ModelTester.Iresponse>("run", (data) => {
-        if ((data.stdout !== "" && data.stderr === "") || (data.stdout !== "" && data.stderr !== "")) {
-            // ok
-        } else if (data.stdout === "" && data.stderr !== "") {
-            ControllerHelper.writeLog("Tester.ts - exec(`npx playwright test ... - stderr: ", data.stderr);
-        }
-    });
-
-    app.post("/msautomatetest/upload", (request: Express.Request, response: Express.Response) => {
+export const api = (app: Express.Express, CaAuthenticationMiddleware: Express.RequestHandler) => {
+    app.post("/api/upload", CaAuthenticationMiddleware, (request: Express.Request, response: Express.Response) => {
         void (async () => {
-            await ControllerUpload.execute(request, false)
+            await ControllerUpload.execute(request, true)
                 .then((resultList) => {
                     let fileName = "";
 
                     for (const value of resultList) {
                         if (value.name === "file" && value.filename) {
                             fileName = value.filename;
+
+                            break;
                         }
                     }
 
                     ControllerHelper.responseBody(fileName, "", response, 200);
                 })
                 .catch((error: Error) => {
-                    ControllerHelper.writeLog("Tester.ts - ControllerUpload.execute() - catch error: ", ControllerHelper.objectOutput(error));
+                    ControllerHelper.writeLog("Tester.ts - /upload - ControllerUpload.execute() - catch()", error);
 
-                    ControllerHelper.responseBody("", error, response, 500);
+                    ControllerHelper.responseBody("", error, response, 400);
                 });
         })();
     });
 
-    app.post("/msautomatetest/run", (request: Express.Request, response: Express.Response) => {
+    app.post("/api/run", CaAuthenticationMiddleware, (request: Express.Request, response: Express.Response) => {
         const requestBody = request.body as ModelTester.Irequest;
 
-        const checkToken = ControllerHelper.checkToken(requestBody.token_api);
-        const name = requestBody.name;
-        const browser = requestBody.browser.match("^(desktop_chrome|desktop_edge|desktop_firefox|desktop_safari|mobile_android|mobile_ios)$")
-            ? requestBody.browser
-            : "";
+        const nameCheck = typeof requestBody.name === "string" ? requestBody.name : "";
+        const browserMatch =
+            typeof requestBody.browser === "string" &&
+            requestBody.browser.match("^(desktop_chrome|desktop_edge|desktop_firefox|desktop_safari|mobile_android|mobile_ios)$")
+                ? requestBody.browser
+                : "";
 
-        if (checkToken) {
-            exec(`npx playwright test "${name}" --config=./src/playwright.config.ts --project=${browser}`, (error, stdout, stderr) => {
-                SioClient.i("run", { stdout: stdout, stderr: stderr });
-            });
+        if (nameCheck !== "" && browserMatch !== "") {
+            startPid("run", (isExecuted) => {
+                if (isExecuted) {
+                    exec(
+                        `npx playwright test "${requestBody.name}" --config=./src/playwright.config.ts --project=${browserMatch}`,
+                        (_error, stdout, stderr) => {
+                            const result = stdout.replace("[1A[2K", "").replace("[1A[2K", "");
 
-            ControllerHelper.responseBody("", "", response, 200);
-        } else {
-            ControllerHelper.writeLog("Tester.ts - /msautomatetest/run - tokenWrong: ", requestBody.token_api);
+                            ControllerHelper.responseBody(result, stderr, response, 200);
 
-            ControllerHelper.responseBody("", `tokenWrong: ${requestBody.token_api}`, response, 500);
-        }
-    });
-
-    app.post("/msautomatetest/download", (request: Express.Request, response: Express.Response) => {
-        const requestBody = request.body as ModelTester.Irequest;
-
-        const checkToken = ControllerHelper.checkToken(requestBody.token_api);
-        const name = requestBody.name ? requestBody.name.replace(/[ _]/g, "-").replace(/[()]/g, "") : "";
-
-        if (checkToken) {
-            exec(`find file/output/evidence/*${name}* -name "*video*"`, (error, stdout, stderr) => {
-                if ((stdout !== "" && stderr === "") || (stdout !== "" && stderr !== "")) {
-                    const filePath = stdout.replace("\n", "");
-
-                    response.download(`./${filePath}`, `${name}.webm`);
-                } else if (stdout === "" && stderr !== "") {
-                    ControllerHelper.writeLog("Tester.ts - exec(`find file/output/... - stderr: ", stderr);
-
-                    ControllerHelper.responseBody("", stderr, response, 500);
+                            endPid("run");
+                        }
+                    );
+                } else {
+                    ControllerHelper.responseBody("", "Another process still running.", response, 400);
                 }
             });
         } else {
-            ControllerHelper.writeLog("Tester.ts - /msautomatetest/download - tokenWrong: ", requestBody.token_api);
+            ControllerHelper.responseBody("", "Wrong parameters.", response, 400);
+        }
+    });
 
-            ControllerHelper.responseBody("", `tokenWrong: ${requestBody.token_api}`, response, 500);
+    app.post("/api/download", CaAuthenticationMiddleware, (request: Express.Request, response: Express.Response) => {
+        const requestBody = request.body as ModelTester.Irequest;
+
+        const nameReplace = typeof requestBody.name === "string" ? requestBody.name.replace(/[ ]/g, "_").replace(/[()]/g, "").toLowerCase() : "";
+
+        if (nameReplace !== "") {
+            startPid("download", (isExecuted) => {
+                if (isExecuted) {
+                    exec(`find ${ControllerHelper.PATH_FILE_OUTPUT}evidence/*${nameReplace}* -name "*video*"`, (error, stdout, stderr) => {
+                        const result = stdout.replace(ControllerHelper.PATH_FILE_OUTPUT, "").trim();
+
+                        ControllerHelper.responseBody(result, stderr, response, 200);
+
+                        endPid("download");
+                    });
+                } else {
+                    ControllerHelper.responseBody("", "Another process still running.", response, 400);
+                }
+            });
+        } else {
+            ControllerHelper.responseBody("", "Wrong parameter.", response, 400);
         }
     });
 };
 
-export const testList = () => {
-    const list = Fs.readdirSync(ControllerHelper.PATH_FILE_INPUT);
+export const specList = () => {
+    return Fs.readdirSync(ControllerHelper.PATH_FILE_INPUT);
+};
 
-    return list;
+const startPid = (name: string, callback: ModelTester.IcallbackExec) => {
+    if (Fs.existsSync(`${ControllerHelper.PATH_FILE_PID}${name}.pid`)) {
+        callback(false);
+    } else {
+        exec(`touch ${ControllerHelper.PATH_FILE_PID}${name}.pid`, () => {
+            callback(true);
+        });
+    }
+};
+
+const endPid = (name: string) => {
+    exec(`rm ${ControllerHelper.PATH_FILE_PID}${name}.pid`);
 };

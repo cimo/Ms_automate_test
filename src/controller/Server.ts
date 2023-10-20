@@ -4,7 +4,8 @@ import * as Https from "https";
 import CookieParser from "cookie-parser";
 import Cors from "cors";
 import { TwingEnvironment, TwingLoaderFilesystem } from "twing";
-import { SioServer } from "@cimo/websocket";
+import { CwsServerMessage } from "@cimo/websocket";
+import { Ca } from "@cimo/authentication";
 
 // Source
 import * as ControllerHelper from "../controller/Helper";
@@ -21,8 +22,10 @@ const corsOption: ModelServer.Icors = {
 const loader = new TwingLoaderFilesystem("/home/root/src/view/");
 const twing = new TwingEnvironment(loader, {
     cache: "/home/root/src/view/cache/",
-    auto_reload: ControllerHelper.DEBUG ? true : false
+    auto_reload: ControllerHelper.DEBUG === "true" ? true : false
 });
+
+Ca.setCookieName("ms_at_authentication");
 
 const app = Express();
 app.use(Express.json());
@@ -39,26 +42,43 @@ app.use(
 
 const server = Https.createServer(
     {
-        key: Fs.readFileSync(ControllerHelper.PATH_CERTIFICATE_FILE_KEY),
-        cert: Fs.readFileSync(ControllerHelper.PATH_CERTIFICATE_FILE_CRT)
+        key: Fs.readFileSync(ControllerHelper.PATH_CERTIFICATE_KEY),
+        cert: Fs.readFileSync(ControllerHelper.PATH_CERTIFICATE_CRT)
     },
     app
 );
 
-SioServer.execute(server, {}, "ms_automatetest", ["upload", "run", "download"]);
-
 server.listen(ControllerHelper.SERVER_PORT, () => {
     const serverTime = ControllerHelper.serverTime();
 
-    ControllerHelper.writeLog("Server.ts - server.listen", `Port ${ControllerHelper.SERVER_PORT || ""} - Time: ${serverTime}`);
-
-    ControllerTester.execute(app);
+    ControllerHelper.writeLog("Server.ts - server.listen()", `Port ${ControllerHelper.SERVER_PORT || ""} - Time: ${serverTime}`);
 
     app.get("/", (_request: Express.Request, response: Express.Response) => {
-        const testList = ControllerTester.testList();
+        ControllerHelper.responseBody("ms_automate_test", "", response, 200);
+    });
 
-        void twing.render("index.twig", { testList: testList }).then((output) => {
-            response.end(output);
-        });
+    app.get("/login", (_request: Express.Request, response: Express.Response) => {
+        Ca.generateCookie(response);
+
+        response.redirect("/ui");
+    });
+
+    ControllerTester.api(app, Ca.authenticationMiddleware);
+
+    app.get("/ui", Ca.authenticationMiddleware, (_request: Express.Request, response: Express.Response) => {
+        const specList = ControllerTester.specList();
+
+        twing
+            .render("index.twig", { specList: specList })
+            .then((output) => {
+                response.end(output);
+            })
+            .catch((error: Error) => {
+                ControllerHelper.writeLog("Tester.ts - server.listen() - twing.render() - catch()", error);
+            });
     });
 });
+
+CwsServerMessage.create(server);
+
+ControllerHelper.keepProcess();

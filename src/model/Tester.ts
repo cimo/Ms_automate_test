@@ -1,11 +1,13 @@
-import { IrequestBody } from "./Helper";
-
-export interface Irequest extends IrequestBody {
+export interface Irequest {
     name: string;
     browser: string;
 }
 
-export interface Iresponse {
+export interface IexecResponse {
     stdout: string;
-    stderr: string;
+    stderr: string | Error;
+}
+
+export interface IcallbackExec {
+    (data: IexecResponse | boolean);
 }

@@ -1,23 +1,70 @@
 import Express from "express";
 import Fs from "fs";
-import * as FormDataParser from "@cimo/form-data_parser";
+import { Cfdp, CfdpInterface } from "@cimo/form-data_parser";
 
 // Source
 import * as ControllerHelper from "../controller/Helper";
 
-const checkRequest = (formDataList: FormDataParser.Iinput[]): boolean => {
+export const execute = (request: Express.Request, isFileExists: boolean): Promise<CfdpInterface.Iinput[]> => {
+    return new Promise((resolve, reject) => {
+        const chunkList: Buffer[] = [];
+
+        request.on("data", (data: Buffer) => {
+            chunkList.push(data);
+        });
+
+        request.on("end", () => {
+            void (async () => {
+                const buffer = Buffer.concat(chunkList);
+                const formDataList = Cfdp.readInput(buffer, request.headers["content-type"]);
+
+                const checkRequestResult = checkRequest(formDataList);
+
+                if (checkRequestResult) {
+                    for (const value of formDataList) {
+                        if (value.name === "file" && value.filename && value.buffer) {
+                            const input = `${ControllerHelper.PATH_FILE_INPUT}${value.filename}`;
+
+                            if (isFileExists && Fs.existsSync(input)) {
+                                reject("File exists.");
+
+                                break;
+                            } else {
+                                await ControllerHelper.fileWriteStream(input, value.buffer)
+                                    .then(() => {
+                                        resolve(formDataList);
+                                    })
+                                    .catch((error: Error) => {
+                                        ControllerHelper.writeLog(
+                                            "Upload.ts - execute() - request.on('end' - ControllerHelper.fileWriteStream() - catch()",
+                                            error
+                                        );
+
+                                        reject(error);
+                                    });
+
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    reject("Wrong parameters.");
+                }
+            })();
+        });
+
+        request.on("error", (error: Error) => {
+            reject(error);
+        });
+    });
+};
+
+const checkRequest = (formDataList: CfdpInterface.Iinput[]): boolean => {
     const parameterList: string[] = [];
-    let tokenWrong = false;
     let fileProblem = "";
     let parameterNotFound = "";
 
     for (const value of formDataList) {
-        if (value.name === "token_api") {
-            if (!ControllerHelper.checkToken(value.buffer.toString())) {
-                tokenWrong = true;
-            }
-        }
-
         if (value.name === "file") {
             if (value.filename === "" || value.mimeType === "" || value.size === "") {
                 fileProblem = "empty";
@@ -31,10 +78,6 @@ const checkRequest = (formDataList: FormDataParser.Iinput[]): boolean => {
         parameterList.push(value.name);
     }
 
-    if (!parameterList.includes("token_api")) {
-        parameterNotFound = "token_api";
-    }
-
     if (!parameterList.includes("file_name")) {
         parameterNotFound = "file_name";
     }
@@ -44,68 +87,11 @@ const checkRequest = (formDataList: FormDataParser.Iinput[]): boolean => {
     }
 
     // Result
-    const result = tokenWrong === false && fileProblem === "" && parameterNotFound === "" ? true : false;
+    const result = fileProblem === "" && parameterNotFound === "" ? true : false;
 
     if (!result) {
-        ControllerHelper.writeLog(
-            "Upload.ts - checkRequest",
-            `tokenWrong: ${tokenWrong.toString()} - fileProblem: ${fileProblem.toString()} - parameterNotFound: ${parameterNotFound}`
-        );
+        ControllerHelper.writeLog("Upload.ts - checkRequest()", `fileProblem: ${fileProblem} - parameterNotFound: ${parameterNotFound}`);
     }
 
     return result;
-};
-
-export const execute = (request: Express.Request, isExists: boolean): Promise<FormDataParser.Iinput[]> => {
-    return new Promise((resolve, reject) => {
-        const chunkList: Buffer[] = [];
-
-        request.on("data", (data: Buffer) => {
-            chunkList.push(data);
-        });
-
-        request.on("end", () => {
-            void (async () => {
-                const buffer = Buffer.concat(chunkList);
-                const formDataList = FormDataParser.readInput(buffer, request.headers["content-type"]);
-
-                const check = checkRequest(formDataList);
-
-                if (check) {
-                    for (const value of formDataList) {
-                        if (value.name === "file" && value.filename && value.buffer) {
-                            const input = `${ControllerHelper.PATH_FILE_INPUT}${value.filename}`;
-
-                            if (isExists && Fs.existsSync(input)) {
-                                reject("Upload.ts - end - reject error: File exists.");
-
-                                break;
-                            } else {
-                                await ControllerHelper.fileWriteStream(input, value.buffer)
-                                    .then(() => {
-                                        resolve(formDataList);
-                                    })
-                                    .catch((error: Error) => {
-                                        ControllerHelper.writeLog(
-                                            "Upload.ts - ControllerHelper.fileWriteStream() - catch error: ",
-                                            ControllerHelper.objectOutput(error)
-                                        );
-                                    });
-
-                                break;
-                            }
-                        }
-                    }
-                } else {
-                    reject("Upload.ts - end - reject error: checkRequest()");
-                }
-            })();
-        });
-
-        request.on("error", (error: Error) => {
-            ControllerHelper.writeLog("Upload.ts - execute() - error: ", ControllerHelper.objectOutput(error));
-
-            reject(error);
-        });
-    });
 };

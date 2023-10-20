@@ -78,4 +78,124 @@ meter {
   all: revert;
 }
 
+@font-face {
+  font-family: "roboto-regular";
+  font-weight: 100;
+  font-style: normal;
+  src: url("../font/roboto-regular.ttf") format("truetype"), url("../font/roboto-regular.woff") format("woff"), url("../font/roboto-regular.woff2") format("woff2");
+}
+body *:not(.material-icons) {
+  font-family: "roboto-regular" !important;
+  font-size: 14px !important;
+  line-height: 1.25 !important;
+}
+
+.page_container {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.page_container .header {
+  background: red;
+}
+.page_container .left {
+  width: 30%;
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  background-color: blue;
+}
+.page_container .right {
+  width: 70%;
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  background-color: green;
+}
+
+.mdc-text-field,
+.mdc-select__anchor {
+  margin: 5px 0 !important;
+  height: 40px !important;
+}
+.mdc-text-field .mdc-floating-label--float-above,
+.mdc-select__anchor .mdc-floating-label--float-above {
+  top: 75% !important;
+}
+
+button {
+  cursor: pointer;
+  text-align: center;
+}
+
+.mdc-touch-target-wrapper {
+  display: inline-block !important;
+  margin: 0 10px !important;
+  height: 40px !important;
+}
+
+form .field_container {
+  display: block;
+}
+form .button_container {
+  display: block;
+  text-align: center;
+}
+
+.table_container {
+  margin: 10px 20px;
+}
+.table_container .mdc-data-table {
+  width: 100%;
+}
+.table_container .mdc-data-table .mdc-data-table__table-container {
+  overflow-x: revert !important;
+}
+.table_container .mdc-data-table .mdc-data-table__header-cell,
+.table_container .mdc-data-table .mdc-data-table__cell {
+  vertical-align: middle !important;
+  overflow: revert !important;
+}
+
+.alert .text_wrap {
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.alert .success {
+  background-color: green;
+}
+.alert .error {
+  background-color: red;
+}
+.alert button span {
+  color: white;
+}
+
+.table_container .mdc-data-table {
+  width: 60%;
+  display: block;
+  margin: auto;
+}
+.table_container .mdc-data-table .column_title {
+  width: 10%;
+}
+.table_container .mdc-data-table .column_test {
+  width: 30%;
+}
+.table_container .mdc-data-table .column_video {
+  width: 20%;
+}
+.table_container .mdc-data-table .row .column_video {
+  text-align: center;
+}
+
+video {
+  width: 400px;
+}
+
 /*# sourceMappingURL=main.css.map */

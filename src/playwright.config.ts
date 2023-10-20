@@ -8,7 +8,10 @@ export default defineConfig({
     outputDir: `${ControllerHelper.PATH_FILE_OUTPUT}/evidence/`,
     fullyParallel: false,
     reporter: "line",
+    timeout: 5 * 60 * 1000,
     use: {
+        actionTimeout: 30 * 1000,
+        navigationTimeout: 30 * 1000,
         ignoreHTTPSErrors: true,
         video: "on"
     },

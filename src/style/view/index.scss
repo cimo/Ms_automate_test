@@ -1,0 +1,27 @@
+.table_container {
+    .mdc-data-table {
+        width: 60%;
+        display: block;
+        margin: auto;
+
+        .column_title {
+            width: 10%;
+        }
+        .column_test {
+            width: 30%;
+        }
+        .column_video {
+            width: 20%;
+        }
+
+        .row {
+            .column_video {
+                text-align: center;
+            }
+        }
+    }
+}
+
+video {
+    width: 400px;
+}

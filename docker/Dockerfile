@@ -14,7 +14,6 @@ ENV VERSION_TAG=${_VERSION_TAG}
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NOWARNINGS=yes
 ENV NODE_OPTIONS=--use-openssl-ca
-ENV NODE_EXTRA_CA_CERTS=${_NODE_EXTRA_CA_CERTS}
 ENV SUDO_FORCE_REMOVE=yes
 
 COPY ./certificate/proxy/ /usr/local/share/ca-certificates/
@@ -39,15 +38,30 @@ RUN cd ~ \
     && apt-get update && apt-get install -y \
     fonts-noto \
     fonts-noto-cjk \
+    libatomic1 \
+    libxslt1.1 \
+    libwoff1 \
+    libevent-2.1-7 \
+    libopus0 \
+    libharfbuzz-icu0 \
+    libopenjp2-7 \
+    libwebpdemux2 \
+    libenchant-2-2 \
+    libsecret-1-0 \
+    libhyphen0 \
+    libflite1 \
+    libegl1 \
+    libgudev-1.0-0 \
+    libevdev2 \
+    libgles2 \
+    gstreamer1.0-libav \
     sudo \
     # Sudo
     && echo "node ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
     && echo "debconf debconf/frontend select Noninteractive" | debconf-set-selections \
     # Playwright
-    && npx playwright install chrome --with-deps \
-    && npx playwright install msedge --with-deps \
-    && npx playwright install firefox --with-deps \
-    && npx playwright install webkit --with-deps \
+    && npx playwright install --with-deps chrome \
+    && npx playwright install --with-deps msedge \
     # Clean
     && apt-get remove --purge -y sudo \
     && rm -rf /var/lib/apt/lists/* \
@@ -59,7 +73,7 @@ USER node
 
 WORKDIR /home/root/
 
-RUN npm install && npm run build
+RUN npm install && npx playwright install && npm run build
 
 CMD node /home/root/dist/controller/Server.js
 
