@@ -75,6 +75,14 @@ file_name       test
 file            "upload field"
 ```
 
+5. Logout
+
+```
+url = https://localhost:1002/logout
+
+Body: none
+```
+
 ## UI
 
 1. Wrinte on the browser url:
