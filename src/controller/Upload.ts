@@ -86,6 +86,10 @@ const checkRequest = (formDataList: CfdpInterface.Iinput[]): boolean => {
         parameterNotFound = "file";
     }
 
+    if (!parameterList.includes("process_number")) {
+        parameterNotFound = "process_number";
+    }
+
     // Result
     const result = fileProblem === "" && parameterNotFound === "" ? true : false;
 

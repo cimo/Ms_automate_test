@@ -1,10 +1,26 @@
 button {
-    cursor: pointer;
-    text-align: center;
+    & :not(:disabled) {
+        cursor: pointer;
+        text-align: center;
+    }
 }
 
 .mdc-touch-target-wrapper {
     display: inline-block !important;
     margin: 0 10px !important;
     height: 40px !important;
+}
+
+.button_primary {
+    color: $white !important;
+    background-color: $buttonPrimary !important;
+
+    &:hover {
+        background-color: $buttonPrimaryHover !important;
+    }
+
+    &:disabled {
+        color: $greyVeryDark !important;
+        background-color: $buttonDisabled !important;
+    }
 }

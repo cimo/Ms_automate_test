@@ -98,36 +98,36 @@ body *:not(.material-icons) {
   right: 0;
 }
 .page_container .header {
-  background: red;
+  height: 50px;
 }
 .page_container .left {
   width: 30%;
   height: 100%;
-  display: inline-block;
-  vertical-align: top;
-  position: relative;
-  background-color: blue;
+  float: left;
 }
 .page_container .right {
   width: 70%;
   height: 100%;
-  display: inline-block;
-  vertical-align: top;
-  position: relative;
-  background-color: green;
+  float: left;
+}
+.page_container .right::after {
+  content: "";
+  clear: both;
+  display: block;
 }
 
 .mdc-text-field,
 .mdc-select__anchor {
   margin: 5px 0 !important;
   height: 40px !important;
+  text-align: left !important;
 }
 .mdc-text-field .mdc-floating-label--float-above,
 .mdc-select__anchor .mdc-floating-label--float-above {
   top: 75% !important;
 }
 
-button {
+button :not(:disabled) {
   cursor: pointer;
   text-align: center;
 }
@@ -138,6 +138,18 @@ button {
   height: 40px !important;
 }
 
+.button_primary {
+  color: #ffffff !important;
+  background-color: #00338d !important;
+}
+.button_primary:hover {
+  background-color: #0091da !important;
+}
+.button_primary:disabled {
+  color: #333333 !important;
+  background-color: #999999 !important;
+}
+
 form .field_container {
   display: block;
 }
@@ -146,19 +158,22 @@ form .button_container {
   text-align: center;
 }
 
-.table_container {
-  margin: 10px 20px;
+.mdc-data-table {
+  display: block !important;
+  margin: 10px 20px !important;
 }
-.table_container .mdc-data-table {
-  width: 100%;
-}
-.table_container .mdc-data-table .mdc-data-table__table-container {
+.mdc-data-table .mdc-data-table__table-container {
   overflow-x: revert !important;
 }
-.table_container .mdc-data-table .mdc-data-table__header-cell,
-.table_container .mdc-data-table .mdc-data-table__cell {
-  vertical-align: middle !important;
+.mdc-data-table .mdc-data-table__table-container table {
+  white-space: revert !important;
+}
+.mdc-data-table .mdc-data-table__table-container table .mdc-data-table__header-cell,
+.mdc-data-table .mdc-data-table__table-container table .mdc-data-table__cell {
   overflow: revert !important;
+  vertical-align: middle;
+  text-align: left;
+  padding: 10px !important;
 }
 
 .alert .text_wrap {
@@ -166,36 +181,64 @@ form .button_container {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.alert .success {
-  background-color: green;
-}
-.alert .error {
-  background-color: red;
-}
 .alert button span {
-  color: white;
+  color: #ffffff;
+}
+.alert.success .mdc-snackbar__surface {
+  background-color: #43b02a !important;
+}
+.alert.error .mdc-snackbar__surface {
+  background-color: #bc204b !important;
 }
 
-.table_container .mdc-data-table {
-  width: 60%;
-  display: block;
-  margin: auto;
-}
-.table_container .mdc-data-table .column_title {
-  width: 10%;
-}
-.table_container .mdc-data-table .column_test {
-  width: 30%;
-}
-.table_container .mdc-data-table .column_video {
-  width: 20%;
-}
-.table_container .mdc-data-table .row .column_video {
+.view_index {
   text-align: center;
 }
-
-video {
+.view_index .icon_process {
+  display: none;
+}
+.view_index .left {
+  width: 100%;
+}
+.view_index .left .table_list {
+  width: 50% !important;
+  display: inline-block !important;
+  vertical-align: top;
+}
+.view_index .left .table_list .column_id {
+  width: 1%;
+}
+.view_index .left .table_list .column_title {
+  width: 19%;
+}
+.view_index .left .table_list .column_action {
+  width: 30%;
+}
+.view_index .left .table_list tbody .column_action {
+  text-align: center !important;
+}
+.view_index .left .table_side {
+  display: inline-block !important;
+}
+.view_index .left .table_side tbody td {
+  text-align: center !important;
+}
+.view_index .left .table_side tbody td video {
   width: 400px;
+  height: 200px;
+  display: block;
+  margin: 10px auto;
+}
+@media screen and (max-width: 1039px) {
+  .view_index .left .table_list {
+    width: revert !important;
+  }
+  .view_index .left .table_side {
+    display: block !important;
+  }
+}
+.view_index .right {
+  width: 0;
 }
 
 /*# sourceMappingURL=main.css.map */

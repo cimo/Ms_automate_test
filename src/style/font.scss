@@ -10,8 +10,10 @@ $lineHeight: 1.25;
         url("../font/roboto-regular.woff2") format("woff2");
 }
 
-body *:not(.material-icons) {
-    font-family: "roboto-regular" !important;
-    font-size: $fontSize !important;
-    line-height: $lineHeight !important;
+body {
+    & *:not(.material-icons) {
+        font-family: "roboto-regular" !important;
+        font-size: $fontSize !important;
+        line-height: $lineHeight !important;
+    }
 }

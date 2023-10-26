@@ -5,17 +5,21 @@
         text-overflow: ellipsis;
     }
 
-    .success {
-        background-color: green;
-    }
-
-    .error {
-        background-color: red;
-    }
-
     button {
         span {
-            color: white;
+            color: $white;
+        }
+    }
+
+    &.success {
+        .mdc-snackbar__surface {
+            background-color: $green !important;
+        }
+    }
+
+    &.error {
+        .mdc-snackbar__surface {
+            background-color: $red !important;
         }
     }
 }

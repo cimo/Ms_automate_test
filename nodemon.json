@@ -1,6 +1,6 @@
 {
-    "ext": "ts,js,twig",
-    "watch": ["src"],
+    "ext": "ts,js,css,twig",
+    "watch": ["src/**/*", "public/style/**/*"],
     "ignore": ["src/view/cache/**/*"],
     "exec": "npm run build && node ./dist/controller/Server.js"
 }

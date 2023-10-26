@@ -1,27 +1,64 @@
-.table_container {
-    .mdc-data-table {
-        width: 60%;
-        display: block;
-        margin: auto;
+.view_index {
+    text-align: center;
 
-        .column_title {
-            width: 10%;
-        }
-        .column_test {
-            width: 30%;
-        }
-        .column_video {
-            width: 20%;
+    .icon_process {
+        display: none;
+    }
+
+    .left {
+        width: 100%;
+
+        .table_list {
+            width: 50% !important;
+            display: inline-block !important;
+            vertical-align: top;
+
+            .column_id {
+                width: 1%;
+            }
+            .column_title {
+                width: 19%;
+            }
+            .column_action {
+                width: 30%;
+            }
+
+            tbody {
+                .column_action {
+                    text-align: center !important;
+                }
+            }
         }
 
-        .row {
-            .column_video {
-                text-align: center;
+        .table_side {
+            display: inline-block !important;
+
+            tbody {
+                td {
+                    text-align: center !important;
+
+                    video {
+                        width: 400px;
+                        height: 200px;
+                        display: block;
+                        margin: 10px auto;
+                    }
+                }
+            }
+        }
+
+        @media screen and (max-width: $widthMobile) {
+            .table_list {
+                width: revert !important;
+            }
+
+            .table_side {
+                display: block !important;
             }
         }
     }
-}
 
-video {
-    width: 400px;
+    .right {
+        width: 0;
+    }
 }

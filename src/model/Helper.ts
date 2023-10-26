@@ -4,3 +4,12 @@ export interface IresponseBody {
         stderr: string | Error;
     };
 }
+
+export interface IresponseExec {
+    stdout: string;
+    stderr: string | Error;
+}
+
+export interface IcallbackExec {
+    (data: boolean);
+}

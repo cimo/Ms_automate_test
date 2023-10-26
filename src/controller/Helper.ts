@@ -1,5 +1,6 @@
 import Express from "express";
 import Fs from "fs";
+import { exec } from "child_process";
 
 // Source
 import * as ModelHelper from "../model/Helper";
@@ -11,6 +12,8 @@ const checkEnv = (key: string, value: string | undefined): string => {
 
     return value as string;
 };
+
+const pidTime = 60;
 
 export const ENV_NAME = checkEnv("ENV_NAME", process.env.ENV_NAME);
 export const DOMAIN = checkEnv("DOMAIN", process.env.DOMAIN);
@@ -153,6 +156,50 @@ export const checkJson = (json: string) => {
     }
 
     return false;
+};
+
+export const startPid = (name: string, callback: ModelHelper.IcallbackExec) => {
+    const fullPath = `${PATH_FILE_PID}${name}.pid`;
+    const createFielWithDate = `touch ${fullPath} && echo $(date +%s) > ${fullPath}`;
+
+    if (Fs.existsSync(fullPath)) {
+        const content = Fs.readFileSync(fullPath).toString();
+
+        if (content !== "") {
+            const date1 = new Date(parseInt(content, 10) * 1000);
+            const date2 = new Date();
+
+            const difference = (date2.getTime() - date1.getTime()) / 1000;
+
+            if (difference > pidTime) {
+                endPid(name);
+
+                exec(createFielWithDate, () => {
+                    callback(true);
+                });
+
+                return;
+            }
+        }
+
+        callback(false);
+
+        return;
+    } else {
+        exec(createFielWithDate, () => {
+            callback(true);
+        });
+
+        return;
+    }
+};
+
+export const endPid = (name: string) => {
+    exec(`rm ${PATH_FILE_PID}${name}.pid`);
+};
+
+export const removeCookie = (name: string, response: Express.Response) => {
+    response.setHeader("Set-Cookie", `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`);
 };
 
 export const keepProcess = () => {

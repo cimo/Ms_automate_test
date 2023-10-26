@@ -6,24 +6,24 @@
     right: 0;
 
     .header {
-        background: red;
+        height: 50px;
     }
 
     .left {
         width: 30%;
         height: 100%;
-        display: inline-block;
-        vertical-align: top;
-        position: relative;
-        background-color: blue;
+        float: left;
     }
 
     .right {
         width: 70%;
         height: 100%;
-        display: inline-block;
-        vertical-align: top;
-        position: relative;
-        background-color: green;
+        float: left;
+
+        &::after {
+            content: "";
+            clear: both;
+            display: block;
+        }
     }
 }

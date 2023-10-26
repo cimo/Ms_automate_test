@@ -4,8 +4,8 @@ import * as Https from "https";
 import CookieParser from "cookie-parser";
 import Cors from "cors";
 import { TwingEnvironment, TwingLoaderFilesystem } from "twing";
-import { CwsServerMessage } from "@cimo/websocket";
 import { Ca } from "@cimo/authentication";
+import { CwsServer } from "@cimo/websocket";
 
 // Source
 import * as ControllerHelper from "../controller/Helper";
@@ -24,8 +24,6 @@ const twing = new TwingEnvironment(loader, {
     cache: "/home/root/src/view/cache/",
     auto_reload: ControllerHelper.DEBUG === "true" ? true : false
 });
-
-Ca.setCookieName("ms_at_authentication");
 
 const app = Express();
 app.use(Express.json());
@@ -58,12 +56,16 @@ server.listen(ControllerHelper.SERVER_PORT, () => {
     });
 
     app.get("/login", (_request: Express.Request, response: Express.Response) => {
-        Ca.generateCookie(response);
+        Ca.generateCookie("ms_at_authentication", response);
 
         response.redirect("/ui");
     });
 
-    ControllerTester.api(app, Ca.authenticationMiddleware);
+    app.get("/logout", Ca.authenticationMiddleware, (_request: Express.Request, response: Express.Response) => {
+        ControllerHelper.removeCookie("ms_at_authentication", response);
+
+        response.redirect("/");
+    });
 
     app.get("/ui", Ca.authenticationMiddleware, (_request: Express.Request, response: Express.Response) => {
         const specList = ControllerTester.specList();
@@ -77,8 +79,13 @@ server.listen(ControllerHelper.SERVER_PORT, () => {
                 ControllerHelper.writeLog("Tester.ts - server.listen() - twing.render() - catch()", error);
             });
     });
+
+    ControllerTester.api(app, Ca.authenticationMiddleware);
 });
 
-CwsServerMessage.create(server);
+const cwsServer = new CwsServer();
+cwsServer.create(server);
+
+ControllerTester.websocket(cwsServer);
 
 ControllerHelper.keepProcess();
