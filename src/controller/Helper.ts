@@ -1,6 +1,5 @@
 import Express from "express";
 import Fs from "fs";
-import { exec } from "child_process";
 
 // Source
 import * as ModelHelper from "../model/Helper";
@@ -12,8 +11,6 @@ const checkEnv = (key: string, value: string | undefined): string => {
 
     return value as string;
 };
-
-const pidTime = 60;
 
 export const ENV_NAME = checkEnv("ENV_NAME", process.env.ENV_NAME);
 export const DOMAIN = checkEnv("DOMAIN", process.env.DOMAIN);
@@ -30,7 +27,6 @@ export const PATH_STATIC = checkEnv("MS_AT_PATH_STATIC", process.env.MS_AT_PATH_
 export const PATH_LOG = checkEnv("MS_AT_PATH_LOG", process.env.MS_AT_PATH_LOG);
 export const PATH_FILE_INPUT = checkEnv("MS_AT_PATH_FILE_INPUT", process.env.MS_AT_PATH_FILE_INPUT);
 export const PATH_FILE_OUTPUT = checkEnv("MS_AT_PATH_FILE_OUTPUT", process.env.MS_AT_PATH_FILE_OUTPUT);
-export const PATH_FILE_PID = checkEnv("MS_AT_PATH_FILE_PID", process.env.MS_AT_PATH_FILE_PID);
 export const PUBLIC_FILE_OUTPUT = checkEnv("MS_AT_PUBLIC_FILE_OUTPUT", process.env.MS_AT_PUBLIC_FILE_OUTPUT);
 
 export const writeLog = (tag: string, value: string | Error) => {
@@ -156,46 +152,6 @@ export const checkJson = (json: string) => {
     }
 
     return false;
-};
-
-export const startPid = (name: string, callback: ModelHelper.IcallbackExec) => {
-    const fullPath = `${PATH_FILE_PID}${name}.pid`;
-    const createFielWithDate = `touch ${fullPath} && echo $(date +%s) > ${fullPath}`;
-
-    if (Fs.existsSync(fullPath)) {
-        const content = Fs.readFileSync(fullPath).toString();
-
-        if (content !== "") {
-            const date1 = new Date(parseInt(content, 10) * 1000);
-            const date2 = new Date();
-
-            const difference = (date2.getTime() - date1.getTime()) / 1000;
-
-            if (difference > pidTime) {
-                endPid(name);
-
-                exec(createFielWithDate, () => {
-                    callback(true);
-                });
-
-                return;
-            }
-        }
-
-        callback(false);
-
-        return;
-    } else {
-        exec(createFielWithDate, () => {
-            callback(true);
-        });
-
-        return;
-    }
-};
-
-export const endPid = (name: string) => {
-    exec(`rm ${PATH_FILE_PID}${name}.pid`);
 };
 
 export const removeCookie = (name: string, response: Express.Response) => {

@@ -59,7 +59,7 @@
                             <tbody class="mdc-data-table__content">
                                 {% for key, item in specList %}
                                     <tr class="mdc-data-table__row row"
-                                        data-process="{{ key }}">
+                                        data-action="{{ key }}">
                                         <td class="mdc-data-table__cell column_id">
                                             <p>
                                                 {{ key + 1 }}
@@ -203,7 +203,7 @@
                                                             aria-hidden="true">
                                                             start
                                                         </i>
-                                                        <i class="material-icons mdc-button__icon icon_process"
+                                                        <i class="material-icons mdc-button__icon icon_action"
                                                             aria-hidden="true">
                                                             pending
                                                         </i>
@@ -225,7 +225,7 @@
                         <table class="mdc-data-table__table">
                             <tbody class="mdc-data-table__content">
                                 <tr class="mdc-data-table__row row"
-                                    data-process="0">
+                                    data-action="0">
                                     <td class="mdc-data-table__cell">
                                         <p>
                                             The video will be available when the
@@ -259,7 +259,7 @@
                                                     aria-hidden="true">
                                                     movie
                                                 </i>
-                                                <i class="material-icons mdc-button__icon icon_process"
+                                                <i class="material-icons mdc-button__icon icon_action"
                                                     aria-hidden="true">
                                                     pending
                                                 </i>
@@ -272,7 +272,7 @@
                                     </td>
                                 </tr>
                                 <tr class="mdc-data-table__row row"
-                                    data-process="1">
+                                    data-action="1">
                                     <td class="mdc-data-table__cell">
                                         <input class="input_upload"
                                             type="file"
@@ -286,7 +286,7 @@
                                                     aria-hidden="true">
                                                     upload
                                                 </i>
-                                                <i class="material-icons mdc-button__icon icon_process"
+                                                <i class="material-icons mdc-button__icon icon_action"
                                                     aria-hidden="true">
                                                     pending
                                                 </i>

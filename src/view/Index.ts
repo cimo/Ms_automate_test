@@ -11,7 +11,7 @@ const PUBLIC_FILE_OUTPUT = `${process.env.MS_AT_PUBLIC_FILE_OUTPUT || ""}`;
 export const create = (cr: Cr, cwsClient: CwsClient) => {
     ControllerAlert.create();
 
-    run(cr, cwsClient);
+    run(cwsClient);
 
     upload(cr);
 
@@ -20,7 +20,7 @@ export const create = (cr: Cr, cwsClient: CwsClient) => {
     websocket(cwsClient);
 };
 
-const run = (cr: Cr, cwsClient: CwsClient) => {
+const run = (cwsClient: CwsClient) => {
     const elementColumTestList = document.querySelectorAll(".table_list .row .column_action") as unknown as HTMLElement[];
 
     for (const elementColumTest of elementColumTestList) {
@@ -38,7 +38,7 @@ const run = (cr: Cr, cwsClient: CwsClient) => {
                 cwsClient.sendMessage("api_run", {
                     name: name,
                     browser: elementSelected.getAttribute("data-value"),
-                    process_number: elementRow.getAttribute("data-process")
+                    action_number: elementRow.getAttribute("data-action")
                 });
             }
         });
@@ -60,7 +60,7 @@ const download = (cr: Cr) => {
                 {},
                 {
                     name: elementInput.value,
-                    process_number: elementRow.getAttribute("data-process")
+                    action_number: elementRow.getAttribute("data-action")
                 }
             )
                 .then((data) => {
@@ -95,7 +95,7 @@ const upload = (cr: Cr) => {
                 formData.append("file", fileList[0]);
             }
 
-            formData.append("process_number", elementRow.getAttribute("data-process") as string);
+            formData.append("action_number", elementRow.getAttribute("data-action") as string);
 
             cr.post<ModelHelper.IresponseBody>("/api/upload", {}, formData)
                 .then((data) => {
@@ -113,8 +113,8 @@ const upload = (cr: Cr) => {
 };
 
 const websocket = (cwsClient: CwsClient) => {
-    cwsClient.receiveMessage("process", (data) => {
-        const message = data.message as unknown as ModelIndex.Iprocess;
+    cwsClient.receiveMessage("action", (data) => {
+        const message = data.message as unknown as ModelIndex.Iaction;
 
         let tag = "";
 
@@ -124,8 +124,8 @@ const websocket = (cwsClient: CwsClient) => {
             tag = ".table_side";
         }
 
-        const elementRow = document.querySelector(`${tag} .row[data-process='${message.number}']`) as HTMLButtonElement;
-        const elementIcon = elementRow.querySelector(".icon_process") as HTMLElement;
+        const elementRow = document.querySelector(`${tag} .row[data-action='${message.number}']`) as HTMLButtonElement;
+        const elementIcon = elementRow.querySelector(".icon_action") as HTMLElement;
 
         if (elementIcon) {
             if (message.status === "start") {
@@ -140,7 +140,7 @@ const websocket = (cwsClient: CwsClient) => {
         const message = data.message as unknown as ModelHelper.IresponseExec;
 
         if (message.stdout !== "") {
-            ControllerAlert.open("success", message.stdout);
+            ControllerAlert.open("success", message.stdout, 4000);
         } else if (message.stderr !== "") {
             ControllerAlert.open("error", message.stderr.toString());
         }

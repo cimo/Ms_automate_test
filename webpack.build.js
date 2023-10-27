@@ -25,7 +25,6 @@ helperEnv.checkEnv("MS_AT_PATH_STATIC", process.env.MS_AT_PATH_STATIC);
 helperEnv.checkEnv("MS_AT_PATH_LOG", process.env.MS_AT_PATH_LOG);
 helperEnv.checkEnv("MS_AT_PATH_FILE_INPUT", process.env.MS_AT_PATH_FILE_INPUT);
 helperEnv.checkEnv("MS_AT_PATH_FILE_OUTPUT", process.env.MS_AT_PATH_FILE_OUTPUT);
-helperEnv.checkEnv("MS_AT_PATH_FILE_PID", process.env.MS_AT_PATH_FILE_PID);
 helperEnv.checkEnv("MS_AT_PUBLIC_FILE_OUTPUT", process.env.MS_AT_PUBLIC_FILE_OUTPUT);
 
 process.env["IGNORE_MOBX_MINIFY_WARNING"] = DEBUG;

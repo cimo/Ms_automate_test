@@ -8,11 +8,12 @@ export const create = () => {
     element.timeoutMs = -1;
 };
 
-export const open = (className: string, text: string) => {
+export const open = (className: string, text: string, timeout = -1) => {
     close();
 
     element.root.classList.add(className);
     element.labelText = text;
+    element.timeoutMs = timeout;
     element.open();
 };
 

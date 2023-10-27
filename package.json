@@ -22,6 +22,7 @@
         "@cimo/request": "1.2.4",
         "@cimo/form-data_parser": "1.1.14",
         "@cimo/websocket": "1.1.21",
+        "@cimo/pid": "1.0.0",
         "cookie-parser": "1.4.6",
         "cors": "2.8.5",
         "express": "4.18.1",

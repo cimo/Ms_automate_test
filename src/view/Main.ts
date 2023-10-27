@@ -5,7 +5,7 @@ import { Cr } from "@cimo/request";
 import CwsClient from "@cimo/websocket/dist/client/Service";
 
 // Source
-import * as Index from "./Index";
+import * as ViewIndex from "./Index";
 
 const HOST = `${process.env.DOMAIN || ""}:${process.env.SERVER_PORT || ""}`;
 
@@ -32,5 +32,5 @@ const cr = new Cr(`https://${HOST}`, 30000);
 const cwsClient = new CwsClient();
 cwsClient.connection(HOST);
 
-// Page
-Index.create(cr, cwsClient);
+// View
+ViewIndex.create(cr, cwsClient);

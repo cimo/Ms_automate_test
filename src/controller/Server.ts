@@ -6,10 +6,11 @@ import Cors from "cors";
 import { TwingEnvironment, TwingLoaderFilesystem } from "twing";
 import { Ca } from "@cimo/authentication";
 import { CwsServer } from "@cimo/websocket";
+import { Cp } from "@cimo/pid";
 
 // Source
-import * as ControllerHelper from "../controller/Helper";
-import * as ControllerTester from "../controller/Tester";
+import * as ControllerHelper from "./Helper";
+import * as ControllerTester from "./Tester";
 import * as ModelServer from "../model/Server";
 
 const corsOption: ModelServer.Icors = {
@@ -24,6 +25,8 @@ const twing = new TwingEnvironment(loader, {
     cache: "/home/root/src/view/cache/",
     auto_reload: ControllerHelper.DEBUG === "true" ? true : false
 });
+
+const cp = new Cp(5);
 
 const app = Express();
 app.use(Express.json());
@@ -80,12 +83,12 @@ server.listen(ControllerHelper.SERVER_PORT, () => {
             });
     });
 
-    ControllerTester.api(app, Ca.authenticationMiddleware);
+    ControllerTester.api(app, Ca.authenticationMiddleware, cp);
 });
 
 const cwsServer = new CwsServer();
 cwsServer.create(server);
 
-ControllerTester.websocket(cwsServer);
+ControllerTester.websocket(cwsServer, cp);
 
 ControllerHelper.keepProcess();

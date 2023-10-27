@@ -30,8 +30,6 @@ env/*
 file/*
 !file/**/
 !file/input/*
-file/pid/*
-!file/pid/.gitkeep
 src/view/cache/*
 !src/view/cache/.gitkeep
 log/*

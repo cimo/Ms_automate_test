@@ -1,5 +1,5 @@
 export interface Irequest {
     name: string;
     browser: string;
-    process_number: string;
+    action_number: string;
 }

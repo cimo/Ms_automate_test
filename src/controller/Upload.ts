@@ -3,7 +3,7 @@ import Fs from "fs";
 import { Cfdp, CfdpInterface } from "@cimo/form-data_parser";
 
 // Source
-import * as ControllerHelper from "../controller/Helper";
+import * as ControllerHelper from "./Helper";
 
 export const execute = (request: Express.Request, isFileExists: boolean): Promise<CfdpInterface.Iinput[]> => {
     return new Promise((resolve, reject) => {
@@ -86,8 +86,8 @@ const checkRequest = (formDataList: CfdpInterface.Iinput[]): boolean => {
         parameterNotFound = "file";
     }
 
-    if (!parameterList.includes("process_number")) {
-        parameterNotFound = "process_number";
+    if (!parameterList.includes("action_number")) {
+        parameterNotFound = "action_number";
     }
 
     // Result
