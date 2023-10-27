@@ -28,16 +28,6 @@ for (const elementMdcSelect of elementMdcSelectList) {
 // Request
 const cr = new Cr(`https://${HOST}`, 30000);
 
-cr.setRequestInterceptor((config) => {
-    return {
-        ...config
-    };
-});
-
-cr.setResponseInterceptor(() => {
-    //...
-});
-
 // Websocket
 const cwsClient = new CwsClient();
 cwsClient.connection(HOST);

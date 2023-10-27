@@ -11,7 +11,7 @@ const PUBLIC_FILE_OUTPUT = `${process.env.MS_AT_PUBLIC_FILE_OUTPUT || ""}`;
 export const create = (cr: Cr, cwsClient: CwsClient) => {
     ControllerAlert.create();
 
-    run(cr);
+    run(cr, cwsClient);
 
     upload(cr);
 
@@ -20,7 +20,7 @@ export const create = (cr: Cr, cwsClient: CwsClient) => {
     websocket(cwsClient);
 };
 
-const run = (cr: Cr) => {
+const run = (cr: Cr, cwsClient: CwsClient) => {
     const elementColumTestList = document.querySelectorAll(".table_list .row .column_action") as unknown as HTMLElement[];
 
     for (const elementColumTest of elementColumTestList) {
@@ -35,25 +35,11 @@ const run = (cr: Cr) => {
                 const name = elementTitle.textContent?.trim() as string;
                 const elementSelected = elementSelectContainer.querySelector(".select_list [aria-selected='true']") as HTMLElement;
 
-                cr.post<ModelHelper.IresponseBody>(
-                    "/api/run",
-                    {},
-                    {
-                        name: name,
-                        browser: elementSelected.getAttribute("data-value"),
-                        process_number: elementRow.getAttribute("data-process")
-                    }
-                )
-                    .then((data) => {
-                        if (data.response.stdout !== "") {
-                            ControllerAlert.open("success", data.response.stdout);
-                        } else if (data.response.stderr !== "") {
-                            ControllerAlert.open("error", data.response.stderr.toString());
-                        }
-                    })
-                    .catch((error: Error) => {
-                        ControllerAlert.open("error", error.toString());
-                    });
+                cwsClient.sendMessage("api_run", {
+                    name: name,
+                    browser: elementSelected.getAttribute("data-value"),
+                    process_number: elementRow.getAttribute("data-process")
+                });
             }
         });
     }
@@ -147,6 +133,16 @@ const websocket = (cwsClient: CwsClient) => {
             } else if (message.status === "end") {
                 elementIcon.style.display = "none";
             }
+        }
+    });
+
+    cwsClient.receiveMessage("api_run", (data) => {
+        const message = data.message as unknown as ModelHelper.IresponseExec;
+
+        if (message.stdout !== "") {
+            ControllerAlert.open("success", message.stdout);
+        } else if (message.stderr !== "") {
+            ControllerAlert.open("error", message.stderr.toString());
         }
     });
 };

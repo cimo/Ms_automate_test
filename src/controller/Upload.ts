@@ -36,7 +36,7 @@ export const execute = (request: Express.Request, isFileExists: boolean): Promis
                                     })
                                     .catch((error: Error) => {
                                         ControllerHelper.writeLog(
-                                            "Upload.ts - execute() - request.on('end' - ControllerHelper.fileWriteStream() - catch()",
+                                            "Upload.ts - execute() - request.on('end') - ControllerHelper.fileWriteStream() - catch()",
                                             error
                                         );
 

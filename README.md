@@ -22,6 +22,8 @@ docker compose -f docker-compose.yaml --env-file ./env/local.env build --no-cach
     - .config
     - .npm
     - .pki
+    - node_modules
+    - package-lock.json
 
 2. Follow the "Installation" instructions.
 
