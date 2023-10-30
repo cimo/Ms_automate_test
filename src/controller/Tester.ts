@@ -34,7 +34,7 @@ export const api = (app: Express.Express, CaAuthenticationMiddleware: Express.Re
     app.post("/api/download", CaAuthenticationMiddleware, (request: Express.Request, response: Express.Response) => {
         const requestBody = request.body as ModelTester.Irequest;
 
-        const nameReplace = typeof requestBody.name === "string" ? requestBody.name.replace(/[ ]/g, "_").replace(/[()]/g, "").toLowerCase() : "";
+        const nameReplace = typeof requestBody.name === "string" ? requestBody.name.replace(/[ ]/g, "_").replace(/[()]/g, "") : "";
         const actionNumber = typeof requestBody.action_number === "string" ? requestBody.action_number : "";
 
         if (nameReplace !== "" && actionNumber !== "") {

@@ -15,7 +15,8 @@ helperEnv.checkEnv("TIMEZONE", process.env.TIMEZONE);
 helperEnv.checkEnv("SERVER_PORT", process.env.SERVER_PORT);
 const DEBUG = helperEnv.checkEnv("MS_AT_DEBUG", process.env.MS_AT_DEBUG);
 const NODE_ENV = helperEnv.checkEnv("MS_AT_NODE_ENV", process.env.MS_AT_NODE_ENV);
-const PUBLIC_PATH = helperEnv.checkEnv("MS_AT_PUBLIC_PATH", process.env.MS_AT_PUBLIC_PATH);
+const URL_ROOT = helperEnv.checkEnv("MS_AT_URL_ROOT", process.env.MS_AT_URL_ROOT);
+helperEnv.checkEnv("MS_AT_URL_FILE_OUTPUT", process.env.MS_AT_URL_FILE_OUTPUT);
 helperEnv.checkEnv("MS_AT_CORS_ORIGIN_URL", process.env.MS_AT_CORS_ORIGIN_URL);
 helperEnv.checkEnv("MS_AT_MIME_TYPE", process.env.MS_AT_MIME_TYPE);
 helperEnv.checkEnv("MS_AT_FILE_SIZE_MB", process.env.MS_AT_FILE_SIZE_MB);
@@ -25,7 +26,6 @@ helperEnv.checkEnv("MS_AT_PATH_STATIC", process.env.MS_AT_PATH_STATIC);
 helperEnv.checkEnv("MS_AT_PATH_LOG", process.env.MS_AT_PATH_LOG);
 helperEnv.checkEnv("MS_AT_PATH_FILE_INPUT", process.env.MS_AT_PATH_FILE_INPUT);
 helperEnv.checkEnv("MS_AT_PATH_FILE_OUTPUT", process.env.MS_AT_PATH_FILE_OUTPUT);
-helperEnv.checkEnv("MS_AT_PUBLIC_FILE_OUTPUT", process.env.MS_AT_PUBLIC_FILE_OUTPUT);
 
 process.env["IGNORE_MOBX_MINIFY_WARNING"] = DEBUG;
 
@@ -38,7 +38,7 @@ module.exports = {
         filename: "main.js",
         sourceMapFilename: "main.js.map",
         path: Path.resolve(__dirname, "public/js"),
-        publicPath: PUBLIC_PATH
+        publicPath: URL_ROOT
     },
     resolve: {
         extensions: [".ts", ".js"]

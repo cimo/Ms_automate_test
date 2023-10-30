@@ -6,7 +6,7 @@ import * as ControllerAlert from "../controller/Alert";
 import * as ModelHelper from "../model/Helper";
 import * as ModelIndex from "../model/Index";
 
-const PUBLIC_FILE_OUTPUT = `${process.env.MS_AT_PUBLIC_FILE_OUTPUT || ""}`;
+const URL_FILE_OUTPUT = `${process.env.MS_AT_URL_FILE_OUTPUT || ""}`;
 
 export const create = (cr: Cr, cwsClient: CwsClient) => {
     ControllerAlert.create();
@@ -65,7 +65,7 @@ const download = (cr: Cr) => {
             )
                 .then((data) => {
                     if (data.response.stdout !== "") {
-                        elementVideo.src = `${PUBLIC_FILE_OUTPUT}${data.response.stdout}`;
+                        elementVideo.src = `${URL_FILE_OUTPUT}${data.response.stdout}`;
                     } else if (data.response.stderr !== "") {
                         ControllerAlert.open("error", data.response.stderr.toString());
                     }
@@ -140,7 +140,7 @@ const websocket = (cwsClient: CwsClient) => {
         const message = data.message as unknown as ModelHelper.IresponseExec;
 
         if (message.stdout !== "") {
-            ControllerAlert.open("success", message.stdout, 4000);
+            ControllerAlert.open("success", message.stdout);
         } else if (message.stderr !== "") {
             ControllerAlert.open("error", message.stderr.toString());
         }

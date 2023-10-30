@@ -17,7 +17,9 @@ export const DOMAIN = checkEnv("DOMAIN", process.env.DOMAIN);
 export const TIMEZONE = checkEnv("TIMEZONE", process.env.TIMEZONE);
 export const SERVER_PORT = checkEnv("SERVER_PORT", process.env.SERVER_PORT);
 export const DEBUG = checkEnv("MS_AT_DEBUG", process.env.MS_AT_DEBUG);
-export const NODE_ENV = checkEnv("MS_AT_DEBUG", process.env.MS_AT_NODE_ENV);
+export const NODE_ENV = checkEnv("MS_AT_NODE_ENV", process.env.MS_AT_NODE_ENV);
+export const URL_ROOT = checkEnv("MS_AT_URL_ROOT", process.env.MS_AT_URL_ROOT);
+export const URL_FILE_OUTPUT = checkEnv("MS_AT_URL_FILE_OUTPUT", process.env.MS_AT_URL_FILE_OUTPUT);
 export const CORS_ORIGIN_URL = checkEnv("MS_AT_CORS_ORIGIN_URL", process.env.MS_AT_CORS_ORIGIN_URL);
 export const MIME_TYPE = checkEnv("MS_AT_MIME_TYPE", process.env.MS_AT_MIME_TYPE);
 export const FILE_SIZE_MB = checkEnv("MS_AT_FILE_SIZE_MB", process.env.MS_AT_FILE_SIZE_MB);
@@ -27,7 +29,6 @@ export const PATH_STATIC = checkEnv("MS_AT_PATH_STATIC", process.env.MS_AT_PATH_
 export const PATH_LOG = checkEnv("MS_AT_PATH_LOG", process.env.MS_AT_PATH_LOG);
 export const PATH_FILE_INPUT = checkEnv("MS_AT_PATH_FILE_INPUT", process.env.MS_AT_PATH_FILE_INPUT);
 export const PATH_FILE_OUTPUT = checkEnv("MS_AT_PATH_FILE_OUTPUT", process.env.MS_AT_PATH_FILE_OUTPUT);
-export const PUBLIC_FILE_OUTPUT = checkEnv("MS_AT_PUBLIC_FILE_OUTPUT", process.env.MS_AT_PUBLIC_FILE_OUTPUT);
 
 export const writeLog = (tag: string, value: string | Error) => {
     if (DEBUG === "true" && PATH_LOG) {
