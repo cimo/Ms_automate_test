@@ -4,6 +4,15 @@ import Fs from "fs";
 // Source
 import * as ModelHelper from "../model/Helper";
 
+export const writeLog = (tag: string, value: string | Error) => {
+    if (DEBUG === "true" && PATH_LOG) {
+        Fs.appendFile(`${PATH_LOG}debug.log`, `${tag}: ${value.toString()}\n`, () => {
+            // eslint-disable-next-line no-console
+            console.log(`WriteLog => ${tag}: `, value);
+        });
+    }
+};
+
 const checkEnv = (key: string, value: string | undefined): string => {
     if (value === undefined) {
         writeLog("Helper.ts - checkEnv()", `${key} is not defined!`);
@@ -29,15 +38,6 @@ export const PATH_STATIC = checkEnv("MS_AT_PATH_STATIC", process.env.MS_AT_PATH_
 export const PATH_LOG = checkEnv("MS_AT_PATH_LOG", process.env.MS_AT_PATH_LOG);
 export const PATH_FILE_INPUT = checkEnv("MS_AT_PATH_FILE_INPUT", process.env.MS_AT_PATH_FILE_INPUT);
 export const PATH_FILE_OUTPUT = checkEnv("MS_AT_PATH_FILE_OUTPUT", process.env.MS_AT_PATH_FILE_OUTPUT);
-
-export const writeLog = (tag: string, value: string | Error) => {
-    if (DEBUG === "true" && PATH_LOG) {
-        Fs.appendFile(`${PATH_LOG}debug.log`, `${tag}: ${value.toString()}\n`, () => {
-            // eslint-disable-next-line no-console
-            console.log(`WriteLog => ${tag}: `, value);
-        });
-    }
-};
 
 export const serverTime = (): string => {
     const currentDate = new Date();

@@ -2,7 +2,7 @@
 
 exports.checkEnv = (key, value) => {
     if (value === undefined) {
-        throw new Error(`${key} is not defined!`);
+        throw new Error(`HelperEnv.js - checkEnv()": ${key} is not defined!`);
     }
 
     return value;
