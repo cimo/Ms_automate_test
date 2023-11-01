@@ -1,5 +1,6 @@
 import Express from "express";
 import Fs from "fs";
+import Path from "path";
 import { exec } from "child_process";
 import { CwsServer } from "@cimo/websocket";
 import { Cp } from "@cimo/pid";
@@ -13,7 +14,13 @@ import * as ModelTester from "../model/Tester";
 let cwsServer: CwsServer;
 
 export const specList = () => {
-    return Fs.readdirSync(ControllerHelper.PATH_FILE_INPUT);
+    const fileList = Fs.readdirSync(ControllerHelper.PATH_FILE_INPUT);
+
+    return fileList.filter((file) => {
+        const extension = Path.extname(file);
+
+        return extension === ".ts";
+    });
 };
 
 export const api = (app: Express.Express, CaAuthenticationMiddleware: Express.RequestHandler, cp: Cp) => {

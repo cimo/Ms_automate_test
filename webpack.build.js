@@ -17,15 +17,15 @@ const DEBUG = helperEnv.checkEnv("MS_AT_DEBUG", process.env.MS_AT_DEBUG);
 const NODE_ENV = helperEnv.checkEnv("MS_AT_NODE_ENV", process.env.MS_AT_NODE_ENV);
 const URL_ROOT = helperEnv.checkEnv("MS_AT_URL_ROOT", process.env.MS_AT_URL_ROOT);
 helperEnv.checkEnv("MS_AT_URL_FILE_OUTPUT", process.env.MS_AT_URL_FILE_OUTPUT);
-helperEnv.checkEnv("MS_AT_CORS_ORIGIN_URL", process.env.MS_AT_CORS_ORIGIN_URL);
-helperEnv.checkEnv("MS_AT_MIME_TYPE", process.env.MS_AT_MIME_TYPE);
-helperEnv.checkEnv("MS_AT_FILE_SIZE_MB", process.env.MS_AT_FILE_SIZE_MB);
+helperEnv.checkEnv("MS_AT_URL_CORS_ORIGIN", process.env.MS_AT_URL_CORS_ORIGIN);
 helperEnv.checkEnv("MS_AT_PATH_CERTIFICATE_KEY", process.env.MS_AT_PATH_CERTIFICATE_KEY);
 helperEnv.checkEnv("MS_AT_PATH_CERTIFICATE_CRT", process.env.MS_AT_PATH_CERTIFICATE_CRT);
 helperEnv.checkEnv("MS_AT_PATH_STATIC", process.env.MS_AT_PATH_STATIC);
 helperEnv.checkEnv("MS_AT_PATH_LOG", process.env.MS_AT_PATH_LOG);
 helperEnv.checkEnv("MS_AT_PATH_FILE_INPUT", process.env.MS_AT_PATH_FILE_INPUT);
 helperEnv.checkEnv("MS_AT_PATH_FILE_OUTPUT", process.env.MS_AT_PATH_FILE_OUTPUT);
+helperEnv.checkEnv("MS_AT_MIME_TYPE", process.env.MS_AT_MIME_TYPE);
+helperEnv.checkEnv("MS_AT_FILE_SIZE_MB", process.env.MS_AT_FILE_SIZE_MB);
 
 process.env["IGNORE_MOBX_MINIFY_WARNING"] = DEBUG;
 

@@ -14,7 +14,7 @@ import * as ControllerTester from "./Tester";
 import * as ModelServer from "../model/Server";
 
 const corsOption: ModelServer.Icors = {
-    originList: ControllerHelper.CORS_ORIGIN_URL,
+    originList: ControllerHelper.URL_CORS_ORIGIN,
     methodList: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
     preflightContinue: false,
     optionsSuccessStatus: 200

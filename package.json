@@ -10,11 +10,12 @@
     },
     "scripts": {
         "preinstall": "([ ! -f package-lock.json ] && npm install --package-lock-only --ignore-scripts --no-audit); npx npm-force-resolutions",
-        "sass": "sass --watch ./src/style/main.scss ./public/style/main.css",
+        "sass_watch": "sass --watch ./src/style/main.scss ./public/style/main.css",
+        "sass": "sass ./src/style/main.scss ./public/style/main.css",
         "check": "eslint --fix",
         "remove_dist": "node -e \"const fs = require('fs'); try{ fs.rmdirSync('./dist/', { recursive: true }) } catch{}; process.exit(0);\"",
         "remove_public": "node -e \"const fs = require('fs'); try{ fs.rmdirSync('./public/js/', { recursive: true }) } catch{}; process.exit(0);\"",
-        "build": "npm run remove_dist && npm run remove_public && npm run check && tsc --build tsconfig.build.json && webpack --config webpack.build.js",
+        "build": "npm run remove_dist && npm run remove_public && npm run sass && npm run check && tsc --build tsconfig.build.json && webpack --config webpack.build.js",
         "execute": "nodemon --config nodemon.json"
     },
     "dependencies": {

@@ -2,8 +2,7 @@
 
 Microservice automate frontend test.
 
-Depend from Ms_cronjob (use the volume "ms_cronjob-volume" for share the certificate).\
-Rename "/env/local.env.public" in "/env/local.env" and adjust the variable for your environment.
+Depend from Ms_cronjob (use the volume "ms_cronjob-volume" for share the certificate).
 
 ## Installation
 

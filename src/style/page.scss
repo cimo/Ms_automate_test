@@ -8,17 +8,20 @@
 
     .header {
         height: 50px;
+        position: relative;
     }
 
     .left {
         width: 30%;
         height: 100%;
+        position: relative;
         float: left;
     }
 
     .right {
         width: 70%;
         height: 100%;
+        position: relative;
         float: left;
 
         &::after {
