@@ -1,19 +1,68 @@
-.mdc-data-table {
-    display: block !important;
-    margin: 10px 20px !important;
+table {
+    display: table !important;
+    color: $black !important;
+    width: 100% !important;
+    position: relative !important;
+    border-collapse: collapse !important;
+    box-shadow: 0px 1px 6px 0px $blackRgb !important;
 
-    .mdc-data-table__table-container {
-        overflow-x: revert !important;
+    .row_empty {
+        display: table-row !important;
+        width: 100% !important;
+        height: 50px !important;
+        position: relative !important;
 
-        table {
-            white-space: revert !important;
+        .icon_progress {
+            width: 40px !important;
+            height: 40px !important;
+            position: absolute !important;
+            left: 50% !important;
+            top: 5px !important;
+        }
 
-            .mdc-data-table__header-cell,
-            .mdc-data-table__cell {
-                overflow: revert !important;
-                vertical-align: middle;
-                text-align: left;
-                padding: 10px !important;
+        .text {
+            position: absolute !important;
+            top: 18px !important;
+            left: 0 !important;
+            right: 0 !important;
+            text-align: center !important;
+        }
+    }
+
+    .row {
+        display: table-row !important;
+        width: 100% !important;
+        background-color: $white !important;
+        word-break: break-word !important;
+
+        &:not(.row_empty):not(.not_hover):hover {
+            background-color: $grey600 !important;
+            color: $white !important;
+        }
+
+        &.even {
+            background-color: $grey100 !important;
+        }
+
+        &.selected_row {
+            background-color: $blueLight !important;
+            color: $white !important;
+
+            a {
+                cursor: pointer !important;
+                text-decoration: underline !important;
+                color: $white !important;
+            }
+        }
+
+        .cell {
+            display: table-cell !important;
+            vertical-align: middle !important;
+            padding: 5px !important;
+            height: 50px !important;
+
+            &.center {
+                text-align: center;
             }
         }
     }

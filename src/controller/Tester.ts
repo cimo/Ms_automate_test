@@ -1,148 +1,254 @@
-import Express from "express";
+import Express, { Request, Response } from "express";
 import Fs from "fs";
-import Path from "path";
-import { exec } from "child_process";
-import { CwsServer } from "@cimo/websocket";
+import { execFile } from "child_process";
+import { TwingEnvironment } from "twing";
+import { Ca } from "@cimo/authentication";
 import { Cp } from "@cimo/pid";
+import { CwsServer } from "@cimo/websocket";
 
 // Source
-import * as ControllerHelper from "./Helper";
-import * as ControllerUpload from "./Upload";
-import * as ModelHelper from "../model/Helper";
+import * as HelperSrc from "../HelperSrc";
 import * as ModelTester from "../model/Tester";
 
-let cwsServer: CwsServer;
+export default class ControllerTester {
+    // Variable
+    private app: Express.Express;
+    private twing: TwingEnvironment;
+    private cp: Cp;
+    private cwsServer: CwsServer;
 
-export const specList = () => {
-    const fileList = Fs.readdirSync(ControllerHelper.PATH_FILE_INPUT);
+    private resultOutput: ModelTester.IserverDataOutput[];
 
-    return fileList.filter((file) => {
-        const extension = Path.extname(file);
+    // Method
+    constructor(app: Express.Express, twing: TwingEnvironment, cp: Cp, cwsServer: CwsServer) {
+        this.app = app;
+        this.twing = twing;
+        this.cp = cp;
+        this.cwsServer = cwsServer;
 
-        return extension === ".ts";
-    });
-};
+        this.resultOutput = [];
+    }
 
-export const api = (app: Express.Express, CaAuthenticationMiddleware: Express.RequestHandler, cp: Cp) => {
-    app.post("/api/run", CaAuthenticationMiddleware, (request: Express.Request, response: Express.Response) => {
-        const requestBody = request.body as ModelTester.Irequest;
+    router = (): void => {
+        this.app.get("/ui", Ca.authenticationMiddleware, (_request: Request, response: Response) => {
+            const viewSpecFileList = this.viewSpecFileList();
 
-        actionRun(cp, requestBody.name, requestBody.browser, requestBody.action_number)
-            .then((data) => {
-                ControllerHelper.responseBody(data.stdout, data.stderr, response, 200);
-            })
-            .catch((error: Error) => {
-                ControllerHelper.writeLog("Tester.ts - app.post('/api/run') - actionRun() - catch()", error);
-
-                ControllerHelper.responseBody("", error, response, 200);
-            });
-    });
-
-    app.post("/api/download", CaAuthenticationMiddleware, (request: Express.Request, response: Express.Response) => {
-        const requestBody = request.body as ModelTester.Irequest;
-
-        const nameReplace = typeof requestBody.name === "string" ? requestBody.name.replace(/[ ]/g, "_").replace(/[()]/g, "") : "";
-        const actionNumber = typeof requestBody.action_number === "string" ? requestBody.action_number : "";
-
-        if (nameReplace !== "" && actionNumber !== "") {
-            cp.add("api", (pidIndex) => {
-                if (pidIndex > 0) {
-                    cwsServer.sendInputBroadcast(null, "action", { name: "side", number: actionNumber, status: "start" });
-
-                    exec(`find ${ControllerHelper.PATH_FILE_OUTPUT}evidence/*${nameReplace}* -name "*video*"`, (error, stdout, stderr) => {
-                        cp.remove(pidIndex);
-
-                        const result = stdout.replace(ControllerHelper.PATH_FILE_OUTPUT, "").trim();
-
-                        ControllerHelper.responseBody(result, stderr, response, 200);
-
-                        cwsServer.sendInputBroadcast(null, "action", { name: "side", number: actionNumber, status: "end" });
-                    });
-                } else {
-                    ControllerHelper.responseBody("", "Another action still running.", response, 200);
-                }
-            });
-        } else {
-            ControllerHelper.responseBody("", "Wrong parameter.", response, 200);
-        }
-    });
-
-    app.post("/api/upload", CaAuthenticationMiddleware, (request: Express.Request, response: Express.Response) => {
-        void (async () => {
-            await ControllerUpload.execute(request, true)
-                .then((resultList) => {
-                    let fileName = "";
-
-                    for (const value of resultList) {
-                        if (value.name === "file" && value.filename) {
-                            fileName = value.filename;
-
-                            break;
-                        }
-                    }
-
-                    ControllerHelper.responseBody(fileName, "", response, 200);
+            this.twing
+                .render("main.twig", { specFileList: viewSpecFileList })
+                .then((output) => {
+                    response.end(output);
                 })
                 .catch((error: Error) => {
-                    ControllerHelper.writeLog("Tester.ts - app.post('/api/upload') - catch()", error);
-
-                    ControllerHelper.responseBody("", error, response, 200);
+                    HelperSrc.writeLog("Tester.ts - router() - twing.render(main.twig) - catch()", error);
                 });
-        })();
-    });
-};
+        });
+    };
 
-export const websocket = (cwsServerValue: CwsServer, cp: Cp) => {
-    cwsServer = cwsServerValue;
+    websocket = (): void => {
+        this.user();
 
-    cwsServer.receiveOutput("api_run", (socket, data) => {
-        const message = data.message as unknown as ModelTester.Irequest;
+        this.output();
 
-        actionRun(cp, message.name, message.browser, message.action_number)
-            .then((data) => {
-                cwsServer.sendInput(socket, "api_run", { stdout: data.stdout, stderr: data.stderr });
-            })
-            .catch((error: Error) => {
-                ControllerHelper.writeLog("Tester.ts - receiveOutput('api_run') - actionRun() - catch()", error);
+        this.run();
 
-                cwsServer.sendInput(socket, "api_run", error.toString());
-            });
-    });
-};
+        this.logRun();
 
-const actionRun = (cp: Cp, nameValue: string, browserValue: string, actionNumberValue: string): Promise<ModelHelper.IresponseExec> => {
-    return new Promise((resolve) => {
-        const nameCheck = typeof nameValue === "string" ? nameValue : "";
-        const browserMatch =
-            typeof browserValue === "string" &&
-            browserValue.match("^(desktop_chrome|desktop_edge|desktop_firefox|desktop_safari|mobile_android|mobile_ios)$")
-                ? browserValue
-                : "";
-        const actionNumber = typeof actionNumberValue === "string" ? actionNumberValue : "";
+        this.video();
 
-        if (nameCheck !== "" && browserMatch !== "" && actionNumber !== "") {
-            cp.add("api", (pidIndex) => {
-                if (pidIndex > 0) {
-                    cwsServer.sendInputBroadcast(null, "action", { name: "list", number: actionNumber, status: "start" });
+        this.upload();
+    };
 
-                    exec(
-                        `npx playwright test "${nameValue}" --config=./src/playwright.config.ts --project=${browserMatch}`,
-                        (_error, stdout, stderr) => {
-                            cp.remove(pidIndex);
+    private viewSpecFileList = (): string[] => {
+        const fileList = Fs.readdirSync(HelperSrc.PATH_FILE_INPUT);
 
-                            const result = stdout.replace("[1A[2K", "").replace("[1A[2K", "");
+        const fileFiltered = fileList.filter((file) => {
+            return file.endsWith(".spec.ts");
+        });
 
-                            cwsServer.sendInputBroadcast(null, "action", { name: "list", number: actionNumber, status: "end" });
+        const resultList = fileFiltered.map((file) => {
+            return file.replace(/\.spec\.ts$/, "");
+        });
 
-                            resolve({ stdout: result, stderr });
+        return [...resultList];
+    };
+
+    private user = (): void => {
+        this.cwsServer.receiveData("user", () => {
+            const keyList: string[] = Array.from(this.cwsServer.getClientList().keys());
+
+            const serverData: ModelTester.IserverDataBroadcast = { status: "", result: keyList, tag: "user" };
+            this.cwsServer.sendDataBroadcast(JSON.stringify(serverData));
+        });
+    };
+
+    private output = (): void => {
+        this.cwsServer.receiveData("output", () => {
+            const serverData: ModelTester.IserverDataBroadcast = { status: "", result: this.resultOutput, tag: "output" };
+            this.cwsServer.sendDataBroadcast(JSON.stringify(serverData));
+        });
+    };
+
+    private run = (): void => {
+        this.cwsServer.receiveData("run", (clientId, data) => {
+            if (typeof data === "string") {
+                const clientData = JSON.parse(data) as ModelTester.IclientDataRun;
+
+                const browserCheck = clientData.browser.match(
+                    "^(desktop_chrome|desktop_edge|desktop_firefox|desktop_safari|mobile_android|mobile_ios)$"
+                )
+                    ? clientData.browser
+                    : "";
+
+                const serverDataBroadcast = {} as ModelTester.IserverDataBroadcast;
+                const serverData = {} as ModelTester.IserverDataRun;
+
+                if (clientData.index >= 0 && clientData.name !== "" && browserCheck !== "") {
+                    serverDataBroadcast.tag = "output";
+
+                    this.cp.add("run", JSON.stringify(serverDataBroadcast), 0, (isExists, pidKey) => {
+                        if (!isExists) {
+                            this.resultOutput[clientData.index] = {
+                                state: "running",
+                                browser: clientData.browser,
+                                time: HelperSrc.serverTime(),
+                                log: ""
+                            };
+
+                            serverDataBroadcast.result = this.resultOutput;
+                            this.cwsServer.sendDataBroadcast(JSON.stringify(serverDataBroadcast));
+
+                            const execCommand1 = `. ${HelperSrc.PATH_FILE_SCRIPT}command1.sh`;
+                            const execArgumentList1 = [`"${clientData.name}"`, `"${browserCheck}"`];
+
+                            execFile(execCommand1, execArgumentList1, { shell: "/bin/bash", encoding: "utf8" }, (_, stdout1) => {
+                                if (stdout1) {
+                                    const execCommand2 = `. ${HelperSrc.PATH_FILE_SCRIPT}command2.sh`;
+                                    const execArgumentList2 = [`"${HelperSrc.PATH_FILE_OUTPUT}"`, `"${HelperSrc.PATH_PUBLIC}"`];
+
+                                    execFile(execCommand2, execArgumentList2, { shell: "/bin/bash", encoding: "utf8" }, () => {
+                                        const status = /Error:/.test(stdout1) ? "error" : "success";
+
+                                        this.resultOutput[clientData.index] = {
+                                            state: status,
+                                            browser: clientData.browser,
+                                            time: HelperSrc.serverTime(),
+                                            log: HelperSrc.removeAnsiEscape(stdout1)
+                                        };
+
+                                        serverDataBroadcast.result = this.resultOutput;
+                                        this.cwsServer.sendDataBroadcast(JSON.stringify(serverDataBroadcast));
+
+                                        this.cp.update(pidKey, JSON.stringify(serverDataBroadcast));
+
+                                        serverData.status = status;
+                                        serverData.result = "Test completed, check the log for more info.";
+                                        this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "run");
+
+                                        this.cp.remove(pidKey);
+                                    });
+                                }
+                            });
+                        } else {
+                            serverData.status = "error";
+                            serverData.result = "Another process still running.";
+                            serverData.index = clientData.index;
+                            this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "run");
                         }
-                    );
+                    });
                 } else {
-                    resolve({ stdout: "", stderr: "Another action still running." });
+                    serverData.status = "error";
+                    serverData.result = "Wrong parameter.";
+                    serverData.index = clientData.index;
+                    this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "run");
                 }
-            });
-        } else {
-            resolve({ stdout: "", stderr: "Wrong parameters." });
-        }
-    });
-};
+            }
+        });
+    };
+
+    private logRun = (): void => {
+        this.cwsServer.receiveData("logRun", (clientId, data) => {
+            if (typeof data === "string") {
+                const clientData = JSON.parse(data) as ModelTester.IclientDataLogRun;
+
+                const serverData = {} as ModelTester.IserverData;
+
+                if (clientData.index >= 0 && this.resultOutput[clientData.index]) {
+                    serverData.status = "success";
+                    serverData.result = this.resultOutput[clientData.index].log;
+                } else {
+                    serverData.status = "error";
+                    serverData.result = "Wrong parameter.";
+                }
+
+                this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "logRun");
+            }
+        });
+    };
+
+    private video = (): void => {
+        this.cwsServer.receiveData("video_list", (clientId, data) => {
+            if (typeof data === "string") {
+                const clientData = JSON.parse(data) as ModelTester.IclientDataVideo;
+
+                const serverData = {} as ModelTester.IserverData;
+
+                if (clientData.name !== "") {
+                    const execCommand = `. ${HelperSrc.PATH_FILE_SCRIPT}command3.sh`;
+                    const execArgumentList = [`"${HelperSrc.PATH_PUBLIC}"`, `"${clientData.name}"`];
+
+                    execFile(execCommand, execArgumentList, { shell: "/bin/bash", encoding: "utf8" }, (_, stdout) => {
+                        if (!stdout) {
+                            serverData.status = "error";
+                            serverData.result = "File not found.";
+                            this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "video_list");
+                        } else {
+                            serverData.status = "success";
+                            serverData.result = stdout
+                                .trim()
+                                .split("\n")
+                                .map((name) => name)
+                                .sort((a, b) => a.localeCompare(b));
+                            this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "video_list");
+                        }
+                    });
+                } else {
+                    serverData.status = "error";
+                    serverData.result = "Wrong parameter.";
+                    this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "video_list");
+                }
+            }
+        });
+
+        this.cwsServer.receiveData("video_delete", (clientId, data) => {
+            if (typeof data === "string") {
+                const clientData = JSON.parse(data) as ModelTester.IclientDataVideo;
+
+                const serverData = {} as ModelTester.IserverData;
+
+                if (clientData.name !== "") {
+                    const execCommand = `. ${HelperSrc.PATH_FILE_SCRIPT}command4.sh`;
+                    const execArgumentList = [`"${HelperSrc.PATH_PUBLIC}"`, `"${clientData.name}"`];
+
+                    execFile(execCommand, execArgumentList, { shell: "/bin/bash", encoding: "utf8" }, () => {
+                        serverData.status = "success";
+                        serverData.result = "File deleted.";
+                        this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "video_delete");
+                    });
+                } else {
+                    serverData.status = "error";
+                    serverData.result = "Wrong parameter.";
+                    this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "video_delete");
+                }
+            }
+        });
+    };
+
+    private upload = (): void => {
+        this.cwsServer.receiveDataUpload((clientId, data, filename) => {
+            Fs.writeFileSync(`${HelperSrc.PATH_FILE_INPUT}${filename}`, Buffer.concat(data));
+
+            const requestWsData: ModelTester.IserverData = { status: "success", result: "Upload completed." };
+            this.cwsServer.sendData(clientId, 1, JSON.stringify(requestWsData), "upload");
+        });
+    };
+}

@@ -1,25 +1,32 @@
 import { defineConfig, devices } from "@playwright/test";
 
 // Source
-import * as ControllerHelper from "./controller/Helper";
+import * as HelperSrc from "./HelperSrc";
 
 export default defineConfig({
-    testDir: ControllerHelper.PATH_FILE_INPUT,
-    outputDir: `${ControllerHelper.PATH_FILE_OUTPUT}/evidence/`,
+    testDir: HelperSrc.PATH_FILE_INPUT,
+    outputDir: HelperSrc.PATH_FILE_OUTPUT,
     fullyParallel: false,
     reporter: "line",
-    timeout: 5 * 60 * 1000,
+    reportSlowTests: null,
+    timeout: 10 * 60 * 1000,
+    expect: {
+        timeout: 2 * 60 * 1000
+    },
     use: {
-        actionTimeout: 30 * 1000,
-        navigationTimeout: 30 * 1000,
+        testIdAttribute: "data-at_id",
         ignoreHTTPSErrors: true,
-        video: "on"
+        video: "on",
+        launchOptions: {
+            slowMo: 500
+        }
     },
     projects: [
         {
             name: "desktop_chrome",
             use: {
                 ...devices["Desktop Chrome"],
+                viewport: { width: 1920, height: 1080 },
                 channel: "chrome"
             }
         },
@@ -27,16 +34,23 @@ export default defineConfig({
             name: "desktop_edge",
             use: {
                 ...devices["Desktop Edge"],
+                viewport: { width: 1920, height: 1080 },
                 channel: "msedge"
             }
         },
         {
             name: "desktop_firefox",
-            use: { ...devices["Desktop firefox"] }
+            use: {
+                ...devices["Desktop firefox"],
+                viewport: { width: 1920, height: 1080 }
+            }
         },
         {
             name: "desktop_safari",
-            use: { ...devices["Desktop safari"] }
+            use: {
+                ...devices["Desktop safari"],
+                viewport: { width: 1920, height: 1080 }
+            }
         },
         {
             name: "mobile_android",

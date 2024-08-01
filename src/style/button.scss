@@ -1,14 +1,27 @@
 button {
-    & :not(:disabled) {
-        cursor: pointer;
-        text-align: center;
-    }
-}
-
-.mdc-touch-target-wrapper {
     display: inline-block !important;
     margin: 0 10px !important;
-    height: 40px !important;
+    padding: 5px 10px !important;
+    min-width: fit-content !important;
+    min-height: 42px !important;
+    text-align: center !important;
+
+    & :not(:disabled) {
+        cursor: pointer !important;
+    }
+
+    &:disabled {
+        color: $grey1400 !important;
+        background-color: $buttonDisabled !important;
+    }
+
+    .mdc-button__label {
+        display: inline-block !important;
+
+        .material-icons {
+            margin: 0 !important;
+        }
+    }
 }
 
 .button_primary {
@@ -18,9 +31,51 @@ button {
     &:hover {
         background-color: $buttonPrimaryHover !important;
     }
+}
 
-    &:disabled {
-        color: $greyVeryDark !important;
-        background-color: $buttonDisabled !important;
+.button_secondary {
+    color: $white !important;
+    background-color: $buttonSecondary !important;
+
+    &:hover {
+        background-color: $buttonSecondaryHover !important;
     }
+}
+
+.button_ghost {
+    color: $buttonGhost !important;
+    background-color: $white !important;
+    border: 1px solid !important;
+
+    &:hover {
+        background-color: $buttonGhostHover !important;
+    }
+}
+
+.button_flat {
+    color: $buttonFlat !important;
+    background-color: $white !important;
+
+    &:hover {
+        background-color: $buttonFlatHover !important;
+    }
+}
+
+.button_danger {
+    color: $white !important;
+    background-color: $buttonDanger !important;
+
+    &:hover {
+        background-color: $buttonDangerHover !important;
+    }
+}
+
+.button_remove {
+    color: $red !important;
+    cursor: pointer !important;
+}
+
+.button_container {
+    display: block !important;
+    text-align: center !important;
 }

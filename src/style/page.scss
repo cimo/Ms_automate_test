@@ -1,33 +1,19 @@
 .page_container {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow-y: auto;
-
-    .header {
+    & > .header {
         height: 50px;
         position: relative;
+        margin-bottom: 10px;
     }
 
-    .left {
+    & > .left {
         width: 30%;
-        height: 100%;
         position: relative;
-        float: left;
+        display: inline-block;
     }
 
-    .right {
+    & > .right {
         width: 70%;
-        height: 100%;
         position: relative;
-        float: left;
-
-        &::after {
-            content: "";
-            clear: both;
-            display: block;
-        }
+        display: inline-block;
     }
 }

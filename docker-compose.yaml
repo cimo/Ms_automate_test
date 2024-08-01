@@ -12,11 +12,11 @@ services:
         _SERVER_PORT: ${SERVER_PORT}
     env_file:
       - ./env/local.env
-    ports:
-      - 127.0.0.1:${SERVER_PORT}:${SERVER_PORT}
+    network_mode: "host"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./:/home/root/
-      - ms_cronjob-volume:/home/root/certificate/
+      - ms_cronjob-volume:/home/root/.ms_cronjob-volume/:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix
 volumes:
   ms_cronjob-volume:

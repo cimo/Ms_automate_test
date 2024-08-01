@@ -83,13 +83,14 @@ meter {
 }
 
 @import "media.scss";
-@import "font.scss";
 @import "color.scss";
+@import "font.scss";
 @import "page.scss";
-@import "field.scss";
 @import "button.scss";
-@import "form.scss";
+@import "field.scss";
 @import "table.scss";
-@import "alert.scss";
-
+@import "filter.scss";
+@import "view/loader.scss";
+@import "view/alert.scss";
+@import "view/dialog.scss";
 @import "view/index.scss";

@@ -1,94 +1,119 @@
-import Express from "express";
-import Fs from "fs";
-import * as Https from "https";
+import Express, { Request, Response, NextFunction } from "express";
+import { rateLimit } from "express-rate-limit";
 import CookieParser from "cookie-parser";
 import Cors from "cors";
+import * as Https from "https";
+import Fs from "fs";
 import { TwingEnvironment, TwingLoaderFilesystem } from "twing";
 import { Ca } from "@cimo/authentication";
-import { CwsServer } from "@cimo/websocket";
 import { Cp } from "@cimo/pid";
+import { CwsServer } from "@cimo/websocket";
 
 // Source
-import * as ControllerHelper from "./Helper";
-import * as ControllerTester from "./Tester";
+import * as HelperSrc from "../HelperSrc";
 import * as ModelServer from "../model/Server";
+import ControllerTester from "./Tester";
 
-const corsOption: ModelServer.Icors = {
-    originList: ControllerHelper.URL_CORS_ORIGIN,
-    methodList: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
-    preflightContinue: false,
-    optionsSuccessStatus: 200
-};
+export default class ControllerServer {
+    // Variable
+    private corsOption: ModelServer.Icors;
+    private limiterOption: ModelServer.Ilimiter;
+    private twing: TwingEnvironment;
+    private app: Express.Express;
 
-const loader = new TwingLoaderFilesystem("/home/root/src/view/");
-const twing = new TwingEnvironment(loader, {
-    cache: "/home/root/src/view/cache/",
-    auto_reload: ControllerHelper.DEBUG === "true" ? true : false
-});
+    // Method
+    constructor() {
+        this.corsOption = {
+            originList: HelperSrc.URL_CORS_ORIGIN,
+            methodList: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+            preflightContinue: false,
+            optionsSuccessStatus: 200
+        };
 
-const cp = new Cp(5);
+        this.limiterOption = {
+            windowMs: 15 * 60 * 1000,
+            limit: 100
+        };
 
-const app = Express();
-app.use(Express.json());
-app.use(Express.urlencoded({ extended: true }));
-app.use(Express.static(ControllerHelper.PATH_STATIC));
-app.use(CookieParser());
-app.use(
-    Cors({
-        origin: corsOption.originList,
-        methods: corsOption.methodList,
-        optionsSuccessStatus: corsOption.optionsSuccessStatus
-    })
-);
+        const twingLoader = new TwingLoaderFilesystem("/home/root/src/view/");
+        this.twing = new TwingEnvironment(twingLoader, {
+            cache: "/home/root/src/view/cache/",
+            auto_reload: HelperSrc.DEBUG === "true" ? true : false
+        });
 
-const server = Https.createServer(
-    {
-        key: Fs.readFileSync(ControllerHelper.PATH_CERTIFICATE_KEY),
-        cert: Fs.readFileSync(ControllerHelper.PATH_CERTIFICATE_CRT)
-    },
-    app
-);
+        this.app = Express();
+    }
 
-server.listen(ControllerHelper.SERVER_PORT, () => {
-    const serverTime = ControllerHelper.serverTime();
-
-    ControllerHelper.writeLog("Server.ts - server.listen()", `Port ${ControllerHelper.SERVER_PORT || ""} - Time: ${serverTime}`);
-
-    app.get("/", (_request: Express.Request, response: Express.Response) => {
-        ControllerHelper.responseBody("ms_automate_test", "", response, 200);
-    });
-
-    app.get("/login", (_request: Express.Request, response: Express.Response) => {
-        Ca.generateCookie("ms_at_authentication", response);
-
-        response.redirect("/ui");
-    });
-
-    app.get("/logout", Ca.authenticationMiddleware, (_request: Express.Request, response: Express.Response) => {
-        ControllerHelper.removeCookie("ms_at_authentication", response);
-
-        response.redirect("/");
-    });
-
-    app.get("/ui", Ca.authenticationMiddleware, (_request: Express.Request, response: Express.Response) => {
-        const specList = ControllerTester.specList();
-
-        twing
-            .render("index.twig", { specList: specList })
-            .then((output) => {
-                response.end(output);
+    createSetting = (): void => {
+        this.app.use(Express.json());
+        this.app.use(Express.urlencoded({ extended: true }));
+        this.app.use(Express.static(HelperSrc.PATH_PUBLIC));
+        this.app.use(CookieParser());
+        this.app.use(
+            Cors({
+                origin: this.corsOption.originList,
+                methods: this.corsOption.methodList,
+                optionsSuccessStatus: this.corsOption.optionsSuccessStatus
             })
-            .catch((error: Error) => {
-                ControllerHelper.writeLog("Tester.ts - server.listen() - twing.render() - catch()", error);
+        );
+        this.app.use((request: ModelServer.Irequest, _, next: NextFunction) => {
+            const headerForwarded = request.headers["x-forwarded-for"] ? request.headers["x-forwarded-for"][0] : "";
+            const removeAddress = request.socket.remoteAddress ? request.socket.remoteAddress : "";
+
+            request.clientIp = headerForwarded || removeAddress;
+
+            next();
+        });
+        this.app.use(
+            rateLimit({
+                windowMs: this.limiterOption.windowMs,
+                limit: this.limiterOption.limit
+            })
+        );
+    };
+
+    createServer = (): void => {
+        const server = Https.createServer(
+            {
+                key: Fs.readFileSync(HelperSrc.PATH_CERTIFICATE_KEY),
+                cert: Fs.readFileSync(HelperSrc.PATH_CERTIFICATE_CRT)
+            },
+            this.app
+        );
+
+        server.listen(HelperSrc.SERVER_PORT, () => {
+            const cp = new Cp();
+            const cwsServer = new CwsServer(server, HelperSrc.SECRET_KEY);
+
+            const controllerTester = new ControllerTester(this.app, this.twing, cp, cwsServer);
+            controllerTester.router();
+            controllerTester.websocket();
+
+            const serverTime = HelperSrc.serverTime();
+
+            HelperSrc.writeLog("Server.ts - createServer() => listen()", `Port: ${HelperSrc.SERVER_PORT} - Time: ${serverTime}`);
+
+            this.app.get("/info", (request: ModelServer.Irequest, response: Response) => {
+                HelperSrc.responseBody(`Client ip: ${request.clientIp || ""}`, "", response, 200);
             });
-    });
 
-    ControllerTester.api(app, Ca.authenticationMiddleware, cp);
-});
+            this.app.get("/login", (_request: Request, response: Response) => {
+                Ca.writeCookie(`${HelperSrc.LABEL}_authentication`, response);
 
-const cwsServer = new CwsServer();
-cwsServer.create(server);
+                response.redirect("ui");
+            });
 
-ControllerTester.websocket(cwsServer, cp);
+            this.app.get("/logout", Ca.authenticationMiddleware, (request: Request, response: Response) => {
+                Ca.removeCookie(`${HelperSrc.LABEL}_authentication`, request, response);
 
-ControllerHelper.keepProcess();
+                response.redirect("info");
+            });
+        });
+    };
+}
+
+const controllerServer = new ControllerServer();
+controllerServer.createSetting();
+controllerServer.createServer();
+
+HelperSrc.keepProcess();

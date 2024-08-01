@@ -1,10 +1,26 @@
-.mdc-text-field,
-.mdc-select__anchor {
-    margin: 5px 0 !important;
-    height: 40px !important;
-    text-align: left !important;
+.field_container {
+    display: block !important;
+    min-width: 200px !important;
 
-    .mdc-floating-label--float-above {
-        top: 75% !important;
+    .field_value {
+        &.mdc-select {
+            display: revert !important;
+        }
+
+        &.mdc-text-field,
+        &.mdc-select,
+        .mdc-select__anchor {
+            margin: 5px 0 !important;
+            height: 40px !important;
+            text-align: left !important;
+
+            .mdc-notched-outline__notch {
+                width: fit-content !important;
+            }
+
+            .mdc-floating-label--float-above {
+                top: 75% !important;
+            }
+        }
     }
 }

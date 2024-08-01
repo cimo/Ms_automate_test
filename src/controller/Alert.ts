@@ -1,25 +1,35 @@
 import { MDCSnackbar } from "@material/snackbar";
 
-let element: MDCSnackbar;
+export default class ControllerAlert {
+    // Variable
+    private mdcSnackbar: MDCSnackbar | undefined;
 
-export const create = () => {
-    const elementMdcSnackbar = document.querySelector(".mdc-snackbar") as HTMLElement;
-    element = new MDCSnackbar(elementMdcSnackbar);
-    element.timeoutMs = -1;
-};
+    // Method
+    constructor() {
+        this.mdcSnackbar = new MDCSnackbar(document.querySelector<HTMLElement>(".mdc-snackbar") as Element);
 
-export const open = (className: string, text: string, timeout = -1) => {
-    close();
+        if (this.mdcSnackbar) {
+            this.mdcSnackbar.timeoutMs = -1;
+        }
+    }
 
-    element.root.classList.add(className);
-    element.labelText = text;
-    element.timeoutMs = timeout;
-    element.open();
-};
+    open = (className: string, text: string, timeout = -1) => {
+        this.close();
 
-export const close = () => {
-    element.close();
-    element.root.classList.remove("success");
-    element.root.classList.remove("error");
-    element.labelText = "";
-};
+        if (this.mdcSnackbar) {
+            this.mdcSnackbar.root.classList.add(className);
+            this.mdcSnackbar.labelText = text;
+            this.mdcSnackbar.timeoutMs = timeout;
+            this.mdcSnackbar.open();
+        }
+    };
+
+    close = () => {
+        if (this.mdcSnackbar) {
+            this.mdcSnackbar.close();
+            this.mdcSnackbar.root.classList.remove("success");
+            this.mdcSnackbar.root.classList.remove("error");
+            this.mdcSnackbar.labelText = "";
+        }
+    };
+}

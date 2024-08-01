@@ -1,0 +1,48 @@
+.view_loader {
+    position: fixed;
+    background-color: $white;
+    z-index: 1000;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+
+    .container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 130px;
+        text-align: center;
+        margin: 0 auto;
+
+        .square {
+            display: inline-block;
+            width: 24px;
+            height: 32px;
+            border: 2px solid $blueMedium700;
+            margin: 1px;
+            animation: animation_loader 1s infinite;
+        }
+
+        .text {
+            margin-top: 10px;
+            color: $blueMedium700;
+            font-size: $fontSizeMedium;
+        }
+    }
+
+    @keyframes animation_loader {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        50% {
+            transform: rotate(180deg) scale(0.5, 0.5);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+}

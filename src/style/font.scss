@@ -1,5 +1,8 @@
 $fontSize: 14px;
-$lineHeight: 1.25;
+$fontSizeNormal: 18px;
+$fontSizeMedium: 30px;
+$fontSizeBig: 40px;
+$fontSizeVeryBig: 50px;
 
 @font-face {
     font-family: "roboto-regular";
@@ -13,7 +16,6 @@ $lineHeight: 1.25;
 body {
     & *:not(.material-icons) {
         font-family: "roboto-regular" !important;
-        font-size: $fontSize !important;
-        line-height: $lineHeight !important;
+        font-size: $fontSize;
     }
 }
