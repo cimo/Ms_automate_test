@@ -82,6 +82,9 @@ meter {
     all: revert;
 }
 
+$zIndexLoader: 1000;
+$zIndexAlert: 1001;
+
 @import "media.scss";
 @import "color.scss";
 @import "font.scss";

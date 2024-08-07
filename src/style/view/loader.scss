@@ -1,7 +1,7 @@
 .view_loader {
     position: fixed;
     background-color: $white;
-    z-index: 1000;
+    z-index: $zIndexLoader;
     top: 0;
     right: 0;
     left: 0;
