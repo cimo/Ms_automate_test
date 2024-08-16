@@ -14,6 +14,7 @@ export default defineConfig({
         timeout: 2 * 60 * 1000
     },
     use: {
+        actionTimeout: 5000,
         testIdAttribute: "data-at_id",
         ignoreHTTPSErrors: true,
         video: "on",
