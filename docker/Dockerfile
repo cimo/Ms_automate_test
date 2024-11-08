@@ -10,6 +10,7 @@ ARG _VERSION_TAG
 ENV ENV_NAME=${_ENV_NAME}
 ENV DOMAIN=${_DOMAIN}
 ENV TZ=${_TIMEZONE}
+ENV SERVER_PORT=${_SERVER_PORT}
 ENV PATH_ROOT=${_PATH_ROOT}
 ENV VERSION_TAG=${_VERSION_TAG}
 
@@ -80,4 +81,4 @@ RUN npm install && npx playwright install && npm run build
 
 CMD node ${PATH_ROOT}dist/controller/Server.js
 
-EXPOSE ${_SERVER_PORT}
+EXPOSE ${SERVER_PORT}
