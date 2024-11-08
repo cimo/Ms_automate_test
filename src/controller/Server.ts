@@ -35,9 +35,9 @@ export default class ControllerServer {
             limit: 100
         };
 
-        const twingLoader = new TwingLoaderFilesystem("/home/root/src/view/");
+        const twingLoader = new TwingLoaderFilesystem(`${HelperSrc.PATH_ROOT}/src/view/`);
         this.twing = new TwingEnvironment(twingLoader, {
-            cache: "/home/root/src/view/cache/",
+            cache: `${HelperSrc.PATH_ROOT}/src/view/cache/`,
             auto_reload: HelperSrc.DEBUG === "true" ? true : false
         });
 

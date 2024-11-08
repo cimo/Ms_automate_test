@@ -15,6 +15,7 @@ require("dotenv").config({ path: `./env/${ENV_NAME}.env` });
 const DOMAIN = helperWebpack.checkEnv("DOMAIN", process.env.DOMAIN);
 const TIMEZONE = helperWebpack.checkEnv("TIMEZONE", process.env.TIMEZONE);
 const SERVER_PORT = helperWebpack.checkEnv("SERVER_PORT", process.env.SERVER_PORT);
+const PATH_ROOT = helperWebpack.checkEnv("PATH_ROOT", process.env.PATH_ROOT);
 const MS_AT_NAME = helperWebpack.checkEnv("MS_AT_NAME", process.env.MS_AT_NAME);
 const MS_AT_LABEL = helperWebpack.checkEnv("MS_AT_LABEL", process.env.MS_AT_LABEL);
 const MS_AT_DEBUG = helperWebpack.checkEnv("MS_AT_DEBUG", process.env.MS_AT_DEBUG);
@@ -37,7 +38,7 @@ module.exports = {
     target: "web",
     devtool: "source-map",
     mode: MS_AT_NODE_ENV,
-    entry: "./src/view/Main.ts",
+    entry: `${PATH_ROOT}src/view/Main.ts`,
     output: {
         filename: "main.js",
         sourceMapFilename: "main.js.map",
@@ -85,6 +86,7 @@ module.exports = {
                 DOMAIN,
                 TIMEZONE,
                 SERVER_PORT,
+                PATH_ROOT,
                 MS_AT_NAME,
                 MS_AT_LABEL,
                 MS_AT_DEBUG,
@@ -105,8 +107,8 @@ module.exports = {
             })
         }),
         new HtmlWebpackPlugin({
-            template: "./template_index.html",
-            filename: "../../src/view/main.twig",
+            template: `${PATH_ROOT}template_index.html`,
+            filename: `${PATH_ROOT}src/view/main.twig`,
             inject: false,
             templateParameters: {
                 name: MS_AT_NAME,

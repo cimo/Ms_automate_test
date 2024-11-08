@@ -4,11 +4,13 @@ ARG _ENV_NAME
 ARG _DOMAIN
 ARG _TIMEZONE
 ARG _SERVER_PORT
+ARG _PATH_ROOT
 ARG _VERSION_TAG
 
 ENV ENV_NAME=${_ENV_NAME}
 ENV DOMAIN=${_DOMAIN}
 ENV TZ=${_TIMEZONE}
+ENV PATH_ROOT=${_PATH_ROOT}
 ENV VERSION_TAG=${_VERSION_TAG}
 
 ENV DEBIAN_FRONTEND=noninteractive
@@ -17,7 +19,7 @@ ENV NODE_OPTIONS=--use-openssl-ca
 ENV SUDO_FORCE_REMOVE=yes
 
 COPY ./certificate/proxy/ /usr/local/share/ca-certificates/
-COPY ./ /home/root/
+COPY ./ ${PATH_ROOT}
 
 RUN cd ~ \
     && VERSION_CODENAME=$(grep VERSION_CODENAME= /etc/os-release | cut -d= -f2) \
@@ -31,10 +33,10 @@ RUN cd ~ \
     && apt-get update && apt-get install -y nodejs \
     # No root
     && groupadd -g 1000 node \
-    && useradd -d /home/root/ -s /bin/bash -u 1000 -g 1000 node \
-    && mkdir -p /home/root/ /usr/local/lib/node_modules/ /usr/local/bin/ \
-    && chown -R node:node /home/root/ /usr/local/lib/node_modules/ /usr/local/bin/ \
-    && chmod -R 775 /home/root/ /usr/local/lib/node_modules/ /usr/local/bin/ \
+    && useradd -d ${PATH_ROOT} -s /bin/bash -u 1000 -g 1000 node \
+    && mkdir -p ${PATH_ROOT} /usr/local/lib/node_modules/ /usr/local/bin/ \
+    && chown -R node:node ${PATH_ROOT} /usr/local/lib/node_modules/ /usr/local/bin/ \
+    && chmod -R 775 ${PATH_ROOT} /usr/local/lib/node_modules/ /usr/local/bin/ \
     # Apt
     && apt-get update && apt-get install -y \
     fonts-noto \
@@ -72,10 +74,10 @@ RUN cd ~ \
 
 USER node
 
-WORKDIR /home/root/
+WORKDIR ${PATH_ROOT}
 
 RUN npm install && npx playwright install && npm run build
 
-CMD node /home/root/dist/controller/Server.js
+CMD node ${PATH_ROOT}dist/controller/Server.js
 
 EXPOSE ${_SERVER_PORT}
