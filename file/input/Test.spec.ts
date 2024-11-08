@@ -4,7 +4,7 @@ import * as HelperSrc from "../../src/HelperSrc";
 test("01-Login-Logout", async ({ page }) => {
     await page.goto(HelperSrc.URL_TEST);
 
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
 
     // Your test here
     //...
