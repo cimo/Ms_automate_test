@@ -46,10 +46,7 @@ module.exports = {
         publicPath: MS_AT_URL_ROOT
     },
     resolve: {
-        extensions: [".ts", ".js"],
-        fallback: {
-            fs: false
-        }
+        extensions: [".ts", ".js"]
     },
     module: {
         rules: [
