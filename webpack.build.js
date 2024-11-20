@@ -108,7 +108,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: `${PATH_ROOT}template_index.html`,
-            filename: `${PATH_ROOT}src/view/main.twig`,
+            filename: `${PATH_ROOT}public/index.html`,
             inject: false,
             templateParameters: {
                 name: MS_AT_NAME,

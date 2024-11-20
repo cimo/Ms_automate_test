@@ -53,7 +53,7 @@ export default class ControllerIndex {
         if (mode === "connection") {
             this.run();
 
-            this.logRun();
+            this.runLog();
 
             this.video();
 
@@ -185,10 +185,10 @@ export default class ControllerIndex {
 
                             elementButtonLog.style.setProperty("display", "inline-block", "important");
                             elementButtonLog.onclick = () => {
-                                const clientDataLogRun: ModelTester.IclientDataLogRun = {
+                                const clientDataRunLog: ModelTester.IclientDataRunLog = {
                                     index: parseInt(elementRow.getAttribute("data-index") as string)
                                 };
-                                this.cwsClient.sendData(1, JSON.stringify(clientDataLogRun), "logRun");
+                                this.cwsClient.sendData(1, JSON.stringify(clientDataRunLog), "runLog");
                             };
 
                             elementIconLoading.style.setProperty("display", "none");
@@ -248,8 +248,8 @@ export default class ControllerIndex {
         }
     };
 
-    private logRun = (): void => {
-        this.cwsClient.receiveData("logRun", (data) => {
+    private runLog = (): void => {
+        this.cwsClient.receiveData("runLog", (data) => {
             if (typeof data === "string") {
                 const serverData = JSON.parse(data) as ModelTester.IserverData;
 

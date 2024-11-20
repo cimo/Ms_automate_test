@@ -4,7 +4,7 @@ export interface IclientDataRun {
     browser: string;
 }
 
-export interface IclientDataLogRun {
+export interface IclientDataRunLog {
     index: number;
 }
 

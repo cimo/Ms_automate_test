@@ -4,7 +4,6 @@ import CookieParser from "cookie-parser";
 import Cors from "cors";
 import * as Https from "https";
 import Fs from "fs";
-import { TwingEnvironment, TwingLoaderFilesystem } from "twing";
 import { Ca } from "@cimo/authentication";
 import { Cp } from "@cimo/pid";
 import { CwsServer } from "@cimo/websocket";
@@ -18,7 +17,6 @@ export default class ControllerServer {
     // Variable
     private corsOption: ModelServer.Icors;
     private limiterOption: ModelServer.Ilimiter;
-    private twing: TwingEnvironment;
     private app: Express.Express;
 
     // Method
@@ -34,12 +32,6 @@ export default class ControllerServer {
             windowMs: 15 * 60 * 1000,
             limit: 100
         };
-
-        const twingLoader = new TwingLoaderFilesystem(`${HelperSrc.PATH_ROOT}src/view/`);
-        this.twing = new TwingEnvironment(twingLoader, {
-            cache: `${HelperSrc.PATH_ROOT}src/view/cache/`,
-            auto_reload: HelperSrc.DEBUG === "true" ? true : false
-        });
 
         this.app = Express();
     }
@@ -85,8 +77,8 @@ export default class ControllerServer {
             const cp = new Cp();
             const cwsServer = new CwsServer(server, HelperSrc.SECRET_KEY);
 
-            const controllerTester = new ControllerTester(this.app, this.twing, cp, cwsServer);
-            controllerTester.router();
+            const controllerTester = new ControllerTester(cp, cwsServer);
+            //controllerTester.router();
             controllerTester.websocket();
 
             const serverTime = HelperSrc.serverTime();

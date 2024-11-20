@@ -1,13 +1,26 @@
-import { MDCRipple } from "@material/ripple";
-import { MDCTextField } from "@material/textfield";
-import { MDCSelect } from "@material/select";
+//import { MDCRipple } from "@material/ripple";
+//import { MDCTextField } from "@material/textfield";
+//import { MDCSelect } from "@material/select";
+import { mainInit } from "@cimo/jsmvcfw/dist/JsMvcFw";
+import { routerInit } from "@cimo/jsmvcfw/dist/JsMvcFwRouter";
 import CwsClient from "@cimo/websocket/dist/client/Service";
 
 // Source
 import * as HelperSrc from "../HelperSrc";
-import ControllerIndex from "../controller/Index";
+//import ControllerIndex from "../controller/Index";
+import ControllerRouter from "../controller/Router";
 
-export default class ViewMain {
+mainInit(true, "/", "jsmvcfw_app");
+
+const cwsClient = new CwsClient(HelperSrc.WS_ADRESS);
+
+cwsClient.checkConnection((mode) => {
+    const controllerRouter = new ControllerRouter(cwsClient, mode);
+
+    routerInit(controllerRouter.dataMain);
+});
+
+/*export default class ViewMain {
     // Variable
 
     // Method
@@ -53,4 +66,4 @@ export default class ViewMain {
     };
 }
 
-new ViewMain();
+new ViewMain();*/

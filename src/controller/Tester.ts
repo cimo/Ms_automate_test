@@ -1,8 +1,7 @@
-import Express, { Request, Response } from "express";
+//import Express, { Request, Response } from "express";
 import Fs from "fs";
 import { execFile } from "child_process";
-import { TwingEnvironment } from "twing";
-import { Ca } from "@cimo/authentication";
+//import { Ca } from "@cimo/authentication";
 import { Cp } from "@cimo/pid";
 import { CwsServer } from "@cimo/websocket";
 
@@ -12,64 +11,62 @@ import * as ModelTester from "../model/Tester";
 
 export default class ControllerTester {
     // Variable
-    private app: Express.Express;
-    private twing: TwingEnvironment;
+    //private app: Express.Express;
     private cp: Cp;
     private cwsServer: CwsServer;
 
     private resultOutput: ModelTester.IserverDataOutput[];
 
     // Method
-    constructor(app: Express.Express, twing: TwingEnvironment, cp: Cp, cwsServer: CwsServer) {
-        this.app = app;
-        this.twing = twing;
+    constructor(cp: Cp, cwsServer: CwsServer) {
+        //this.app = app;
         this.cp = cp;
         this.cwsServer = cwsServer;
 
         this.resultOutput = [];
     }
 
-    router = (): void => {
+    /*router = (): void => {
         this.app.get("/ui", Ca.authenticationMiddleware, (_request: Request, response: Response) => {
             const viewSpecFileList = this.viewSpecFileList();
-
-            this.twing
-                .render("main.twig", { specFileList: viewSpecFileList })
-                .then((output) => {
-                    response.end(output);
-                })
-                .catch((error: Error) => {
-                    HelperSrc.writeLog("Tester.ts - router() - twing.render(main.twig) - catch()", error);
-                });
         });
-    };
+    };*/
 
     websocket = (): void => {
+        this.specFile();
+
         this.user();
 
         this.output();
 
         this.run();
 
-        this.logRun();
+        this.runLog();
 
         this.video();
 
         this.upload();
     };
 
-    private viewSpecFileList = (): string[] => {
-        const fileList = Fs.readdirSync(HelperSrc.PATH_FILE_INPUT);
+    private specFile = (): void => {
+        this.cwsServer.receiveData("specFile", (clientId) => {
+            const fileList = Fs.readdirSync(HelperSrc.PATH_FILE_INPUT);
 
-        const fileFiltered = fileList.filter((file) => {
-            return file.endsWith(".spec.ts");
+            const fileFiltered: string[] = [];
+            for (let i = 0; i < fileList.length; i++) {
+                if (fileList[i].endsWith(".spec.ts")) {
+                    fileFiltered.push(fileList[i]);
+                }
+            }
+
+            const resultList: string[] = [];
+            for (let i = 0; i < fileFiltered.length; i++) {
+                resultList.push(fileFiltered[i].replace(/\.spec\.ts$/, ""));
+            }
+
+            const serverData: ModelTester.IserverData = { status: "", result: resultList };
+            this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "specFile");
         });
-
-        const resultList = fileFiltered.map((file) => {
-            return file.replace(/\.spec\.ts$/, "");
-        });
-
-        return [...resultList];
     };
 
     private user = (): void => {
@@ -165,10 +162,10 @@ export default class ControllerTester {
         });
     };
 
-    private logRun = (): void => {
-        this.cwsServer.receiveData("logRun", (clientId, data) => {
+    private runLog = (): void => {
+        this.cwsServer.receiveData("runLog", (clientId, data) => {
             if (typeof data === "string") {
-                const clientData = JSON.parse(data) as ModelTester.IclientDataLogRun;
+                const clientData = JSON.parse(data) as ModelTester.IclientDataRunLog;
 
                 const serverData = {} as ModelTester.IserverData;
 
@@ -180,7 +177,7 @@ export default class ControllerTester {
                     serverData.result = "Wrong parameter.";
                 }
 
-                this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "logRun");
+                this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "runLog");
             }
         });
     };
