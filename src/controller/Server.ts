@@ -83,7 +83,7 @@ export default class ControllerServer {
 
             const serverTime = HelperSrc.serverTime();
 
-            HelperSrc.writeLog("Server.ts - createServer() => listen()", `Port: ${HelperSrc.SERVER_PORT} - Time: ${serverTime}`);
+            HelperSrc.writeLog("Server.ts => createServer() => listen()", `Port: ${HelperSrc.SERVER_PORT} - Time: ${serverTime}`);
 
             this.app.get("/info", (request: ModelServer.Irequest, response: Response) => {
                 HelperSrc.responseBody(`Client ip: ${request.clientIp || ""}`, "", response, 200);

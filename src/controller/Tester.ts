@@ -33,7 +33,7 @@ export default class ControllerTester {
     };*/
 
     websocket = (): void => {
-        this.specFile();
+        this.specFileList();
 
         this.user();
 
@@ -48,8 +48,8 @@ export default class ControllerTester {
         this.upload();
     };
 
-    private specFile = (): void => {
-        this.cwsServer.receiveData("specFile", (clientId) => {
+    private specFileList = (): void => {
+        this.cwsServer.receiveData("specFileList", (clientId) => {
             const fileList = Fs.readdirSync(HelperSrc.PATH_FILE_INPUT);
 
             const fileFiltered: string[] = [];
@@ -65,7 +65,7 @@ export default class ControllerTester {
             }
 
             const serverData: ModelTester.IserverData = { status: "", result: resultList };
-            this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "specFile");
+            this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "specFileList");
         });
     };
 

@@ -20,7 +20,7 @@ export const writeLog = (tag: string, value: string | Record<string, unknown> | 
 
 const checkEnv = (key: string, value: string | undefined): string => {
     if (typeof process !== "undefined" && value === undefined) {
-        writeLog("HelperSrc.ts - checkEnv()", `${key} is not defined!`);
+        writeLog("HelperSrc.ts => checkEnv()", `${key} is not defined!`);
     }
 
     return value ? value : "";
@@ -144,7 +144,7 @@ export const responseBody = (stdoutValue: string, stderrValue: string | Error, r
 export const keepProcess = (): void => {
     for (const event of ["uncaughtException", "unhandledRejection"]) {
         process.on(event, (error: Error) => {
-            writeLog("HelperSrc.ts - keepProcess()", `Event: ${event} - Error: ${error.toString()}`);
+            writeLog("HelperSrc.ts => keepProcess()", `Event: ${event} - Error: ${error.toString()}`);
         });
     }
 };
