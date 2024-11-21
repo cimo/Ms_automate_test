@@ -1,6 +1,8 @@
 import { Icontroller } from "../jsmvcfw/JsMvcFwInterface";
 import { writeLog, variableState } from "../jsmvcfw/JsMvcFw";
 import CwsClient from "@cimo/websocket/dist/client/Service";
+import { MDCRipple } from "@material/ripple";
+import { MDCTextField } from "@material/textfield";
 import { MDCSelect } from "@material/select";
 
 // Source
@@ -8,6 +10,7 @@ import * as HelperSrc from "../HelperSrc";
 import * as ModelTester from "../model/Tester";
 import { IvariableList } from "../model/Index";
 import viewPageIndex from "../view/PageIndex";
+import viewLoader from "../view/Loader";
 import viewAlert from "../view/Alert";
 import ControllerAlert from "./Alert";
 import viewDialog from "../view/Dialog";
@@ -17,6 +20,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
     // Variable
     private cwsClient: CwsClient;
     private variableList: IvariableList;
+    private elementLoader: HTMLElement | null = null;
     private elementTableData: HTMLElement | null;
     private elementTableDataRowList: NodeListOf<HTMLElement> | null;
     private controllerAlert: ControllerAlert | null;
@@ -26,6 +30,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
     constructor(cwsClientValue: CwsClient) {
         this.cwsClient = cwsClientValue;
         this.variableList = {} as IvariableList;
+        this.elementLoader = null;
         this.elementTableData = null;
         this.elementTableDataRowList = null;
         this.controllerAlert = null;
@@ -52,10 +57,11 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
     view(variableList: IvariableList): string {
         writeLog("Home.ts => view()", variableList);
 
+        const viewLoaderTemplate = viewLoader().template;
         const viewAlertTemplate = viewAlert().template;
         const viewDialogTemplate = viewDialog().template;
 
-        return viewPageIndex(variableList, viewAlertTemplate, viewDialogTemplate).template;
+        return viewPageIndex(variableList, viewLoaderTemplate, viewAlertTemplate, viewDialogTemplate).template;
     }
 
     event(variableList: IvariableList): void {
@@ -67,9 +73,27 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
     }
 
     private initializeHtmlElement = (): void => {
-        /*this.elementLoader = document.querySelector<HTMLElement>(".view_loader");
+        const elementMdcButtonList = document.querySelectorAll<HTMLElement>(".mdc-button");
 
-        this.elementTableClient = document.querySelector<HTMLElement>(".table_client");
+        for (const elementMdcButton of elementMdcButtonList) {
+            new MDCRipple(elementMdcButton);
+        }
+
+        const elementMdcTextFieldList = document.querySelectorAll<HTMLElement>(".mdc-text-field");
+
+        for (const elementMdcTextField of elementMdcTextFieldList) {
+            new MDCTextField(elementMdcTextField);
+        }
+
+        const elementMdcSelectList = document.querySelectorAll<HTMLElement>(".mdc-select");
+
+        for (const elementMdcSelect of elementMdcSelectList) {
+            new MDCSelect(elementMdcSelect);
+        }
+
+        this.elementLoader = document.querySelector<HTMLElement>(".view_loader");
+
+        /*this.elementTableClient = document.querySelector<HTMLElement>(".table_client");
 
         if (this.elementTableClient) {
             this.elementTableClientItem = this.elementTableClient.querySelector<HTMLElement>(".item");
@@ -140,6 +164,10 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
                 /*this.video();
 
                 this.upload();*/
+
+                if (this.elementLoader) {
+                    this.elementLoader.style.setProperty("display", "none");
+                }
             }
         });
     };

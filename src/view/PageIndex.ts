@@ -3,8 +3,9 @@ import { Iview } from "../jsmvcfw/JsMvcFwInterface";
 // Source
 import { IvariableList } from "../model/Index";
 
-const viewPageIndex = (variableList: IvariableList, viewAlertTemplate: string, viewDialogTemplate: string): Iview => {
+const viewPageIndex = (variableList: IvariableList, viewLoaderTemplate: string, viewAlertTemplate: string, viewDialogTemplate: string): Iview => {
     const template = String.raw`
+    ${viewLoaderTemplate}
     ${viewAlertTemplate}
     ${viewDialogTemplate}
     <div class="page_container">

@@ -3,7 +3,8 @@ import { Iview } from "../jsmvcfw/JsMvcFwInterface";
 // Source
 
 const viewDialog = (): Iview => {
-    const template = String.raw`<aside class="mdc-dialog view_dialog">
+    const template = String.raw`
+    <aside class="mdc-dialog view_dialog">
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface"
                 role="alertdialog"
