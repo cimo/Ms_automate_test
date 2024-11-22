@@ -2,6 +2,7 @@ import Express, { Request, Response, NextFunction } from "express";
 import { rateLimit } from "express-rate-limit";
 import CookieParser from "cookie-parser";
 import Cors from "cors";
+import * as Http from "http";
 import * as Https from "https";
 import Fs from "fs";
 import { Ca } from "@cimo/authentication";
@@ -65,20 +66,27 @@ export default class ControllerServer {
     };
 
     createServer = (): void => {
-        const server = Https.createServer(
-            {
-                key: Fs.readFileSync(HelperSrc.PATH_CERTIFICATE_KEY),
-                cert: Fs.readFileSync(HelperSrc.PATH_CERTIFICATE_CRT)
-            },
-            this.app
-        );
+        let creation: Http.Server | Https.Server;
+
+        if (HelperSrc.SERVER_LOCATION === "jp") {
+            creation = Https.createServer(
+                {
+                    key: Fs.readFileSync(HelperSrc.PATH_CERTIFICATE_KEY),
+                    cert: Fs.readFileSync(HelperSrc.PATH_CERTIFICATE_CRT)
+                },
+                this.app
+            );
+        } else {
+            creation = Http.createServer(this.app);
+        }
+
+        const server = creation;
 
         server.listen(HelperSrc.SERVER_PORT, () => {
             const cp = new Cp();
             const cwsServer = new CwsServer(server, HelperSrc.SECRET_KEY);
 
             const controllerTester = new ControllerTester(cp, cwsServer);
-            //controllerTester.router();
             controllerTester.websocket();
 
             const serverTime = HelperSrc.serverTime();

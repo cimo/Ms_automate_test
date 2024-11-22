@@ -15,14 +15,29 @@ import viewAlert from "../view/Alert";
 import ControllerAlert from "./Alert";
 import viewDialog from "../view/Dialog";
 import ControllerDialog from "./Dialog";
+import viewSpecFile from "../view/SpecFile";
+import viewClient from "../view/Client";
+import viewVideo from "../view/Video";
+import viewUpload from "../view/Upload";
 
 export default class ControllerIndex implements Icontroller<IvariableList> {
     // Variable
     private cwsClient: CwsClient;
     private variableList: IvariableList;
-    private elementLoader: HTMLElement | null = null;
+    private elementLoader: HTMLElement | null;
+    private elementTableClient: HTMLElement | null;
+    private elementTableClientItem: HTMLElement | null;
     private elementTableData: HTMLElement | null;
     private elementTableDataRowList: NodeListOf<HTMLElement> | null;
+    private elementTableVideo: HTMLElement | null;
+    private elementTableVideoButtonLoad: HTMLButtonElement | null;
+    private elementTableVideoInput: HTMLInputElement | null;
+    private elementTableVideoItem: HTMLElement | null;
+    private elementTableVideoPlayer: HTMLVideoElement | null;
+    private elementTableUpload: HTMLElement | null;
+    private elementTableUploadButton: HTMLButtonElement | null;
+    private elementTableUploadButtonFake: HTMLButtonElement | null;
+    private elementTableUploadInput: HTMLInputElement | null;
     private controllerAlert: ControllerAlert | null;
     private controllerDialog: ControllerDialog | null;
 
@@ -31,8 +46,19 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
         this.cwsClient = cwsClientValue;
         this.variableList = {} as IvariableList;
         this.elementLoader = null;
+        this.elementTableClient = null;
+        this.elementTableClientItem = null;
         this.elementTableData = null;
         this.elementTableDataRowList = null;
+        this.elementTableVideo = null;
+        this.elementTableVideoButtonLoad = null;
+        this.elementTableVideoInput = null;
+        this.elementTableVideoItem = null;
+        this.elementTableVideoPlayer = null;
+        this.elementTableUpload = null;
+        this.elementTableUploadButton = null;
+        this.elementTableUploadButtonFake = null;
+        this.elementTableUploadInput = null;
         this.controllerAlert = null;
         this.controllerDialog = null;
 
@@ -47,7 +73,6 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
 
     variable(): IvariableList {
         this.variableList = {
-            label: variableState<string>("label", ""),
             specFileList: variableState<string[]>("specFileList", [])
         };
 
@@ -60,8 +85,20 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
         const viewLoaderTemplate = viewLoader().template;
         const viewAlertTemplate = viewAlert().template;
         const viewDialogTemplate = viewDialog().template;
+        const viewSpecFileTemplate = viewSpecFile(variableList).template;
+        const viewClientTemplate = viewClient().template;
+        const viewVideoTemplate = viewVideo().template;
+        const viewUploadTemplate = viewUpload().template;
 
-        return viewPageIndex(variableList, viewLoaderTemplate, viewAlertTemplate, viewDialogTemplate).template;
+        return viewPageIndex(
+            viewLoaderTemplate,
+            viewAlertTemplate,
+            viewDialogTemplate,
+            viewSpecFileTemplate,
+            viewClientTemplate,
+            viewVideoTemplate,
+            viewUploadTemplate
+        ).template;
     }
 
     event(variableList: IvariableList): void {
@@ -93,11 +130,11 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
 
         this.elementLoader = document.querySelector<HTMLElement>(".view_loader");
 
-        /*this.elementTableClient = document.querySelector<HTMLElement>(".table_client");
+        this.elementTableClient = document.querySelector<HTMLElement>(".table_client");
 
         if (this.elementTableClient) {
             this.elementTableClientItem = this.elementTableClient.querySelector<HTMLElement>(".item");
-        }*/
+        }
 
         this.elementTableData = document.querySelector<HTMLElement>(".table_data");
 
@@ -105,7 +142,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
             this.elementTableDataRowList = this.elementTableData.querySelectorAll<HTMLElement>("tbody .row");
         }
 
-        /*this.elementTableVideo = document.querySelector<HTMLElement>(".table_video");
+        this.elementTableVideo = document.querySelector<HTMLElement>(".table_video");
 
         if (this.elementTableVideo) {
             this.elementTableVideoButtonLoad = this.elementTableVideo.querySelector<HTMLButtonElement>(".button_load");
@@ -120,7 +157,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
             this.elementTableUploadButton = this.elementTableUpload.querySelector<HTMLButtonElement>(".button_upload");
             this.elementTableUploadButtonFake = this.elementTableUpload.querySelector<HTMLButtonElement>(".button_input_upload_fake");
             this.elementTableUploadInput = this.elementTableUpload.querySelector<HTMLInputElement>(".input_upload");
-        }*/
+        }
     };
 
     private broadcast = (): void => {
@@ -130,10 +167,10 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
 
                 if (serverData.tag === "disconnection") {
                     this.cwsClient.sendData(1, "", "specFileList");
-                    //this.cwsClient.sendData(1, "", "user", 100);
+                    this.cwsClient.sendData(1, "", "user", 100);
                     this.cwsClient.sendData(1, "", "output", 200);
                 } else if (serverData.tag === "user") {
-                    //this.statusUser(serverData);
+                    this.statusUser(serverData);
                 } else if (serverData.tag === "output") {
                     this.statusOutput(serverData);
                 }
@@ -141,7 +178,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
         });
 
         this.cwsClient.sendData(1, "", "specFileList");
-        //this.cwsClient.sendData(1, "", "user", 100);
+        this.cwsClient.sendData(1, "", "user", 100);
         this.cwsClient.sendData(1, "", "output", 200);
     };
 
@@ -161,15 +198,36 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
 
                 this.runLog();
 
-                /*this.video();
+                this.video();
 
-                this.upload();*/
+                this.upload();
 
                 if (this.elementLoader) {
                     this.elementLoader.style.setProperty("display", "none");
                 }
             }
         });
+    };
+
+    private statusUser = (serverData: ModelTester.IserverDataBroadcast): void => {
+        if (this.elementTableClientItem) {
+            this.elementTableClientItem.innerHTML = "";
+
+            const serverDataResultList = serverData.result as string[];
+
+            for (const serverDataResult of serverDataResultList) {
+                const elementLi = document.createElement("li");
+                elementLi.innerHTML = `<p>${serverDataResult}</p>`;
+
+                const elementIcon = document.createElement("i");
+                elementIcon.setAttribute("class", "mdc-button__icon material-icons");
+                elementIcon.setAttribute("aria-hidden", "true");
+                elementIcon.textContent = "person";
+                elementLi.insertBefore(elementIcon, elementLi.firstChild);
+
+                this.elementTableClientItem.appendChild(elementLi);
+            }
+        }
     };
 
     private statusOutput = (serverData: ModelTester.IserverDataBroadcast): void => {
@@ -305,5 +363,134 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
                 }
             }
         });
+    };
+
+    private video = (): void => {
+        this.cwsClient.receiveData("video_list", (data) => {
+            if (typeof data === "string" && this.elementTableVideoItem && this.elementTableVideoPlayer) {
+                const serverData = JSON.parse(data) as ModelTester.IserverData;
+
+                this.elementTableVideoItem.innerHTML = "";
+                this.elementTableVideoPlayer.src = "";
+                this.elementTableVideoPlayer.style.setProperty("display", "none");
+
+                if (serverData.status === "error") {
+                    if (this.controllerAlert) {
+                        this.controllerAlert.open(serverData.status, serverData.result as string);
+                    }
+                } else {
+                    const serverDataResultList = serverData.result as string[];
+
+                    for (const resultList of serverDataResultList) {
+                        const elementLi = document.createElement("li");
+                        elementLi.innerHTML = `<p>${resultList}</p>`;
+
+                        const elementIcon = document.createElement("i");
+                        elementIcon.setAttribute("class", "mdc-button__icon material-icons");
+                        elementIcon.setAttribute("aria-hidden", "true");
+                        elementIcon.textContent = "delete";
+                        elementLi.insertBefore(elementIcon, elementLi.firstChild);
+
+                        elementIcon.onclick = () => {
+                            elementLi.remove();
+
+                            if (this.elementTableVideoPlayer) {
+                                this.elementTableVideoPlayer.src = "";
+                                this.elementTableVideoPlayer.style.setProperty("display", "none");
+                            }
+
+                            const clientData: ModelTester.IclientDataVideo = { name: resultList };
+                            this.cwsClient.sendData(1, JSON.stringify(clientData), "video_delete");
+                        };
+
+                        const elementLiText = elementLi.querySelector<HTMLElement>("p");
+
+                        if (elementLiText) {
+                            elementLiText.onclick = () => {
+                                if (this.elementTableVideoPlayer) {
+                                    this.elementTableVideoPlayer.src = `${HelperSrc.URL_ROOT}/file/${resultList}`;
+                                    this.elementTableVideoPlayer.style.setProperty("display", "block");
+                                }
+                            };
+                        }
+
+                        this.elementTableVideoItem.appendChild(elementLi);
+                    }
+                }
+            }
+        });
+
+        this.cwsClient.receiveData("video_delete", (data) => {
+            if (typeof data === "string") {
+                const serverData = JSON.parse(data) as ModelTester.IserverData;
+
+                if (this.controllerAlert) {
+                    this.controllerAlert.open(serverData.status, serverData.result as string);
+                }
+            }
+        });
+
+        if (this.elementTableVideoButtonLoad) {
+            this.elementTableVideoButtonLoad.onclick = () => {
+                if (this.controllerAlert) {
+                    this.controllerAlert.close();
+                }
+
+                if (this.elementTableVideoInput) {
+                    const clientData: ModelTester.IclientDataVideo = { name: this.elementTableVideoInput.value };
+                    this.cwsClient.sendData(1, JSON.stringify(clientData), "video_list");
+                }
+            };
+        }
+    };
+
+    private upload = (): void => {
+        if (this.elementTableUploadButton && this.elementTableUploadButtonFake) {
+            this.elementTableUploadButtonFake.onclick = () => {
+                if (this.elementTableUploadInput) {
+                    this.elementTableUploadInput.click();
+                }
+            };
+
+            this.cwsClient.receiveData("upload", (data) => {
+                if (typeof data === "string") {
+                    const serverData = JSON.parse(data) as ModelTester.IserverData;
+
+                    if (this.controllerAlert) {
+                        this.controllerAlert.open(serverData.status, serverData.result as string);
+                    }
+                }
+            });
+
+            this.elementTableUploadButton.onclick = () => {
+                if (this.controllerAlert) {
+                    this.controllerAlert.close();
+                }
+
+                if (this.elementTableUploadInput && this.elementTableUploadInput.files) {
+                    const file = this.elementTableUploadInput.files[0];
+
+                    if (file) {
+                        const reader = new FileReader();
+
+                        reader.onload = (event) => {
+                            if (event.target && event.target.result) {
+                                const result = event.target.result as ArrayBuffer;
+
+                                this.cwsClient.sendDataUpload(file.name, result);
+
+                                this.cwsClient.sendData(1, "", "specFileList");
+                            }
+                        };
+
+                        reader.readAsArrayBuffer(file);
+                    } else {
+                        if (this.controllerAlert) {
+                            this.controllerAlert.open("error", "Select a file.");
+                        }
+                    }
+                }
+            };
+        }
     };
 }

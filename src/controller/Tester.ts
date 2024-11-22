@@ -1,7 +1,5 @@
-//import Express, { Request, Response } from "express";
 import Fs from "fs";
 import { execFile } from "child_process";
-//import { Ca } from "@cimo/authentication";
 import { Cp } from "@cimo/pid";
 import { CwsServer } from "@cimo/websocket";
 
@@ -11,7 +9,6 @@ import * as ModelTester from "../model/Tester";
 
 export default class ControllerTester {
     // Variable
-    //private app: Express.Express;
     private cp: Cp;
     private cwsServer: CwsServer;
 
@@ -19,7 +16,6 @@ export default class ControllerTester {
 
     // Method
     constructor(cp: Cp, cwsServer: CwsServer) {
-        //this.app = app;
         this.cp = cp;
         this.cwsServer = cwsServer;
 
