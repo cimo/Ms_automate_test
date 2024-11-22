@@ -38,5 +38,3 @@ package-lock.json
 # ---
 file/output/*
 !file/output/.gitkeep
-src/view/cache/*
-!src/view/cache/.gitkeep
