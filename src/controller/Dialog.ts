@@ -1,13 +1,48 @@
+import { Icontroller } from "../jsmvcfw/JsMvcFwInterface";
+import { writeLog } from "../jsmvcfw/JsMvcFw";
 import { MDCDialog } from "@material/dialog";
 
-export default class ControllerDialog {
+// Source
+import { IvariableList } from "../model/Alert";
+
+export default class ControllerAlert implements Icontroller<IvariableList> {
     // Variable
-    private mdcDialog: MDCDialog | undefined;
+    private variableList: IvariableList;
+    private mdcDialog: MDCDialog | null;
 
     // Method
     constructor() {
-        this.mdcDialog = new MDCDialog(document.querySelector<HTMLElement>(".mdc-dialog") as Element);
+        this.variableList = {} as IvariableList;
+        this.mdcDialog = null;
+
+        this.initializeHtmlElement();
     }
+
+    variable(): IvariableList {
+        return this.variableList;
+    }
+
+    view(variableList: IvariableList): string {
+        writeLog("Dialog.ts => view()", variableList);
+
+        return "";
+    }
+
+    event(variableList: IvariableList): void {
+        writeLog("Dialog.ts => event()", variableList);
+    }
+
+    destroy(variableList: IvariableList): void {
+        writeLog("Dialog.ts => destroy()", variableList);
+    }
+
+    private initializeHtmlElement = (): void => {
+        const elementMdcDialog = document.querySelector<HTMLElement>(".mdc-dialog");
+
+        if (elementMdcDialog) {
+            this.mdcDialog = new MDCDialog(elementMdcDialog);
+        }
+    };
 
     open = (title: string, message: string, isSingleButton = false, callbackAccept?: () => void, callbackClose?: () => void) => {
         this.close();

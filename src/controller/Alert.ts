@@ -1,17 +1,52 @@
+import { Icontroller } from "../jsmvcfw/JsMvcFwInterface";
+import { writeLog } from "../jsmvcfw/JsMvcFw";
 import { MDCSnackbar } from "@material/snackbar";
 
-export default class ControllerAlert {
+// Source
+import { IvariableList } from "../model/Alert";
+
+export default class ControllerAlert implements Icontroller<IvariableList> {
     // Variable
-    private mdcSnackbar: MDCSnackbar | undefined;
+    private variableList: IvariableList;
+    private mdcSnackbar: MDCSnackbar | null;
 
     // Method
     constructor() {
-        this.mdcSnackbar = new MDCSnackbar(document.querySelector<HTMLElement>(".mdc-snackbar") as Element);
+        this.variableList = {} as IvariableList;
+        this.mdcSnackbar = null;
 
-        if (this.mdcSnackbar) {
-            this.mdcSnackbar.timeoutMs = -1;
-        }
+        this.initializeHtmlElement();
     }
+
+    variable(): IvariableList {
+        return this.variableList;
+    }
+
+    view(variableList: IvariableList): string {
+        writeLog("Alert.ts => view()", variableList);
+
+        return "";
+    }
+
+    event(variableList: IvariableList): void {
+        writeLog("Alert.ts => event()", variableList);
+    }
+
+    destroy(variableList: IvariableList): void {
+        writeLog("Alert.ts => destroy()", variableList);
+    }
+
+    private initializeHtmlElement = (): void => {
+        const elementMdcSnackbar = document.querySelector<HTMLElement>(".mdc-snackbar");
+
+        if (elementMdcSnackbar) {
+            this.mdcSnackbar = new MDCSnackbar(elementMdcSnackbar);
+
+            if (this.mdcSnackbar) {
+                this.mdcSnackbar.timeoutMs = -1;
+            }
+        }
+    };
 
     open = (className: string, text: string, timeout = -1) => {
         this.close();

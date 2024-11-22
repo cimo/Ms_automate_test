@@ -15,6 +15,7 @@ require("dotenv").config({ path: `./env/${ENV_NAME}.env` });
 const DOMAIN = helperWebpack.checkEnv("DOMAIN", process.env.DOMAIN);
 const TIMEZONE = helperWebpack.checkEnv("TIMEZONE", process.env.TIMEZONE);
 const SERVER_PORT = helperWebpack.checkEnv("SERVER_PORT", process.env.SERVER_PORT);
+const SERVER_LOCATION = helperWebpack.checkEnv("SERVER_LOCATION", process.env.SERVER_LOCATION);
 const PATH_ROOT = helperWebpack.checkEnv("PATH_ROOT", process.env.PATH_ROOT);
 const MS_AT_NAME = helperWebpack.checkEnv("MS_AT_NAME", process.env.MS_AT_NAME);
 const MS_AT_LABEL = helperWebpack.checkEnv("MS_AT_LABEL", process.env.MS_AT_LABEL);
@@ -86,6 +87,7 @@ module.exports = {
                 DOMAIN,
                 TIMEZONE,
                 SERVER_PORT,
+                SERVER_LOCATION,
                 PATH_ROOT,
                 MS_AT_NAME,
                 MS_AT_LABEL,
@@ -108,7 +110,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: `${PATH_ROOT}template_index.html`,
-            filename: `${PATH_ROOT}src/view/main.twig`,
+            filename: `${PATH_ROOT}public/index.html`,
             inject: false,
             templateParameters: {
                 name: MS_AT_NAME,

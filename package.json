@@ -23,14 +23,14 @@
     "dependencies": {
         "@cimo/authentication": "1.1.12",
         "@cimo/pid": "1.0.6",
-        "@cimo/websocket": "1.1.35",
+        "@cimo/websocket": "1.2.35",
+        "@cimo/jsmvcfw": "1.0.2",
         "cookie-parser": "1.4.6",
         "cors": "2.8.5",
         "express": "4.20.0",
         "express-rate-limit": "7.2.0",
         "playwright": "1.39.0",
         "@playwright/test": "1.39.0",
-        "twing": "6.0.0-alpha.1",
         "material-components-web": "14.0.0"
     },
     "devDependencies": {
@@ -45,7 +45,6 @@
         "eslint-config-prettier": "8.8.0",
         "eslint-webpack-plugin": "4.0.1",
         "prettier": "2.8.7",
-        "prettier-plugin-twig-melody": "0.4.6",
         "typescript": "4.9.4",
         "sass": "1.57.1",
         "nodemon": "2.0.21",

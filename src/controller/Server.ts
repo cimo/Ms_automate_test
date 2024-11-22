@@ -2,9 +2,9 @@ import Express, { Request, Response, NextFunction } from "express";
 import { rateLimit } from "express-rate-limit";
 import CookieParser from "cookie-parser";
 import Cors from "cors";
+import * as Http from "http";
 import * as Https from "https";
 import Fs from "fs";
-import { TwingEnvironment, TwingLoaderFilesystem } from "twing";
 import { Ca } from "@cimo/authentication";
 import { Cp } from "@cimo/pid";
 import { CwsServer } from "@cimo/websocket";
@@ -18,7 +18,6 @@ export default class ControllerServer {
     // Variable
     private corsOption: ModelServer.Icors;
     private limiterOption: ModelServer.Ilimiter;
-    private twing: TwingEnvironment;
     private app: Express.Express;
 
     // Method
@@ -34,12 +33,6 @@ export default class ControllerServer {
             windowMs: 15 * 60 * 1000,
             limit: 100
         };
-
-        const twingLoader = new TwingLoaderFilesystem(`${HelperSrc.PATH_ROOT}src/view/`);
-        this.twing = new TwingEnvironment(twingLoader, {
-            cache: `${HelperSrc.PATH_ROOT}src/view/cache/`,
-            auto_reload: HelperSrc.DEBUG === "true" ? true : false
-        });
 
         this.app = Express();
     }
@@ -73,25 +66,32 @@ export default class ControllerServer {
     };
 
     createServer = (): void => {
-        const server = Https.createServer(
-            {
-                key: Fs.readFileSync(HelperSrc.PATH_CERTIFICATE_KEY),
-                cert: Fs.readFileSync(HelperSrc.PATH_CERTIFICATE_CRT)
-            },
-            this.app
-        );
+        let creation: Http.Server | Https.Server;
+
+        if (HelperSrc.SERVER_LOCATION === "jp") {
+            creation = Https.createServer(
+                {
+                    key: Fs.readFileSync(HelperSrc.PATH_CERTIFICATE_KEY),
+                    cert: Fs.readFileSync(HelperSrc.PATH_CERTIFICATE_CRT)
+                },
+                this.app
+            );
+        } else {
+            creation = Http.createServer(this.app);
+        }
+
+        const server = creation;
 
         server.listen(HelperSrc.SERVER_PORT, () => {
             const cp = new Cp();
             const cwsServer = new CwsServer(server, HelperSrc.SECRET_KEY);
 
-            const controllerTester = new ControllerTester(this.app, this.twing, cp, cwsServer);
-            controllerTester.router();
+            const controllerTester = new ControllerTester(cp, cwsServer);
             controllerTester.websocket();
 
             const serverTime = HelperSrc.serverTime();
 
-            HelperSrc.writeLog("Server.ts - createServer() => listen()", `Port: ${HelperSrc.SERVER_PORT} - Time: ${serverTime}`);
+            HelperSrc.writeLog("Server.ts => createServer() => listen()", `Port: ${HelperSrc.SERVER_PORT} - Time: ${serverTime}`);
 
             this.app.get("/info", (request: ModelServer.Irequest, response: Response) => {
                 HelperSrc.responseBody(`Client ip: ${request.clientIp || ""}`, "", response, 200);

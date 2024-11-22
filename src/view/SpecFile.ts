@@ -1,38 +1,48 @@
-<div class="view_index">
-    <div class="left">
-        <table class="table_data">
-            <thead class="filter">
-                <tr className="row filter_action"></tr>
-                <tr class="row not_hover">
-                    <th class="cell column_id">
-                        Id
-                    </th>
-                    <th class="cell column_title">
-                        Filename
-                    </th>
-                    <th class="cell column_action">
-                        Action
-                    </th>
-                    <th class="cell column_time">
-                        Time
-                    </th>
-                    <th class="cell column_status">
-                        Status
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for index, specFile in specFileList %}
-                    <tr class="row {{ cycle(['even', ''], loop.index0) }}"
-                        data-index="{{ index }}">
+import { Iview } from "../jsmvcfw/JsMvcFwInterface";
+
+// Source
+import { IvariableList } from "../model/Index";
+
+const viewSpecFile = (variableList: IvariableList): Iview => {
+    const template = String.raw`
+    <table class="table_data">
+        <thead class="filter">
+            <tr className="row filter_action"></tr>
+            <tr class="row not_hover">
+                <th class="cell column_id">
+                    Id
+                </th>
+                <th class="cell column_title">
+                    Filename
+                </th>
+                <th class="cell column_action">
+                    Action
+                </th>
+                <th class="cell column_time">
+                    Time
+                </th>
+                <th class="cell column_status">
+                    Status
+                </th>
+            </tr>
+        </thead>
+        <tbody data-section-bind="specFileList">
+            ${(() => {
+                const result: string[] = [];
+
+                for (const [key, value] of Object.entries(variableList.specFileList.state)) {
+                    const index = parseInt(key);
+
+                    result.push(String.raw`<tr class="row"
+                        data-index="${index}">
                         <td class="cell column_id">
                             <p>
-                                {{ index + 1 }}
+                                ${index + 1}
                             </p>
                         </td>
                         <td class="cell column_title">
                             <p>
-                                <span class="name">{{ specFile }}</span>
+                                <span class="name">${value}</span>
                             </p>
                         </td>
                         <td class="cell column_action">
@@ -187,101 +197,17 @@
                                 </span>
                             </button>
                         </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div class="right">
-        <table class="table_client">
-            <tbody>
-                <tr class="row not_hover">
-                    <td class="cell">
-                        <p>
-                            Client connected:
-                        </p>
-                        <ul class="item"></ul>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="table_video">
-            <tbody>
-                <tr class="row not_hover">
-                    <td class="cell">
-                        <p>
-                            Video:<br /><br />
-                            Will be avaliable after the execution test.<br />Write
-                            the "Filename", present in the list, inside the
-                            input and click on the button.<br />Click on the
-                            generated list item for load the specific video.
-                        </p>
-                        <div class="field_container">
-                            <label class="mdc-text-field mdc-text-field--outlined field_value input_video">
-                                <span class="mdc-notched-outline">
-                                    <span class="mdc-notched-outline__leading">
+                    </tr>`);
+                }
 
-                                    </span>
-                                    <span class="mdc-notched-outline__notch">
-                                        <span class="mdc-floating-label">
-                                            Test name
-                                        </span>
-                                    </span>
-                                    <span class="mdc-notched-outline__trailing">
+                return result.join("");
+            })()}
+        </tbody>
+    </table>`;
 
-                                    </span>
-                                </span>
-                                <input type="text"
-                                    class="mdc-text-field__input" />
-                            </label>
-                        </div>
-                        <div class="mdc-touch-target-wrapper">
-                            <button class="mdc-button mdc-button--raised mdc-button--leading button_primary button_load">
-                                <span class="mdc-button__ripple"></span>
-                                <span class="mdc-button__label">
-                                    <i class="mdc-button__icon material-icons"
-                                        aria-hidden="true">
-                                        movie
-                                    </i> Load
-                                </span>
-                            </button>
-                        </div>
-                        <ul class="item"></ul>
-                        <video controls class="video"></video>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="table_upload">
-            <tbody>
-                <tr class="row not_hover">
-                    <td class="cell">
-                        <p>
-                            Upload:<br /><br />
-                            This is a temporary file and will be delete on deploy
-                            phase.<br />If you need a stable file you need
-                            create a PR.
-                        </p>
-                        <div class="field_container">
-                            <button class="mdc-button mdc-button--raised mdc-button--leading button_primary button_input_upload_fake">
-                                Choose file
-                            </button>
-                            <input class="input_upload" type="file" value="" />
-                        </div>
-                        <div class="mdc-touch-target-wrapper">
-                            <button class="mdc-button mdc-button--raised mdc-button--leading button_primary button_upload">
-                                <span class="mdc-button__ripple"></span>
-                                <span class="mdc-button__label">
-                                    <i class="mdc-button__icon material-icons"
-                                        aria-hidden="true">
-                                        upload
-                                    </i> Upload
-                                </span>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+    return {
+        template
+    };
+};
+
+export default viewSpecFile;
