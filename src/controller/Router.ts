@@ -1,4 +1,4 @@
-import { Irouter, Icontroller } from "../jsmvcfw/JsMvcFwInterface";
+import { Irouter, Icontroller } from "@cimo/jsmvcfw/dist/JsMvcFwInterface";
 import CwsClient from "@cimo/websocket/dist/client/Service";
 
 // Source

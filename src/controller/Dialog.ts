@@ -1,5 +1,5 @@
-import { Icontroller } from "../jsmvcfw/JsMvcFwInterface";
-import { writeLog } from "../jsmvcfw/JsMvcFw";
+import { Icontroller } from "@cimo/jsmvcfw/dist/JsMvcFwInterface";
+import { writeLog } from "@cimo/jsmvcfw/dist/JsMvcFw";
 import { MDCDialog } from "@material/dialog";
 
 // Source

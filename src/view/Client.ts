@@ -1,4 +1,4 @@
-import { Iview } from "../jsmvcfw/JsMvcFwInterface";
+import { Iview } from "@cimo/jsmvcfw/dist/JsMvcFwInterface";
 
 // Source
 
