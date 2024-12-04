@@ -5,7 +5,7 @@ import * as HelperSrc from "./HelperSrc";
 
 export default defineConfig({
     testDir: HelperSrc.PATH_FILE_INPUT,
-    outputDir: HelperSrc.PATH_FILE_OUTPUT,
+    outputDir: `${HelperSrc.PATH_FILE_OUTPUT}artifact`,
     fullyParallel: false,
     reporter: "line",
     reportSlowTests: null,
@@ -14,7 +14,7 @@ export default defineConfig({
         timeout: 2 * 60 * 1000
     },
     use: {
-        actionTimeout: 5000,
+        actionTimeout: 10000,
         testIdAttribute: "data-at_id",
         ignoreHTTPSErrors: true,
         video: "on",

@@ -30,6 +30,7 @@ const MS_AT_PATH_PUBLIC = helperWebpack.checkEnv("MS_AT_PATH_PUBLIC", process.en
 const MS_AT_PATH_LOG = helperWebpack.checkEnv("MS_AT_PATH_LOG", process.env.MS_AT_PATH_LOG);
 const MS_AT_PATH_FILE_INPUT = helperWebpack.checkEnv("MS_AT_PATH_FILE_INPUT", process.env.MS_AT_PATH_FILE_INPUT);
 const MS_AT_PATH_FILE_OUTPUT = helperWebpack.checkEnv("MS_AT_PATH_FILE_OUTPUT", process.env.MS_AT_PATH_FILE_OUTPUT);
+const MS_AT_PATH_FILE_DOWNLOAD = helperWebpack.checkEnv("MS_AT_PATH_FILE_DOWNLOAD", process.env.MS_AT_PATH_FILE_DOWNLOAD);
 const MS_AT_PATH_FILE_SCRIPT = helperWebpack.checkEnv("MS_AT_PATH_FILE_SCRIPT", process.env.MS_AT_PATH_FILE_SCRIPT);
 const MS_AT_MIME_TYPE = helperWebpack.checkEnv("MS_AT_MIME_TYPE", process.env.MS_AT_MIME_TYPE);
 const MS_AT_FILE_SIZE_MB = helperWebpack.checkEnv("MS_AT_FILE_SIZE_MB", process.env.MS_AT_FILE_SIZE_MB);
@@ -102,6 +103,7 @@ module.exports = {
                 MS_AT_PATH_LOG,
                 MS_AT_PATH_FILE_INPUT,
                 MS_AT_PATH_FILE_OUTPUT,
+                MS_AT_PATH_FILE_DOWNLOAD,
                 MS_AT_PATH_FILE_SCRIPT,
                 MS_AT_MIME_TYPE,
                 MS_AT_FILE_SIZE_MB,
@@ -110,7 +112,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             template: `${PATH_ROOT}template_index.html`,
-            filename: `${PATH_ROOT}public/index.html`,
+            filename: `${Path.resolve(__dirname, "public")}/index.html`,
             inject: false,
             templateParameters: {
                 name: MS_AT_NAME,

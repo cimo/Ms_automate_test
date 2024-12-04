@@ -167,7 +167,7 @@ const viewSpecFile = (variableList: IvariableList): Iview => {
                                 <button class="mdc-button mdc-button--raised mdc-button--leading button_primary button_execute">
                                     <span class="mdc-button__ripple"></span>
                                     <span class="mdc-button__label">
-                                        <i class="mdc-button__icon material-icons"
+                                        <i class="mdc-button__icon material-icons start"
                                             aria-hidden="true">
                                             start
                                         </i>

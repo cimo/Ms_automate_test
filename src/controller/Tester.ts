@@ -1,5 +1,5 @@
 import Fs from "fs";
-import { execFile } from "child_process";
+import { execFile, spawn } from "child_process";
 import { Cp } from "@cimo/pid";
 import { CwsServer } from "@cimo/websocket";
 
@@ -12,21 +12,19 @@ export default class ControllerTester {
     private cp: Cp;
     private cwsServer: CwsServer;
 
+    private pidKey: number;
     private resultOutput: ModelTester.IserverDataOutput[];
+    private processRunPid: number | null;
 
     // Method
     constructor(cp: Cp, cwsServer: CwsServer) {
         this.cp = cp;
         this.cwsServer = cwsServer;
 
+        this.pidKey = 0;
         this.resultOutput = [];
+        this.processRunPid = null;
     }
-
-    /*router = (): void => {
-        this.app.get("/ui", Ca.authenticationMiddleware, (_request: Request, response: Response) => {
-            const viewSpecFileList = this.viewSpecFileList();
-        });
-    };*/
 
     websocket = (): void => {
         this.specFileList();
@@ -38,6 +36,8 @@ export default class ControllerTester {
         this.run();
 
         this.runLog();
+
+        this.stop();
 
         this.video();
 
@@ -100,6 +100,8 @@ export default class ControllerTester {
 
                     this.cp.add("run", JSON.stringify(serverDataBroadcast), 0, (isExists, pidKey) => {
                         if (!isExists) {
+                            this.pidKey = pidKey;
+
                             this.resultOutput[clientData.index] = {
                                 state: "running",
                                 browser: clientData.browser,
@@ -110,37 +112,78 @@ export default class ControllerTester {
                             serverDataBroadcast.result = this.resultOutput;
                             this.cwsServer.sendDataBroadcast(JSON.stringify(serverDataBroadcast));
 
+                            this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcast));
+
                             const execCommand1 = `. ${HelperSrc.PATH_FILE_SCRIPT}command1.sh`;
                             const execArgumentList1 = [`"${clientData.name}"`, `"${browserCheck}"`];
 
-                            execFile(execCommand1, execArgumentList1, { shell: "/bin/bash", encoding: "utf8" }, (_, stdout1) => {
-                                if (stdout1) {
-                                    const execCommand2 = `. ${HelperSrc.PATH_FILE_SCRIPT}command2.sh`;
-                                    const execArgumentList2 = [`"${HelperSrc.PATH_FILE_OUTPUT}"`, `"${HelperSrc.PATH_PUBLIC}"`];
+                            const processRun = execFile(
+                                execCommand1,
+                                execArgumentList1,
+                                { shell: "/bin/bash", encoding: "utf8" },
+                                (_, stdout1, stderr1) => {
+                                    if (stderr1 !== "") {
+                                        HelperSrc.writeLog("Tester.ts => run() => execFile()", `stderr1: ${stderr1}`);
 
-                                    execFile(execCommand2, execArgumentList2, { shell: "/bin/bash", encoding: "utf8" }, () => {
-                                        const status = /Error:/.test(stdout1) ? "error" : "success";
+                                        const status = "error";
 
                                         this.resultOutput[clientData.index] = {
                                             state: status,
                                             browser: clientData.browser,
                                             time: HelperSrc.serverTime(),
-                                            log: HelperSrc.removeAnsiEscape(stdout1)
+                                            log: HelperSrc.removeAnsiEscape(stderr1)
                                         };
 
                                         serverDataBroadcast.result = this.resultOutput;
                                         this.cwsServer.sendDataBroadcast(JSON.stringify(serverDataBroadcast));
 
-                                        this.cp.update(pidKey, JSON.stringify(serverDataBroadcast));
+                                        this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcast));
 
                                         serverData.status = status;
-                                        serverData.result = "Test completed, check the log for more info.";
+                                        serverData.result = "System error, check the log for more info.";
                                         this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "run");
 
-                                        this.cp.remove(pidKey);
-                                    });
+                                        this.cp.remove(this.pidKey);
+
+                                        this.pidKey = 0;
+                                    } else {
+                                        const execCommand2 = `. ${HelperSrc.PATH_FILE_SCRIPT}command2.sh`;
+                                        const execArgumentList2 = [`"${HelperSrc.PATH_FILE_OUTPUT}artifact"`, `"${HelperSrc.PATH_PUBLIC}"`];
+
+                                        execFile(execCommand2, execArgumentList2, { shell: "/bin/bash", encoding: "utf8" }, () => {
+                                            const status = /Error:|interrupted/.test(stdout1) ? "error" : "success";
+
+                                            this.resultOutput[clientData.index] = {
+                                                state: status,
+                                                browser: clientData.browser,
+                                                time: HelperSrc.serverTime(),
+                                                log: HelperSrc.removeAnsiEscape(stdout1)
+                                            };
+
+                                            serverDataBroadcast.result = this.resultOutput;
+                                            this.cwsServer.sendDataBroadcast(JSON.stringify(serverDataBroadcast));
+
+                                            this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcast));
+
+                                            serverData.status = status;
+                                            serverData.result = "Test completed, check the log for more info.";
+                                            this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "run");
+
+                                            this.cp.remove(this.pidKey);
+
+                                            this.pidKey = 0;
+                                        });
+                                    }
                                 }
-                            });
+                            );
+
+                            if (processRun && processRun.pid) {
+                                const spawnCommand = spawn("pgrep", ["-P", processRun.pid.toString()]);
+
+                                spawnCommand.stdout.on("data", (data: string) => {
+                                    this.processRunPid = parseInt(data);
+                                });
+                            }
                         } else {
                             serverData.status = "error";
                             serverData.result = "Another process still running.";
@@ -174,6 +217,18 @@ export default class ControllerTester {
                 }
 
                 this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "runLog");
+            }
+        });
+    };
+
+    private stop = (): void => {
+        this.cwsServer.receiveData("stop", () => {
+            if (this.processRunPid) {
+                process.kill(this.processRunPid, "SIGINT");
+
+                this.cp.remove(this.pidKey);
+
+                this.pidKey = 0;
             }
         });
     };

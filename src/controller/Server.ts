@@ -103,6 +103,10 @@ export default class ControllerServer {
                 response.redirect("ui");
             });
 
+            this.app.get("/ui", Ca.authenticationMiddleware, (_request: Request, response: Response) => {
+                response.sendFile(`${HelperSrc.PATH_PUBLIC}index.html`);
+            });
+
             this.app.get("/logout", Ca.authenticationMiddleware, (request: Request, response: Response) => {
                 Ca.removeCookie(`${HelperSrc.LABEL}_authentication`, request, response);
 

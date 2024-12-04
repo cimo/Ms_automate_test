@@ -36,5 +36,7 @@ public/index.html
 node_modules
 package-lock.json
 # ---
+file/download/*
+!file/download/.gitkeep
 file/output/*
 !file/output/.gitkeep

@@ -253,12 +253,18 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
                     const serverDataOutput = serverData.result[elementKey] as ModelTester.IserverDataOutput;
 
                     if (serverDataOutput) {
+                        const elementButtonExecuteIcon = elementButtonExecute.querySelector<HTMLElement>(".material-icons");
+
                         if (serverDataOutput.browser) {
                             mdcSelectBrowser.setValue(serverDataOutput.browser);
                         }
 
                         if (serverDataOutput.state === "running") {
-                            elementButtonExecute.disabled = true;
+                            if (elementButtonExecuteIcon) {
+                                elementButtonExecuteIcon.classList.remove("start");
+                                elementButtonExecuteIcon.classList.add("stop");
+                                elementButtonExecuteIcon.textContent = "stop";
+                            }
 
                             elementTime.innerHTML = serverDataOutput.time;
 
@@ -267,14 +273,18 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
                             elementIconSuccess.style.setProperty("display", "none");
                             elementIconFail.style.setProperty("display", "none");
 
-                            /*if (this.elementTableVideoItem && this.elementTableVideoPlayer) {
+                            if (this.elementTableVideoItem && this.elementTableVideoPlayer) {
                                 this.elementTableVideoItem.innerHTML = "";
 
                                 this.elementTableVideoPlayer.src = "";
                                 this.elementTableVideoPlayer.style.setProperty("display", "none");
-                            }*/
+                            }
                         } else {
-                            elementButtonExecute.disabled = false;
+                            if (elementButtonExecuteIcon) {
+                                elementButtonExecuteIcon.classList.remove("stop");
+                                elementButtonExecuteIcon.classList.add("start");
+                                elementButtonExecuteIcon.textContent = "start";
+                            }
 
                             elementTime.innerHTML = serverDataOutput.time;
 
@@ -305,15 +315,6 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
             if (typeof data === "string") {
                 const serverData = JSON.parse(data) as ModelTester.IserverDataRun;
 
-                if (this.elementTableDataRowList && serverData.index) {
-                    const elementRow = this.elementTableDataRowList[serverData.index];
-                    const elementButtonExecute = elementRow.querySelector<HTMLButtonElement>(".button_execute");
-
-                    if (elementButtonExecute) {
-                        elementButtonExecute.disabled = false;
-                    }
-                }
-
                 if (this.controllerAlert) {
                     this.controllerAlert.open(serverData.status, serverData.result as string);
                 }
@@ -330,16 +331,26 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
                             this.controllerAlert.close();
                         }
 
-                        const elementSpecName = elementRow.querySelector<HTMLElement>(".name");
-                        const mdcSelectBrowser = new MDCSelect(elementRow.querySelector(".select_browser") as Element);
+                        const elementButtonExecuteIcon = elementButtonExecute.querySelector<HTMLElement>(".material-icons");
 
-                        if (elementSpecName && mdcSelectBrowser) {
-                            const clientData: ModelTester.IclientDataRun = {
-                                index: parseInt(elementRow.getAttribute("data-index") as string),
-                                name: elementSpecName.textContent ? elementSpecName.textContent.trim() : "",
-                                browser: mdcSelectBrowser.value
+                        if (elementButtonExecuteIcon && !elementButtonExecuteIcon.classList.contains("stop")) {
+                            const elementSpecName = elementRow.querySelector<HTMLElement>(".name");
+                            const mdcSelectBrowser = new MDCSelect(elementRow.querySelector(".select_browser") as Element);
+
+                            if (elementSpecName && mdcSelectBrowser) {
+                                const clientData: ModelTester.IclientDataRun = {
+                                    index: parseInt(elementRow.getAttribute("data-index") as string),
+                                    name: elementSpecName.textContent ? elementSpecName.textContent.trim() : "",
+                                    browser: mdcSelectBrowser.value
+                                };
+                                this.cwsClient.sendData(1, JSON.stringify(clientData), "run");
+                            }
+                        } else {
+                            const clientData: ModelTester.IclientDataStop = {
+                                index: parseInt(elementRow.getAttribute("data-index") as string)
                             };
-                            this.cwsClient.sendData(1, JSON.stringify(clientData), "run");
+
+                            this.cwsClient.sendData(1, JSON.stringify(clientData), "stop");
                         }
                     };
                 }

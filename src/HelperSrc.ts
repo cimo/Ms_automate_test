@@ -45,6 +45,7 @@ export const PATH_PUBLIC = checkEnv("MS_AT_PATH_PUBLIC", process.env.MS_AT_PATH_
 export const PATH_LOG = checkEnv("MS_AT_PATH_LOG", process.env.MS_AT_PATH_LOG);
 export const PATH_FILE_INPUT = checkEnv("MS_AT_PATH_FILE_INPUT", process.env.MS_AT_PATH_FILE_INPUT);
 export const PATH_FILE_OUTPUT = checkEnv("MS_AT_PATH_FILE_OUTPUT", process.env.MS_AT_PATH_FILE_OUTPUT);
+export const PATH_FILE_DOWNLOAD = checkEnv("MS_AT_PATH_FILE_DOWNLOAD", process.env.MS_AT_PATH_FILE_DOWNLOAD);
 export const PATH_FILE_SCRIPT = checkEnv("MS_AT_PATH_FILE_SCRIPT", process.env.MS_AT_PATH_FILE_SCRIPT);
 export const MIME_TYPE = checkEnv("MS_AT_MIME_TYPE", process.env.MS_AT_MIME_TYPE);
 export const FILE_SIZE_MB = checkEnv("MS_AT_FILE_SIZE_MB", process.env.MS_AT_FILE_SIZE_MB);

@@ -8,6 +8,10 @@ export interface IclientDataRunLog {
     index: number;
 }
 
+export interface IclientDataStop {
+    index: number;
+}
+
 export interface IclientDataVideo {
     name: string;
 }

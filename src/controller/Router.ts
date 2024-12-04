@@ -2,6 +2,7 @@ import { Irouter, Icontroller } from "@cimo/jsmvcfw/dist/JsMvcFwInterface";
 import CwsClient from "@cimo/websocket/dist/client/Service";
 
 // Source
+import * as HelperSrc from "../HelperSrc";
 import ControllerIndex from "./Index";
 
 export default class ControllerRouter {
@@ -13,7 +14,7 @@ export default class ControllerRouter {
         this.dataMain = [
             {
                 title: "Index",
-                path: "/",
+                path: `${HelperSrc.URL_ROOT}/ui`,
                 controller: () => new ControllerIndex(cwsClient) as unknown as Icontroller
             }
         ];
