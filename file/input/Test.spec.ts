@@ -1,7 +1,7 @@
 import { test } from "@playwright/test";
 import * as HelperSrc from "../../src/HelperSrc";
 
-test("01-Login-Logout", async ({ page }) => {
+test("01", async ({ page }) => {
     await page.goto(HelperSrc.URL_TEST);
 
     await page.waitForLoadState("domcontentloaded");

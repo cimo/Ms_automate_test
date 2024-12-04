@@ -61,13 +61,16 @@ RUN cd ~ \
     libevdev2 \
     libgles2 \
     gstreamer1.0-libav \
+    gstreamer1.0-plugins-bad \
+    libsoup-3.0-0 \
+    libgstreamer-gl1.0-0 \
+    libmanette-0.2-0 \
     sudo \
     # Sudo
     && echo "node ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers \
     && echo "debconf debconf/frontend select Noninteractive" | debconf-set-selections \
     # Playwright
-    && npx playwright install --with-deps chrome \
-    && npx playwright install --with-deps msedge \
+    && npx playwright install --with-deps chrome msedge \
     # Clean
     && apt-get remove --purge -y sudo \
     && rm -rf /var/lib/apt/lists/* \
@@ -79,7 +82,7 @@ USER node
 
 WORKDIR ${PATH_ROOT}
 
-RUN npm install && npx playwright install && npm run build
+RUN npm install && npm run build
 
 CMD node ${PATH_ROOT}dist/controller/Server.js
 
