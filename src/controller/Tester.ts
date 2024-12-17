@@ -46,7 +46,7 @@ export default class ControllerTester {
 
     private specFileList = (): void => {
         this.cwsServer.receiveData("specFileList", (clientId) => {
-            const fileList = Fs.readdirSync(HelperSrc.PATH_FILE_INPUT);
+            const fileList = Fs.readdirSync(`${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_INPUT}`);
 
             const fileFiltered: string[] = [];
             for (let i = 0; i < fileList.length; i++) {
@@ -114,7 +114,7 @@ export default class ControllerTester {
 
                             this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcast));
 
-                            const execCommand1 = `. ${HelperSrc.PATH_FILE_SCRIPT}command1.sh`;
+                            const execCommand1 = `. ${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_SCRIPT}command1.sh`;
                             const execArgumentList1 = [`"${clientData.name}"`, `"${browserCheck}"`];
 
                             const processRun = execFile(
@@ -147,11 +147,14 @@ export default class ControllerTester {
 
                                         this.pidKey = 0;
                                     } else {
-                                        const execCommand2 = `. ${HelperSrc.PATH_FILE_SCRIPT}command2.sh`;
-                                        const execArgumentList2 = [`"${HelperSrc.PATH_FILE_OUTPUT}artifact"`, `"${HelperSrc.PATH_PUBLIC}"`];
+                                        const execCommand2 = `. ${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_SCRIPT}command2.sh`;
+                                        const execArgumentList2 = [
+                                            `"${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_OUTPUT}artifact"`,
+                                            `"${HelperSrc.PATH_ROOT}${HelperSrc.PATH_PUBLIC}"`
+                                        ];
 
                                         execFile(execCommand2, execArgumentList2, { shell: "/bin/bash", encoding: "utf8" }, () => {
-                                            const status = /Error:|interrupted/.test(stdout1) ? "error" : "success";
+                                            const status = /Error:|interrupted|not run/.test(stdout1) ? "error" : "success";
 
                                             this.resultOutput[clientData.index] = {
                                                 state: status,
@@ -241,8 +244,8 @@ export default class ControllerTester {
                 const serverData = {} as ModelTester.IserverData;
 
                 if (clientData.name !== "") {
-                    const execCommand = `. ${HelperSrc.PATH_FILE_SCRIPT}command3.sh`;
-                    const execArgumentList = [`"${HelperSrc.PATH_PUBLIC}"`, `"${clientData.name}"`];
+                    const execCommand = `. ${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_SCRIPT}command3.sh`;
+                    const execArgumentList = [`"${HelperSrc.PATH_ROOT}${HelperSrc.PATH_PUBLIC}"`, `"${clientData.name}"`];
 
                     execFile(execCommand, execArgumentList, { shell: "/bin/bash", encoding: "utf8" }, (_, stdout) => {
                         if (!stdout) {
@@ -274,8 +277,8 @@ export default class ControllerTester {
                 const serverData = {} as ModelTester.IserverData;
 
                 if (clientData.name !== "") {
-                    const execCommand = `. ${HelperSrc.PATH_FILE_SCRIPT}command4.sh`;
-                    const execArgumentList = [`"${HelperSrc.PATH_PUBLIC}"`, `"${clientData.name}"`];
+                    const execCommand = `. ${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_SCRIPT}command4.sh`;
+                    const execArgumentList = [`"${HelperSrc.PATH_ROOT}${HelperSrc.PATH_PUBLIC}"`, `"${clientData.name}"`];
 
                     execFile(execCommand, execArgumentList, { shell: "/bin/bash", encoding: "utf8" }, () => {
                         serverData.status = "success";
@@ -293,7 +296,7 @@ export default class ControllerTester {
 
     private upload = (): void => {
         this.cwsServer.receiveDataUpload((clientId, data, filename) => {
-            Fs.writeFileSync(`${HelperSrc.PATH_FILE_INPUT}${filename}`, Buffer.concat(data));
+            Fs.writeFileSync(`${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_INPUT}${filename}`, Buffer.concat(data));
 
             const requestWsData: ModelTester.IserverData = { status: "success", result: "Upload completed." };
             this.cwsServer.sendData(clientId, 1, JSON.stringify(requestWsData), "upload");

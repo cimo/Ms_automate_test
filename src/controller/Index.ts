@@ -1,6 +1,6 @@
 import { Icontroller } from "@cimo/jsmvcfw/dist/JsMvcFwInterface";
 import { writeLog, variableState } from "@cimo/jsmvcfw/dist/JsMvcFw";
-import CwsClient from "@cimo/websocket/dist/client/Service";
+import CwsClient from "@cimo/websocket/dist/client/Manager";
 import { MDCRipple } from "@material/ripple";
 import { MDCTextField } from "@material/textfield";
 import { MDCSelect } from "@material/select";

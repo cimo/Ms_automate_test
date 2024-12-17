@@ -1,6 +1,6 @@
 import { mainInit } from "@cimo/jsmvcfw/dist/JsMvcFw";
 import { routerInit } from "@cimo/jsmvcfw/dist/JsMvcFwRouter";
-import CwsClient from "@cimo/websocket/dist/client/Service";
+import CwsClient from "@cimo/websocket/dist/client/Manager";
 
 // Source
 import * as HelperSrc from "../HelperSrc";

@@ -40,7 +40,7 @@ export default class ControllerServer {
     createSetting = (): void => {
         this.app.use(Express.json());
         this.app.use(Express.urlencoded({ extended: true }));
-        this.app.use(Express.static(HelperSrc.PATH_PUBLIC));
+        this.app.use(Express.static(`${HelperSrc.PATH_ROOT}${HelperSrc.PATH_PUBLIC}`));
         this.app.use(CookieParser());
         this.app.use(
             Cors({
@@ -71,8 +71,8 @@ export default class ControllerServer {
         if (HelperSrc.SERVER_LOCATION === "jp") {
             creation = Https.createServer(
                 {
-                    key: Fs.readFileSync(HelperSrc.PATH_CERTIFICATE_KEY),
-                    cert: Fs.readFileSync(HelperSrc.PATH_CERTIFICATE_CRT)
+                    key: Fs.readFileSync(`${HelperSrc.PATH_ROOT}${HelperSrc.PATH_CERTIFICATE_KEY}`),
+                    cert: Fs.readFileSync(`${HelperSrc.PATH_ROOT}${HelperSrc.PATH_CERTIFICATE_CRT}`)
                 },
                 this.app
             );
@@ -104,7 +104,7 @@ export default class ControllerServer {
             });
 
             this.app.get("/ui", Ca.authenticationMiddleware, (_request: Request, response: Response) => {
-                response.sendFile(`${HelperSrc.PATH_PUBLIC}index.html`);
+                response.sendFile(`${HelperSrc.PATH_ROOT}${HelperSrc.PATH_PUBLIC}index.html`);
             });
 
             this.app.get("/logout", Ca.authenticationMiddleware, (request: Request, response: Response) => {

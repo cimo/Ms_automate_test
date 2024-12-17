@@ -1,7 +1,9 @@
 version: "3.8"
 services:
-  cimo_ms_automate_test:
-    container_name: cimo-ms-automate-test
+  nbb_ms_automate_test:
+    container_name: nbb-ms-automate-test
+    env_file:
+      - ./env/local.env
     build:
       context: ./
       dockerfile: ./docker/${DOCKERFILE}
@@ -12,8 +14,6 @@ services:
         _SERVER_PORT: ${SERVER_PORT}
         _SERVER_LOCATION: ${SERVER_LOCATION}
         _PATH_ROOT: ${PATH_ROOT}
-    env_file:
-      - ./env/local.env
     network_mode: "host"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
