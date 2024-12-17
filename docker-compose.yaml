@@ -1,7 +1,7 @@
 version: "3.8"
 services:
-  nbb_ms_automate_test:
-    container_name: nbb-ms-automate-test
+  cimo_ms_automate_test:
+    container_name: cimo-ms-automate-test
     env_file:
       - ./env/local.env
     build:
