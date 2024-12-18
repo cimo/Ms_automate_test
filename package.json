@@ -25,7 +25,7 @@
         "@cimo/pid": "1.0.7",
         "@cimo/websocket": "1.2.37",
         "@cimo/jsmvcfw": "1.1.3",
-        "@cimo/environment": "1.0.5",
+        "@cimo/environment": "1.0.6",
         "cookie-parser": "1.4.7",
         "cors": "2.8.5",
         "express": "4.21.2",

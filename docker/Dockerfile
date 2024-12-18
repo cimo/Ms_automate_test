@@ -20,6 +20,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NOWARNINGS=yes
 ENV SUDO_FORCE_REMOVE=yes
 ENV NODE_OPTIONS=--use-openssl-ca
+ENV PLAYWRIGHT_BROWSERS_PATH=${PATH_ROOT}.cache/ms-playwright/
 
 COPY ./certificate/proxy/ /usr/local/share/ca-certificates/
 COPY ./ ${PATH_ROOT}
@@ -57,6 +58,7 @@ USER node
 WORKDIR ${PATH_ROOT}
 
 RUN npm install \
+    && npx playwright install \
     && npm run build
 
 CMD node ${PATH_ROOT}dist/controller/Server.js
