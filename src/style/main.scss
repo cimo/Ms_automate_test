@@ -1,99 +1,11 @@
-@charset "utf-8";
+@use "reset.scss";
 
-*:where(
-        :not(html, iframe, canvas, img, svg, video, audio):not(svg *, symbol *)
-    ) {
-    all: unset;
-    display: revert;
-}
-
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
-}
-
-a,
-button {
-    cursor: revert;
-}
-
-ol,
-ul,
-menu {
-    list-style: none;
-}
-
-img {
-    max-inline-size: 100%;
-    max-block-size: 100%;
-}
-
-table {
-    border-collapse: collapse;
-}
-
-input,
-textarea {
-    user-select: auto;
-    -webkit-user-select: auto;
-}
-
-textarea {
-    white-space: revert;
-}
-
-meter {
-    -webkit-appearance: revert;
-    appearance: revert;
-}
-
-:where(pre) {
-    all: revert;
-}
-
-::placeholder {
-    color: unset;
-}
-
-::marker {
-    content: initial;
-}
-
-:where([hidden]) {
-    display: none;
-}
-
-:where([contenteditable]:not([contenteditable="false"])) {
-    -moz-user-modify: read-write;
-    -webkit-user-modify: read-write;
-    overflow-wrap: break-word;
-    line-break: after-white-space;
-    -webkit-line-break: after-white-space;
-    user-select: auto;
-    -webkit-user-select: auto;
-}
-
-:where([draggable="true"]) {
-    -webkit-user-drag: element;
-}
-
-:where(dialog:modal) {
-    all: revert;
-}
-
-$zIndexLoader: 1000;
-$zIndexAlert: 1001;
-
-@import "media.scss";
-@import "color.scss";
-@import "font.scss";
-@import "page.scss";
-@import "button.scss";
-@import "field.scss";
-@import "table.scss";
-@import "filter.scss";
-@import "view/loader.scss";
-@import "view/alert.scss";
-@import "view/dialog.scss";
-@import "view/index.scss";
+@use "page.scss";
+@use "button.scss";
+@use "field.scss";
+@use "table.scss";
+@use "filter.scss";
+@use "view/loader.scss";
+@use "view/alert.scss";
+@use "view/dialog.scss";
+@use "view/index.scss";

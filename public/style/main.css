@@ -78,17 +78,6 @@ meter {
   all: revert;
 }
 
-@font-face {
-  font-family: "roboto-regular";
-  font-weight: 100;
-  font-style: normal;
-  src: url("../font/roboto-regular.ttf") format("truetype"), url("../font/roboto-regular.woff") format("woff"), url("../font/roboto-regular.woff2") format("woff2");
-}
-body *:not(.material-icons) {
-  font-family: "roboto-regular" !important;
-  font-size: 14px;
-}
-
 .page_container > .header {
   height: 50px;
   position: relative;
@@ -281,6 +270,17 @@ table .row .cell.center {
 }
 .filter .row .cell.field_container .field_value {
   width: unset !important;
+}
+
+@font-face {
+  font-family: "roboto-regular";
+  font-weight: 100;
+  font-style: normal;
+  src: url("../font/roboto-regular.ttf") format("truetype"), url("../font/roboto-regular.woff") format("woff"), url("../font/roboto-regular.woff2") format("woff2");
+}
+body *:not(.material-icons) {
+  font-family: "roboto-regular" !important;
+  font-size: 14px;
 }
 
 .view_loader {

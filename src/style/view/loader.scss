@@ -1,7 +1,11 @@
+@use "../color.scss" as color;
+@use "../media.scss" as media;
+@use "../font.scss" as font;
+
 .view_loader {
     position: fixed;
-    background-color: $white;
-    z-index: $zIndexLoader;
+    background-color: color.$white;
+    z-index: media.$zIndexLoader;
     top: 0;
     right: 0;
     left: 0;
@@ -20,15 +24,15 @@
             display: inline-block;
             width: 24px;
             height: 32px;
-            border: 2px solid $blueMedium700;
+            border: 2px solid color.$blueMedium700;
             margin: 1px;
             animation: animation_loader 1s infinite;
         }
 
         .text {
             margin-top: 10px;
-            color: $blueMedium700;
-            font-size: $fontSizeMedium;
+            color: color.$blueMedium700;
+            font-size: font.$sizeMedium;
         }
     }
 

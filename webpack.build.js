@@ -93,8 +93,9 @@ module.exports = {
         }),
         new EsLintPlugin({
             extensions: ["ts", "js"],
-            exclude: ["node_modules"],
-            fix: true
+            configType: "flat",
+            overrideConfigFile: `${Path.resolve(__dirname)}/eslint.config.js`,
+
         }),
         new CompressionPlugin({
             algorithm: "gzip",

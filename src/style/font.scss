@@ -1,8 +1,8 @@
-$fontSize: 14px;
-$fontSizeNormal: 18px;
-$fontSizeMedium: 30px;
-$fontSizeBig: 40px;
-$fontSizeVeryBig: 50px;
+$base: 14px;
+$sizeNormal: 18px;
+$sizeMedium: 30px;
+$sizeBig: 40px;
+$sizeVeryBig: 50px;
 
 @font-face {
     font-family: "roboto-regular";
@@ -16,6 +16,6 @@ $fontSizeVeryBig: 50px;
 body {
     & *:not(.material-icons) {
         font-family: "roboto-regular" !important;
-        font-size: $fontSize;
+        font-size: $base;
     }
 }

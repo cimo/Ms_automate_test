@@ -1,17 +1,20 @@
+@use "../color.scss" as color;
+@use "../font.scss" as font;
+
 .view_dialog {
     .mdc-dialog__surface {
         max-width: unset !important;
 
         .mdc-dialog__title {
-            font-size: $fontSizeNormal !important;
+            font-size: font.$sizeNormal !important;
             font-weight: bold !important;
         }
 
         .mdc-dialog__content {
             padding-top: 20px !important;
             white-space: pre !important;
-            background-color: $black !important;
-            color: $white !important;
+            background-color: color.$black !important;
+            color: color.$white !important;
             overflow-x: hidden !important;
         }
     }

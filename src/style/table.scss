@@ -1,10 +1,12 @@
+@use "color.scss" as color;
+
 table {
     display: table !important;
-    color: $black !important;
+    color: color.$black !important;
     width: 100% !important;
     position: relative !important;
     border-collapse: collapse !important;
-    box-shadow: 0px 1px 6px 0px $blackRgb !important;
+    box-shadow: 0px 1px 6px 0px color.$blackRgb !important;
 
     .row_empty {
         display: table-row !important;
@@ -32,26 +34,26 @@ table {
     .row {
         display: table-row !important;
         width: 100% !important;
-        background-color: $white !important;
+        background-color: color.$white !important;
         word-break: break-word !important;
 
         &:not(.row_empty):not(.not_hover):hover {
-            background-color: $grey600 !important;
-            color: $white !important;
+            background-color: color.$grey600 !important;
+            color: color.$white !important;
         }
 
         &.even {
-            background-color: $grey100 !important;
+            background-color: color.$grey100 !important;
         }
 
         &.selected_row {
-            background-color: $blueLight !important;
-            color: $white !important;
+            background-color: color.$blueLight !important;
+            color: color.$white !important;
 
             a {
                 cursor: pointer !important;
                 text-decoration: underline !important;
-                color: $white !important;
+                color: color.$white !important;
             }
         }
 

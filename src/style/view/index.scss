@@ -1,3 +1,6 @@
+@use "../color.scss" as color;
+@use "../media.scss" as media;
+
 .page_container {
     & > .left {
         display: none !important;
@@ -62,11 +65,11 @@
                         }
 
                         .icon_success {
-                            color: $green;
+                            color: color.$green;
                         }
 
                         .icon_fail {
-                            color: $red;
+                            color: color.$red;
                         }
                     }
                 }
@@ -154,7 +157,7 @@
         }
     }
 
-    @media screen and (max-width: $widthMobile) {
+    @media screen and (max-width: media.$widthMobile) {
         .left,
         .right {
             display: block !important;

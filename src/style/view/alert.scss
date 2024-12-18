@@ -1,28 +1,31 @@
+@use "../color.scss" as color;
+@use "../media.scss" as media;
+
 .view_alert {
     top: 0 !important;
     right: 0 !important;
     left: auto !important;
     bottom: auto !important;
-    z-index: $zIndexAlert !important;
+    z-index: media.$zIndexAlert !important;
 
     &.success {
         .mdc-snackbar__surface {
-            background-color: $backgroundSuccess !important;
+            background-color: color.$backgroundSuccess !important;
 
             .mdc-snackbar__label,
             .mdc-snackbar__action {
-                color: $green800 !important;
+                color: color.$green800 !important;
             }
         }
     }
 
     &.error {
         .mdc-snackbar__surface {
-            background-color: $backgroundFail !important;
+            background-color: color.$backgroundFail !important;
 
             .mdc-snackbar__label,
             .mdc-snackbar__action {
-                color: $red800 !important;
+                color: color.$red800 !important;
             }
         }
     }
@@ -30,7 +33,7 @@
     .mdc-snackbar__surface {
         max-height: 200px !important;
         padding: 10px 0 !important;
-        border: 1px solid $grey600 !important;
+        border: 1px solid color.$grey600 !important;
         flex-direction: revert !important;
         align-items: revert !important;
 

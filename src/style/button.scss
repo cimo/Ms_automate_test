@@ -1,3 +1,5 @@
+@use "color.scss" as color;
+
 button {
     display: inline-block !important;
     margin: 0 10px !important;
@@ -11,8 +13,8 @@ button {
     }
 
     &:disabled {
-        color: $grey1400 !important;
-        background-color: $buttonDisabled !important;
+        color: color.$grey1400 !important;
+        background-color: color.$buttonDisabled !important;
     }
 
     .mdc-button__label {
@@ -25,53 +27,53 @@ button {
 }
 
 .button_primary {
-    color: $white !important;
-    background-color: $buttonPrimary !important;
+    color: color.$white !important;
+    background-color: color.$buttonPrimary !important;
 
     &:hover {
-        background-color: $buttonPrimaryHover !important;
+        background-color: color.$buttonPrimaryHover !important;
     }
 }
 
 .button_secondary {
-    color: $white !important;
-    background-color: $buttonSecondary !important;
+    color: color.$white !important;
+    background-color: color.$buttonSecondary !important;
 
     &:hover {
-        background-color: $buttonSecondaryHover !important;
+        background-color: color.$buttonSecondaryHover !important;
     }
 }
 
 .button_ghost {
-    color: $buttonGhost !important;
-    background-color: $white !important;
+    color: color.$buttonGhost !important;
+    background-color: color.$white !important;
     border: 1px solid !important;
 
     &:hover {
-        background-color: $buttonGhostHover !important;
+        background-color: color.$buttonGhostHover !important;
     }
 }
 
 .button_flat {
-    color: $buttonFlat !important;
-    background-color: $white !important;
+    color: color.$buttonFlat !important;
+    background-color: color.$white !important;
 
     &:hover {
-        background-color: $buttonFlatHover !important;
+        background-color: color.$buttonFlatHover !important;
     }
 }
 
 .button_danger {
-    color: $white !important;
-    background-color: $buttonDanger !important;
+    color: color.$white !important;
+    background-color: color.$buttonDanger !important;
 
     &:hover {
-        background-color: $buttonDangerHover !important;
+        background-color: color.$buttonDangerHover !important;
     }
 }
 
 .button_remove {
-    color: $red !important;
+    color: color.$red !important;
     cursor: pointer !important;
 }
 
