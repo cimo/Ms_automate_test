@@ -46,6 +46,7 @@ RUN cd ~ \
     fonts-noto-cjk \
     # Playwright
     && npx playwright install --with-deps chromium chrome msedge firefox webkit \
+    && chown -R node:node ${PATH_ROOT}.cache/ms-playwright/ \
     # Clean
     && apt-get remove --purge -y sudo \
     && rm -rf /var/lib/apt/lists/* \
