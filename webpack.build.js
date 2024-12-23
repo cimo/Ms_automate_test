@@ -12,6 +12,7 @@ const ceList = Ce.loadFile(`./env/${ENV_NAME}.env`);
 
 Ce.checkVariable("DOMAIN");
 Ce.checkVariable("TIMEZONE");
+Ce.checkVariable("LANG");
 Ce.checkVariable("SERVER_PORT");
 Ce.checkVariable("SERVER_LOCATION");
 const PATH_ROOT = Ce.checkVariable("PATH_ROOT");
