@@ -78,22 +78,6 @@ meter {
   all: revert;
 }
 
-.page_container > .header {
-  height: 50px;
-  position: relative;
-  margin-bottom: 10px;
-}
-.page_container > .left {
-  width: 30%;
-  position: relative;
-  display: inline-block;
-}
-.page_container > .right {
-  width: 70%;
-  position: relative;
-  display: inline-block;
-}
-
 button {
   display: inline-block !important;
   margin: 0 10px !important;
@@ -189,6 +173,45 @@ button .mdc-button__label .material-icons {
   top: 75% !important;
 }
 
+.filter {
+  height: 40px !important;
+  display: table-header-group !important;
+}
+.filter .row {
+  background-color: #005eb8 !important;
+  color: #ffffff !important;
+  word-break: break-word !important;
+}
+.filter .row.filter_action .button_action {
+  position: absolute !important;
+  top: -50px !important;
+  right: 0px !important;
+}
+.filter .row .cell {
+  vertical-align: middle !important;
+  padding: 0px 10px !important;
+  min-width: auto !important;
+}
+.filter .row .cell.field_container .field_value {
+  width: unset !important;
+}
+
+.page_container > .header {
+  height: 50px;
+  position: relative;
+  margin-bottom: 10px;
+}
+.page_container > .left {
+  width: 30%;
+  position: relative;
+  display: inline-block;
+}
+.page_container > .right {
+  width: 70%;
+  position: relative;
+  display: inline-block;
+}
+
 table {
   display: table !important;
   color: #000000 !important;
@@ -249,83 +272,6 @@ table .row .cell.center {
   text-align: center;
 }
 
-.filter {
-  height: 40px !important;
-  display: table-header-group !important;
-}
-.filter .row {
-  background-color: #005eb8 !important;
-  color: #ffffff !important;
-  word-break: break-word !important;
-}
-.filter .row.filter_action .button_action {
-  position: absolute !important;
-  top: -50px !important;
-  right: 0px !important;
-}
-.filter .row .cell {
-  vertical-align: middle !important;
-  padding: 0px 10px !important;
-  min-width: auto !important;
-}
-.filter .row .cell.field_container .field_value {
-  width: unset !important;
-}
-
-@font-face {
-  font-family: "roboto-regular";
-  font-weight: 100;
-  font-style: normal;
-  src: url("../font/roboto-regular.ttf") format("truetype"), url("../font/roboto-regular.woff") format("woff"), url("../font/roboto-regular.woff2") format("woff2");
-}
-body *:not(.material-icons) {
-  font-family: "roboto-regular" !important;
-  font-size: 14px;
-}
-
-.view_loader {
-  position: fixed;
-  background-color: #ffffff;
-  z-index: 1000;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-}
-.view_loader .container {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 130px;
-  text-align: center;
-  margin: 0 auto;
-}
-.view_loader .container .square {
-  display: inline-block;
-  width: 24px;
-  height: 32px;
-  border: 2px solid #00498f;
-  margin: 1px;
-  animation: animation_loader 1s infinite;
-}
-.view_loader .container .text {
-  margin-top: 10px;
-  color: #00498f;
-  font-size: 30px;
-}
-@keyframes animation_loader {
-  0% {
-    transform: rotate(0deg);
-  }
-  50% {
-    transform: rotate(180deg) scale(0.5, 0.5);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
 .view_alert {
   top: 0 !important;
   right: 0 !important;
@@ -369,6 +315,17 @@ body *:not(.material-icons) {
 }
 .view_alert .mdc-snackbar__surface .mdc-snackbar__actions .mdc-snackbar__action {
   margin: 6px !important;
+}
+
+@font-face {
+  font-family: "roboto-regular";
+  font-weight: 100;
+  font-style: normal;
+  src: url("../font/roboto-regular.ttf") format("truetype"), url("../font/roboto-regular.woff") format("woff"), url("../font/roboto-regular.woff2") format("woff2");
+}
+body *:not(.material-icons) {
+  font-family: "roboto-regular" !important;
+  font-size: 14px;
 }
 
 .view_dialog .mdc-dialog__surface {
@@ -524,6 +481,49 @@ body *:not(.material-icons) {
   }
   100% {
     transform: rotate(0);
+  }
+}
+
+.view_loader {
+  position: fixed;
+  background-color: #ffffff;
+  z-index: 1000;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+.view_loader .container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 130px;
+  text-align: center;
+  margin: 0 auto;
+}
+.view_loader .container .square {
+  display: inline-block;
+  width: 24px;
+  height: 32px;
+  border: 2px solid #00498f;
+  margin: 1px;
+  animation: animation_loader 1s infinite;
+}
+.view_loader .container .text {
+  margin-top: 10px;
+  color: #00498f;
+  font-size: 30px;
+}
+@keyframes animation_loader {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(180deg) scale(0.5, 0.5);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 
