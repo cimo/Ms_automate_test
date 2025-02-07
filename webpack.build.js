@@ -11,10 +11,9 @@ const ENV_NAME = Ce.checkVariable("ENV_NAME");
 const ceList = Ce.loadFile(`./env/${ENV_NAME}.env`);
 
 Ce.checkVariable("DOMAIN");
-Ce.checkVariable("TIMEZONE");
+Ce.checkVariable("TIME_ZONE");
 Ce.checkVariable("LANG");
 Ce.checkVariable("SERVER_PORT");
-Ce.checkVariable("SERVER_LOCATION");
 const PATH_ROOT = Ce.checkVariable("PATH_ROOT");
 const NAME = Ce.checkVariable("MS_AT_NAME");
 Ce.checkVariable("MS_AT_LABEL");
