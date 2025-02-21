@@ -13,7 +13,7 @@ export const DOMAIN = Ce.checkVariable("DOMAIN") || (process.env.DOMAIN as strin
 export const TIME_ZONE = Ce.checkVariable("TIME_ZONE") || (process.env.TIME_ZONE as string);
 export const LANG = Ce.checkVariable("LANG") || (process.env.LANG as string);
 export const SERVER_PORT = Ce.checkVariable("SERVER_PORT") || (process.env.SERVER_PORT as string);
-export const PATH_ROOT = Ce.checkVariable("PATH_ROOT") || (process.env.PATH_ROOT as string);
+export const PATH_ROOT = Ce.checkVariable("PATH_ROOT");
 export const NAME = Ce.checkVariable("MS_AT_NAME") || (process.env.MS_AT_NAME as string);
 export const LABEL = Ce.checkVariable("MS_AT_LABEL") || (process.env.MS_AT_LABEL as string);
 export const DEBUG = Ce.checkVariable("MS_AT_DEBUG") || (process.env.MS_AT_DEBUG as string);
@@ -21,18 +21,18 @@ export const NODE_ENV = Ce.checkVariable("MS_AT_NODE_ENV") || (process.env.MS_AT
 export const URL_ROOT = Ce.checkVariable("MS_AT_URL_ROOT") || (process.env.MS_AT_URL_ROOT as string);
 export const URL_CORS_ORIGIN = Ce.checkVariable("MS_AT_URL_CORS_ORIGIN") || (process.env.MS_AT_URL_CORS_ORIGIN as string);
 export const URL_TEST = Ce.checkVariable("MS_AT_URL_TEST") || (process.env.MS_AT_URL_TEST as string);
-export const PATH_CERTIFICATE_KEY = Ce.checkVariable("MS_AT_PATH_CERTIFICATE_KEY") || (process.env.MS_AT_PATH_CERTIFICATE_KEY as string);
-export const PATH_CERTIFICATE_CRT = Ce.checkVariable("MS_AT_PATH_CERTIFICATE_CRT") || (process.env.MS_AT_PATH_CERTIFICATE_CRT as string);
-export const PATH_PUBLIC = Ce.checkVariable("MS_AT_PATH_PUBLIC") || (process.env.MS_AT_PATH_PUBLIC as string);
-export const PATH_LOG = Ce.checkVariable("MS_AT_PATH_LOG") || (process.env.MS_AT_PATH_LOG as string);
-export const PATH_FILE_INPUT = Ce.checkVariable("MS_AT_PATH_FILE_INPUT") || (process.env.MS_AT_PATH_FILE_INPUT as string);
-export const PATH_FILE_OUTPUT = Ce.checkVariable("MS_AT_PATH_FILE_OUTPUT") || (process.env.MS_AT_PATH_FILE_OUTPUT as string);
-export const PATH_FILE_DOWNLOAD = Ce.checkVariable("MS_AT_PATH_FILE_DOWNLOAD") || (process.env.MS_AT_PATH_FILE_DOWNLOAD as string);
-export const PATH_FILE_SCRIPT = Ce.checkVariable("MS_AT_PATH_FILE_SCRIPT") || (process.env.MS_AT_PATH_FILE_SCRIPT as string);
+export const PATH_CERTIFICATE_KEY = Ce.checkVariable("MS_AT_PATH_CERTIFICATE_KEY");
+export const PATH_CERTIFICATE_CRT = Ce.checkVariable("MS_AT_PATH_CERTIFICATE_CRT");
+export const PATH_PUBLIC = Ce.checkVariable("MS_AT_PATH_PUBLIC");
+export const PATH_LOG = Ce.checkVariable("MS_AT_PATH_LOG");
+export const PATH_FILE_INPUT = Ce.checkVariable("MS_AT_PATH_FILE_INPUT");
+export const PATH_FILE_OUTPUT = Ce.checkVariable("MS_AT_PATH_FILE_OUTPUT");
+export const PATH_FILE_DOWNLOAD = Ce.checkVariable("MS_AT_PATH_FILE_DOWNLOAD");
+export const PATH_FILE_SCRIPT = Ce.checkVariable("MS_AT_PATH_FILE_SCRIPT");
 export const MIME_TYPE = Ce.checkVariable("MS_AT_MIME_TYPE") || (process.env.MS_AT_MIME_TYPE as string);
 export const FILE_SIZE_MB = Ce.checkVariable("MS_AT_FILE_SIZE_MB") || (process.env.MS_AT_FILE_SIZE_MB as string);
 export const WS_ADRESS = Ce.checkVariable("MS_AT_WS_ADDRESS") || (process.env.MS_AT_WS_ADDRESS as string);
-export const SECRET_KEY = Ce.checkVariable("MS_AT_SECRET_KEY") || (process.env.MS_AT_SECRET_KEY as string);
+export const SECRET_KEY = Ce.checkVariable("MS_AT_SECRET_KEY");
 
 export const writeLog = (tag: string, value: string | Record<string, unknown> | Error): void => {
     if (DEBUG === "true") {
