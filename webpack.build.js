@@ -41,8 +41,8 @@ module.exports = {
     mode: NODE_ENV,
     entry: `${PATH_ROOT}src/view/Main.ts`,
     output: {
-        filename: "main.js",
-        sourceMapFilename: "main.js.map",
+        filename: "[name].js",
+        sourceMapFilename: "[name].js.map",
         path: Path.resolve(__dirname, "public/js"),
         publicPath: URL_ROOT
     },
