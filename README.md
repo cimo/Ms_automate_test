@@ -6,19 +6,25 @@ Depend from Ms_cronjob (use the volume "ms_cronjob-volume" for share the certifi
 
 ## Installation
 
-1. Write on terminal:
+1. For full build write on terminal:
 
 ```
 docker compose -f docker-compose.yaml --env-file ./env/local.env build --no-cache \
 && docker compose -f docker-compose.yaml --env-file ./env/local.env up --detach --pull "always"
 ```
 
-2. Execute UI:
-
-Write on the container terminal:
+2. For light build (just env variable change) remove the container and write on terminal:
 
 ```
-npm run execute-ui
+docker compose -f docker-compose.yaml --env-file ./env/local.env up --detach --pull "always"
+```
+
+## Wsl UI
+
+1. Write on the container terminal:
+
+```
+npm run execute_ui
 ```
 
 ## Reset

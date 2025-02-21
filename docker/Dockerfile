@@ -21,6 +21,7 @@ ENV DEBCONF_NOWARNINGS=yes
 ENV SUDO_FORCE_REMOVE=yes
 ENV NODE_OPTIONS=--use-openssl-ca
 ENV PLAYWRIGHT_BROWSERS_PATH=${PATH_ROOT}.cache/ms-playwright/
+ENV PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT=60000
 
 COPY ./certificate/proxy/ /usr/local/share/ca-certificates/
 COPY ./ ${PATH_ROOT}
@@ -46,7 +47,7 @@ RUN cd ~ \
     fonts-noto-cjk \
     media-types \
     # Playwright
-    && npx playwright install --with-deps chromium chrome msedge firefox webkit \
+    && npx playwright install --force --with-deps chromium chrome msedge firefox webkit \
     && chown -R node:node ${PATH_ROOT}.cache/ms-playwright/ \
     # Clean
     && apt-get remove --purge -y sudo \

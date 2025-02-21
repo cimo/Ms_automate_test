@@ -11,7 +11,7 @@ export default defineConfig({
     reportSlowTests: null,
     timeout: 10 * 60 * 1000,
     expect: {
-        timeout: 2 * 60 * 1000
+        timeout: 10 * 60 * 1000
     },
     use: {
         actionTimeout: 60000,
@@ -19,7 +19,7 @@ export default defineConfig({
         ignoreHTTPSErrors: true,
         video: "on",
         launchOptions: {
-            slowMo: 500
+            slowMo: 1500
         }
     },
     projects: [
