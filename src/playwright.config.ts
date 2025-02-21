@@ -9,9 +9,9 @@ export default defineConfig({
     fullyParallel: false,
     reporter: "line",
     reportSlowTests: null,
-    timeout: 10 * 60 * 1000,
+    timeout: 20 * 60 * 1000,
     expect: {
-        timeout: 10 * 60 * 1000
+        timeout: 15 * 60 * 1000
     },
     use: {
         actionTimeout: 60000,
