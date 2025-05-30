@@ -22,7 +22,7 @@ export interface IserverData {
 }
 
 export interface IserverDataOutput {
-    state: string;
+    status: string;
     browser: string;
     time: string;
     log: string;

@@ -103,7 +103,7 @@ export default class ControllerTester {
                             this.pidKey = pidKey;
 
                             this.resultOutput[clientData.index] = {
-                                state: "running",
+                                status: "running",
                                 browser: clientData.browser,
                                 time: HelperSrc.serverTime(),
                                 log: ""
@@ -128,7 +128,7 @@ export default class ControllerTester {
                                         const status = "error";
 
                                         this.resultOutput[clientData.index] = {
-                                            state: status,
+                                            status: status,
                                             browser: clientData.browser,
                                             time: HelperSrc.serverTime(),
                                             log: HelperSrc.removeAnsiEscape(stderr1)
@@ -157,7 +157,7 @@ export default class ControllerTester {
                                             const status = /Error:|interrupted|not run/.test(stdout1) ? "error" : "success";
 
                                             this.resultOutput[clientData.index] = {
-                                                state: status,
+                                                status: status,
                                                 browser: clientData.browser,
                                                 time: HelperSrc.serverTime(),
                                                 log: HelperSrc.removeAnsiEscape(stdout1)

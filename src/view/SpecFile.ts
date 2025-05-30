@@ -4,6 +4,12 @@ import { Iview } from "@cimo/jsmvcfw/dist/JsMvcFwInterface";
 import { IvariableList } from "../model/Index";
 
 const viewSpecFile = (variableList: IvariableList): Iview => {
+    const specFileListState = variableList.specFileList.state;
+    const serverDataOutputState = variableList.serverDataOutput.state;
+
+    // eslint-disable-next-line no-console
+    console.log("cimo - serverDataOutputState", serverDataOutputState);
+
     const template = String.raw`
     <table class="table_data">
         <thead class="filter">
@@ -30,10 +36,12 @@ const viewSpecFile = (variableList: IvariableList): Iview => {
             ${(() => {
                 const result: string[] = [];
 
-                for (const [key, value] of Object.entries(variableList.specFileList.state)) {
+                for (const [key, value] of Object.entries(specFileListState)) {
                     const index = parseInt(key);
 
-                    result.push(String.raw`<tr class="row"
+                    const serverDataOutputStateTime = serverDataOutputState[index] ? serverDataOutputState[index].time : "";
+
+                    result.push(`<tr class="row"
                         data-index="${index}">
                         <td class="cell column_id">
                             <p>
@@ -176,7 +184,7 @@ const viewSpecFile = (variableList: IvariableList): Iview => {
                             </div>
                         </td>
                         <td class="cell column_time">
-                            <p class="time"></p>
+                            <p class="time" data-bind="serverDataOutput">${JSON.stringify(serverDataOutputStateTime)}</p>
                         </td>
                         <td class="cell column_status">
                             <i class="mdc-button__icon material-icons icon_loading"

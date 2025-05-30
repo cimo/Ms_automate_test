@@ -24,11 +24,11 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
     // Variable
     private cwsClient: CwsClient;
     private variableList: IvariableList;
+    private elementButtonExecute: HTMLButtonElement[] | null;
+
     private elementLoader: HTMLElement | null;
-    private elementTableClient: HTMLElement | null;
-    private elementTableClientItem: HTMLElement | null;
-    private elementTableData: HTMLElement | null;
-    private elementTableDataRowList: NodeListOf<HTMLElement> | null;
+    //private elementTableData: HTMLElement | null;
+    //private elementTableDataRowList: NodeListOf<HTMLElement> | null;
     private elementTableVideo: HTMLElement | null;
     private elementTableVideoButtonLoad: HTMLButtonElement | null;
     private elementTableVideoInput: HTMLInputElement | null;
@@ -45,11 +45,11 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
     constructor(cwsClientValue: CwsClient) {
         this.cwsClient = cwsClientValue;
         this.variableList = {} as IvariableList;
+        this.elementButtonExecute = null;
+
         this.elementLoader = null;
-        this.elementTableClient = null;
-        this.elementTableClientItem = null;
-        this.elementTableData = null;
-        this.elementTableDataRowList = null;
+        //this.elementTableData = null;
+        //this.elementTableDataRowList = null;
         this.elementTableVideo = null;
         this.elementTableVideoButtonLoad = null;
         this.elementTableVideoInput = null;
@@ -73,22 +73,27 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
 
     variable(): IvariableList {
         this.variableList = {
-            specFileList: variableState<string[]>("specFileList", [])
+            specFileList: variableState<string[]>("specFileList", []),
+            clientList: variableState<string[]>("clientList", []),
+            serverDataOutput: variableState<ModelTester.IserverDataOutput[]>("serverDataOutput", [])
         };
 
         return this.variableList;
     }
 
     view(variableList: IvariableList): string {
-        writeLog("Home.ts => view()", variableList);
+        writeLog("Index.ts => view()", variableList);
 
         const viewLoaderTemplate = viewLoader().template;
         const viewAlertTemplate = viewAlert().template;
         const viewDialogTemplate = viewDialog().template;
         const viewSpecFileTemplate = viewSpecFile(variableList).template;
-        const viewClientTemplate = viewClient().template;
+        const viewClientTemplate = viewClient(variableList).template;
         const viewVideoTemplate = viewVideo().template;
         const viewUploadTemplate = viewUpload().template;
+
+        this.viewInitialize();
+        this.viewAction();
 
         return viewPageIndex(
             viewLoaderTemplate,
@@ -102,45 +107,36 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
     }
 
     event(variableList: IvariableList): void {
-        writeLog("Home.ts => event()", variableList);
+        writeLog("Index.ts => event()", variableList);
+
+        this.run();
+
+        this.video();
+
+        this.upload();
     }
 
     destroy(variableList: IvariableList): void {
-        writeLog("Home.ts => destroy()", variableList);
+        writeLog("Index.ts => destroy()", variableList);
     }
 
-    private initializeHtmlElement = (): void => {
-        const elementMdcButtonList = document.querySelectorAll<HTMLElement>(".mdc-button");
+    private viewInitialize = (): void => {
+        this.controllerAlert = new ControllerAlert();
+        this.controllerDialog = new ControllerDialog();
 
-        for (const elementMdcButton of elementMdcButtonList) {
-            new MDCRipple(elementMdcButton);
-        }
-
-        const elementMdcTextFieldList = document.querySelectorAll<HTMLElement>(".mdc-text-field");
-
-        for (const elementMdcTextField of elementMdcTextFieldList) {
-            new MDCTextField(elementMdcTextField);
-        }
-
-        const elementMdcSelectList = document.querySelectorAll<HTMLElement>(".mdc-select");
-
-        for (const elementMdcSelect of elementMdcSelectList) {
-            new MDCSelect(elementMdcSelect);
-        }
+        this.elementButtonExecute = Array.from(document.querySelectorAll<HTMLButtonElement>(".button_execute"));
 
         this.elementLoader = document.querySelector<HTMLElement>(".view_loader");
 
-        this.elementTableClient = document.querySelector<HTMLElement>(".table_client");
-
-        if (this.elementTableClient) {
-            this.elementTableClientItem = this.elementTableClient.querySelector<HTMLElement>(".item");
+        if (this.elementLoader) {
+            this.elementLoader.style.setProperty("display", "none");
         }
 
-        this.elementTableData = document.querySelector<HTMLElement>(".table_data");
+        /*this.elementTableData = document.querySelector<HTMLElement>(".table_data");
 
         if (this.elementTableData) {
             this.elementTableDataRowList = this.elementTableData.querySelectorAll<HTMLElement>("tbody .row");
-        }
+        }*/
 
         this.elementTableVideo = document.querySelector<HTMLElement>(".table_video");
 
@@ -158,6 +154,62 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
             this.elementTableUploadButtonFake = this.elementTableUpload.querySelector<HTMLButtonElement>(".button_input_upload_fake");
             this.elementTableUploadInput = this.elementTableUpload.querySelector<HTMLInputElement>(".input_upload");
         }
+
+        const elementMdcButtonList = document.querySelectorAll<HTMLElement>(".mdc-button");
+
+        for (const elementMdcButton of elementMdcButtonList) {
+            new MDCRipple(elementMdcButton);
+        }
+
+        const elementMdcTextFieldList = document.querySelectorAll<HTMLElement>(".mdc-text-field");
+
+        for (const elementMdcTextField of elementMdcTextFieldList) {
+            new MDCTextField(elementMdcTextField);
+        }
+
+        const elementMdcSelectList = document.querySelectorAll<HTMLElement>(".mdc-select");
+
+        for (const elementMdcSelect of elementMdcSelectList) {
+            new MDCSelect(elementMdcSelect);
+        }
+    };
+
+    private viewAction = (): void => {
+        if (this.elementButtonExecute) {
+            for (const [, buttonExecuteValue] of Object.entries(this.elementButtonExecute)) {
+                buttonExecuteValue.onclick = () => {
+                    if (this.controllerAlert) {
+                        this.controllerAlert.close();
+                    }
+
+                    const elementRow = buttonExecuteValue.closest<HTMLElement>(".row");
+
+                    if (elementRow) {
+                        const elementIcon = buttonExecuteValue.querySelector<HTMLElement>(".material-icons");
+
+                        if (elementIcon && !elementIcon.classList.contains("stop")) {
+                            const elementName = elementRow.querySelector<HTMLElement>(".name");
+                            const mdcSelectBrowser = new MDCSelect(elementRow.querySelector(".select_browser") as Element);
+
+                            if (elementName && mdcSelectBrowser) {
+                                const clientData: ModelTester.IclientDataRun = {
+                                    index: parseInt(elementRow.getAttribute("data-index") as string),
+                                    name: elementName.textContent ? elementName.textContent.trim() : "",
+                                    browser: mdcSelectBrowser.value
+                                };
+                                this.cwsClient.sendData(1, JSON.stringify(clientData), "run");
+                            }
+                        } else {
+                            const clientData: ModelTester.IclientDataStop = {
+                                index: parseInt(elementRow.getAttribute("data-index") as string)
+                            };
+
+                            this.cwsClient.sendData(1, JSON.stringify(clientData), "stop");
+                        }
+                    }
+                };
+            }
+        }
     };
 
     private broadcast = (): void => {
@@ -170,9 +222,10 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
                     this.cwsClient.sendData(1, "", "user", 100);
                     this.cwsClient.sendData(1, "", "output", 200);
                 } else if (serverData.tag === "user") {
-                    this.statusUser(serverData);
+                    this.variableList.clientList.state = serverData.result as string[];
                 } else if (serverData.tag === "output") {
-                    this.statusOutput(serverData);
+                    //this.statusOutput(serverData);
+                    this.variableList.serverDataOutput.state = serverData.result as ModelTester.IserverDataOutput[];
                 }
             }
         });
@@ -188,49 +241,11 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
                 const serverData = JSON.parse(data) as ModelTester.IserverData;
 
                 this.variableList.specFileList.state = serverData.result as string[];
-
-                this.controllerAlert = new ControllerAlert();
-                this.controllerDialog = new ControllerDialog();
-
-                this.initializeHtmlElement();
-
-                this.run();
-
-                this.runLog();
-
-                this.video();
-
-                this.upload();
-
-                if (this.elementLoader) {
-                    this.elementLoader.style.setProperty("display", "none");
-                }
             }
         });
     };
 
-    private statusUser = (serverData: ModelTester.IserverDataBroadcast): void => {
-        if (this.elementTableClientItem) {
-            this.elementTableClientItem.innerHTML = "";
-
-            const serverDataResultList = serverData.result as string[];
-
-            for (const serverDataResult of serverDataResultList) {
-                const elementLi = document.createElement("li");
-                elementLi.innerHTML = `<p>${serverDataResult}</p>`;
-
-                const elementIcon = document.createElement("i");
-                elementIcon.setAttribute("class", "mdc-button__icon material-icons");
-                elementIcon.setAttribute("aria-hidden", "true");
-                elementIcon.textContent = "person";
-                elementLi.insertBefore(elementIcon, elementLi.firstChild);
-
-                this.elementTableClientItem.appendChild(elementLi);
-            }
-        }
-    };
-
-    private statusOutput = (serverData: ModelTester.IserverDataBroadcast): void => {
+    /*private statusOutput = (serverData: ModelTester.IserverDataBroadcast): void => {
         if (this.elementTableDataRowList) {
             for (const [elementKey, elementRow] of Object.entries(this.elementTableDataRowList)) {
                 const mdcSelectBrowser = new MDCSelect(elementRow.querySelector(".select_browser") as Element);
@@ -259,7 +274,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
                             mdcSelectBrowser.setValue(serverDataOutput.browser);
                         }
 
-                        if (serverDataOutput.state === "running") {
+                        if (serverDataOutput.status === "running") {
                             if (elementButtonExecuteIcon) {
                                 elementButtonExecuteIcon.classList.remove("start");
                                 elementButtonExecuteIcon.classList.add("stop");
@@ -272,13 +287,6 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
                             elementIconLoading.style.setProperty("display", "inline-block");
                             elementIconSuccess.style.setProperty("display", "none");
                             elementIconFail.style.setProperty("display", "none");
-
-                            if (this.elementTableVideoItem && this.elementTableVideoPlayer) {
-                                this.elementTableVideoItem.innerHTML = "";
-
-                                this.elementTableVideoPlayer.src = "";
-                                this.elementTableVideoPlayer.style.setProperty("display", "none");
-                            }
                         } else {
                             if (elementButtonExecuteIcon) {
                                 elementButtonExecuteIcon.classList.remove("stop");
@@ -298,9 +306,9 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
 
                             elementIconLoading.style.setProperty("display", "none");
 
-                            if (serverDataOutput.state === "success") {
+                            if (serverDataOutput.status === "success") {
                                 elementIconSuccess.style.setProperty("display", "inline-block");
-                            } else if (serverDataOutput.state === "error") {
+                            } else if (serverDataOutput.status === "error") {
                                 elementIconFail.style.setProperty("display", "inline-block");
                             }
                         }
@@ -308,7 +316,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
                 }
             }
         }
-    };
+    };*/
 
     private run = (): void => {
         this.cwsClient.receiveData("run", (data) => {
@@ -321,44 +329,6 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
             }
         });
 
-        if (this.elementTableDataRowList) {
-            for (const elementRow of this.elementTableDataRowList) {
-                const elementButtonExecute = elementRow.querySelector<HTMLButtonElement>(".button_execute");
-
-                if (elementButtonExecute) {
-                    elementButtonExecute.onclick = () => {
-                        if (this.controllerAlert) {
-                            this.controllerAlert.close();
-                        }
-
-                        const elementButtonExecuteIcon = elementButtonExecute.querySelector<HTMLElement>(".material-icons");
-
-                        if (elementButtonExecuteIcon && !elementButtonExecuteIcon.classList.contains("stop")) {
-                            const elementSpecName = elementRow.querySelector<HTMLElement>(".name");
-                            const mdcSelectBrowser = new MDCSelect(elementRow.querySelector(".select_browser") as Element);
-
-                            if (elementSpecName && mdcSelectBrowser) {
-                                const clientData: ModelTester.IclientDataRun = {
-                                    index: parseInt(elementRow.getAttribute("data-index") as string),
-                                    name: elementSpecName.textContent ? elementSpecName.textContent.trim() : "",
-                                    browser: mdcSelectBrowser.value
-                                };
-                                this.cwsClient.sendData(1, JSON.stringify(clientData), "run");
-                            }
-                        } else {
-                            const clientData: ModelTester.IclientDataStop = {
-                                index: parseInt(elementRow.getAttribute("data-index") as string)
-                            };
-
-                            this.cwsClient.sendData(1, JSON.stringify(clientData), "stop");
-                        }
-                    };
-                }
-            }
-        }
-    };
-
-    private runLog = (): void => {
         this.cwsClient.receiveData("runLog", (data) => {
             if (typeof data === "string") {
                 const serverData = JSON.parse(data) as ModelTester.IserverData;
