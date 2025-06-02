@@ -1,4 +1,4 @@
-import { Iview } from "@cimo/jsmvcfw/dist/JsMvcFwInterface";
+import { Iview } from "../JsMvcFwInterface";
 
 // Source
 import { IvariableList } from "../model/Index";
@@ -14,7 +14,7 @@ const viewClient = (variableList: IvariableList): Iview => {
                     <p>
                         Client connected:
                     </p>
-                    <ul class="item" data-section-bind="clientList">
+                    <ul class="item" data-bind="clientList">
                         ${(() => {
                             const result: string[] = [];
 

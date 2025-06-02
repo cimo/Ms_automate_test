@@ -1,4 +1,4 @@
-import { Icontroller } from "@cimo/jsmvcfw/dist/JsMvcFwInterface";
+import { Icontroller } from "../JsMvcFwInterface";
 import { writeLog, variableState } from "@cimo/jsmvcfw/dist/JsMvcFw";
 import CwsClient from "@cimo/websocket/dist/client/Manager";
 import { MDCRipple } from "@material/ripple";
@@ -24,7 +24,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
     // Variable
     private cwsClient: CwsClient;
     private variableList: IvariableList;
-    private elementButtonExecute: HTMLButtonElement[] | null;
+    private elementButtonExecuteList: HTMLButtonElement[] | null;
 
     private elementLoader: HTMLElement | null;
     //private elementTableData: HTMLElement | null;
@@ -45,7 +45,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
     constructor(cwsClientValue: CwsClient) {
         this.cwsClient = cwsClientValue;
         this.variableList = {} as IvariableList;
-        this.elementButtonExecute = null;
+        this.elementButtonExecuteList = null;
 
         this.elementLoader = null;
         //this.elementTableData = null;
@@ -124,7 +124,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
         this.controllerAlert = new ControllerAlert();
         this.controllerDialog = new ControllerDialog();
 
-        this.elementButtonExecute = Array.from(document.querySelectorAll<HTMLButtonElement>(".button_execute"));
+        this.elementButtonExecuteList = Array.from(document.querySelectorAll<HTMLButtonElement>(".button_execute"));
 
         this.elementLoader = document.querySelector<HTMLElement>(".view_loader");
 
@@ -175,8 +175,8 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
     };
 
     private viewAction = (): void => {
-        if (this.elementButtonExecute) {
-            for (const [, buttonExecuteValue] of Object.entries(this.elementButtonExecute)) {
+        if (this.elementButtonExecuteList) {
+            for (const [, buttonExecuteValue] of Object.entries(this.elementButtonExecuteList)) {
                 buttonExecuteValue.onclick = () => {
                     if (this.controllerAlert) {
                         this.controllerAlert.close();
@@ -185,9 +185,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
                     const elementRow = buttonExecuteValue.closest<HTMLElement>(".row");
 
                     if (elementRow) {
-                        const elementIcon = buttonExecuteValue.querySelector<HTMLElement>(".material-icons");
-
-                        if (elementIcon && !elementIcon.classList.contains("stop")) {
+                        if (buttonExecuteValue.classList.contains("start")) {
                             const elementName = elementRow.querySelector<HTMLElement>(".name");
                             const mdcSelectBrowser = new MDCSelect(elementRow.querySelector(".select_browser") as Element);
 
@@ -224,7 +222,6 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
                 } else if (serverData.tag === "user") {
                     this.variableList.clientList.state = serverData.result as string[];
                 } else if (serverData.tag === "output") {
-                    //this.statusOutput(serverData);
                     this.variableList.serverDataOutput.state = serverData.result as ModelTester.IserverDataOutput[];
                 }
             }
@@ -333,13 +330,13 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
             if (typeof data === "string") {
                 const serverData = JSON.parse(data) as ModelTester.IserverData;
 
-                if (serverData.status === "error") {
-                    if (this.controllerAlert) {
-                        this.controllerAlert.open(serverData.status, serverData.result as string);
-                    }
-                } else {
+                if (serverData.status === "success") {
                     if (this.controllerDialog) {
                         this.controllerDialog.open("Log", serverData.result as string, true);
+                    }
+                } else {
+                    if (this.controllerAlert) {
+                        this.controllerAlert.open(serverData.status, serverData.result as string);
                     }
                 }
             }

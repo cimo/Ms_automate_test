@@ -380,13 +380,9 @@ body *:not(.material-icons) {
 .view_index .left .table_data tbody tr td .field_container {
   display: inline-block !important;
 }
-.view_index .left .table_data tbody tr td .button_log {
-  display: none !important;
-}
 .view_index .left .table_data tbody tr td .icon_loading,
 .view_index .left .table_data tbody tr td .icon_success,
 .view_index .left .table_data tbody tr td .icon_fail {
-  display: none;
   vertical-align: middle;
 }
 .view_index .left .table_data tbody tr td .icon_loading {

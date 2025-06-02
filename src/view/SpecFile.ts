@@ -7,9 +7,6 @@ const viewSpecFile = (variableList: IvariableList): Iview => {
     const specFileListState = variableList.specFileList.state;
     const serverDataOutputState = variableList.serverDataOutput.state;
 
-    // eslint-disable-next-line no-console
-    console.log("cimo - serverDataOutputState", serverDataOutputState);
-
     const template = String.raw`
     <table class="table_data">
         <thead class="filter">
@@ -32,7 +29,7 @@ const viewSpecFile = (variableList: IvariableList): Iview => {
                 </th>
             </tr>
         </thead>
-        <tbody data-section-bind="specFileList">
+        <tbody data-bind="specFileList">
             ${(() => {
                 const result: string[] = [];
 
@@ -40,6 +37,7 @@ const viewSpecFile = (variableList: IvariableList): Iview => {
                     const index = parseInt(key);
 
                     const serverDataOutputStateTime = serverDataOutputState[index] ? serverDataOutputState[index].time : "";
+                    const serverDataOutputStateStatus = serverDataOutputState[index] ? serverDataOutputState[index].status : "";
 
                     result.push(`<tr class="row"
                         data-index="${index}">
@@ -171,39 +169,49 @@ const viewSpecFile = (variableList: IvariableList): Iview => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="mdc-touch-target-wrapper">
-                                <button class="mdc-button mdc-button--raised mdc-button--leading button_primary button_execute">
-                                    <span class="mdc-button__ripple"></span>
-                                    <span class="mdc-button__label">
-                                        <i class="mdc-button__icon material-icons start"
-                                            aria-hidden="true">
-                                            start
-                                        </i>
-                                    </span>
-                                </button>
+                            <div class="mdc-touch-target-wrapper" data-bind="serverDataOutputStatus">
+                                 ${(() => {
+                                     const result: string[] = [];
+
+                                     const label = serverDataOutputStateStatus !== "running" ? "start" : "stop";
+
+                                     result.push(`<button class="mdc-button mdc-button--raised mdc-button--leading button_primary button_execute ${label}">
+                                        <span class="mdc-button__ripple"></span>
+                                        <span class="mdc-button__label">
+                                            <i class="mdc-button__icon material-icons" aria-hidden="true">${label}</i>
+                                        </span>
+                                    </button>`);
+
+                                     return result.join("");
+                                 })()}
                             </div>
                         </td>
                         <td class="cell column_time">
-                            <p class="time" data-bind="serverDataOutput">${JSON.stringify(serverDataOutputStateTime)}</p>
+                            <p data-bind="serverDataOutput">${serverDataOutputStateTime}</p>
                         </td>
-                        <td class="cell column_status">
-                            <i class="mdc-button__icon material-icons icon_loading"
-                                aria-hidden="true">
-                                cached
-                            </i>
-                            <button class="mdc-button mdc-button--raised mdc-button--leading button_flat button_log">
-                                <span class="mdc-button__ripple"></span>
-                                <span class="mdc-button__label">
-                                    <i class="mdc-button__icon material-icons icon_success"
-                                        aria-hidden="true">
-                                        done
-                                    </i>
-                                    <i class="mdc-button__icon material-icons icon_fail"
-                                        aria-hidden="true">
-                                        priority_high
-                                    </i>
-                                </span>
-                            </button>
+                        <td class="cell column_status" data-bind="serverDataOutput">
+                            ${(() => {
+                                const result: string[] = [];
+
+                                if (serverDataOutputStateStatus === "running") {
+                                    result.push(`<i class="mdc-button__icon material-icons icon_loading" aria-hidden="true">cached</i>`);
+                                } else if (serverDataOutputStateStatus !== "" && serverDataOutputStateStatus !== "running") {
+                                    result.push(`<button class="mdc-button mdc-button--raised mdc-button--leading button_flat">
+                                        <span class="mdc-button__ripple"></span>
+                                        <span class="mdc-button__label">`);
+
+                                    if (serverDataOutputStateStatus === "success") {
+                                        result.push(`<i class="mdc-button__icon material-icons icon_success" aria-hidden="true">done</i>`);
+                                    } else if (serverDataOutputStateStatus === "error") {
+                                        result.push(`<i class="mdc-button__icon material-icons icon_fail" aria-hidden="true">priority_high</i>`);
+                                    }
+
+                                    result.push(`</span>
+                                    </button>`);
+                                }
+
+                                return result.join("");
+                            })()}
                         </td>
                     </tr>`);
                 }
