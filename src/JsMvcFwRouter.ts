@@ -1,10 +1,10 @@
 import { Irouter, Icontroller, IvariableState } from "./JsMvcFwInterface";
 import { writeLog, urlRoot } from "./JsMvcFw";
-import { updateDataBind, createReactiveVariable } from "./JsMvcFwDom";
+import { updateDataBind } from "./JsMvcFwDom";
 
 let elementRoot: Element | null = null;
 let routerList: Irouter[] = [];
-let controller: Icontroller | null = null;
+let controller: Icontroller | null;
 let variableMethod: Record<string, IvariableState<unknown>> | null = null;
 
 export const routerInit = (routerListValue: Irouter[]) => {
@@ -51,72 +51,67 @@ const populatePage = (
 ) => {
     let isNotFound = false;
 
-    if (!elementRoot) {
-        throw new Error("@cimo/jsmvcfw => JsMvcFwRouter.ts => #jsmvcfw_app not found!");
-    }
+    if (elementRoot) {
+        for (const [, value] of routerList.entries()) {
+            if (value.path === nextUrl) {
+                controller = value.controller();
 
-    for (const [, value] of routerList.entries()) {
-        if (value.path === nextUrl) {
-            controller = value.controller();
-
-            if (Object.keys(controller).length > 0) {
-                const rawVars = controller.variable();
-                variableMethod = {};
-                for (const name of Object.keys(rawVars)) {
-                    const rawState = rawVars[name].state;
-                    variableMethod[name] = createReactiveVariable(rawState, name);
+                if (Object.keys(controller).length > 0) {
+                    variableMethod = controller.variable();
                 }
+
+                if (urlRoot && isHistoryPushEnabled) {
+                    const urlRootReplace = urlRoot.replace(/\/+$/, "");
+
+                    routerHistoryPush(`${urlRootReplace}${nextUrl}`, soft, value.title, parameterList);
+
+                    if (parameterSearch) {
+                        window.location.search = parameterSearch;
+                    }
+                }
+
+                if (!isHistoryPushEnabled || soft) {
+                    document.title = value.title;
+
+                    if (controller && Object.keys(controller).length > 0 && variableMethod) {
+                        for (const name of Object.keys(variableMethod)) {
+                            document.addEventListener(name, () => {
+                                if (controller && Object.keys(controller).length > 0 && variableMethod) {
+                                    updateDataBind(controller.view(variableMethod), name);
+                                }
+                            });
+                        }
+                        elementRoot.innerHTML = controller.view(variableMethod);
+                    } else {
+                        elementRoot.innerHTML = "";
+                    }
+                }
+
+                if (controller && Object.keys(controller).length > 0 && variableMethod) {
+                    controller.event(variableMethod);
+                }
+
+                isNotFound = false;
+
+                break;
             } else {
-                variableMethod = null;
+                isNotFound = true;
             }
+        }
 
-            if (urlRoot && isHistoryPushEnabled) {
-                const urlRootReplace = urlRoot.replace(/\/+$/, "");
-
-                routerHistoryPush(`${urlRootReplace}${nextUrl}`, soft, value.title, parameterList);
-
-                if (parameterSearch) {
-                    window.location.search = parameterSearch;
-                }
+        if (isNotFound) {
+            if (isHistoryPushEnabled) {
+                routerHistoryPush("/404", soft, "404", parameterList);
             }
 
             if (!isHistoryPushEnabled || soft) {
-                document.title = value.title;
+                document.title = "404";
 
-                if (controller && Object.keys(controller).length > 0 && variableMethod) {
-                    for (const name of Object.keys(variableMethod)) {
-                        variableMethod[name].listener?.(() => {
-                            if (controller && Object.keys(controller).length > 0 && variableMethod) {
-                                updateDataBind(controller.view(variableMethod), name);
-                            }
-                        });
-                    }
-                    elementRoot.innerHTML = controller.view(variableMethod);
-                } else {
-                    elementRoot.innerHTML = "";
-                }
+                elementRoot.innerHTML = "Route not found!";
             }
-
-            if (controller && Object.keys(controller).length > 0 && variableMethod) {
-                controller.event(variableMethod);
-            }
-
-            isNotFound = false;
-            break;
-        } else {
-            isNotFound = true;
         }
-    }
-
-    if (isNotFound) {
-        if (isHistoryPushEnabled) {
-            routerHistoryPush("/404", soft, "404", parameterList);
-        }
-
-        if (!isHistoryPushEnabled || soft) {
-            document.title = "404";
-            elementRoot.innerHTML = "Route not found!";
-        }
+    } else {
+        throw new Error("@cimo/jsmvcfw => JsMvcFwRouter.ts => #jsmvcfw_app not found!");
     }
 };
 
@@ -142,6 +137,7 @@ const routerHistoryPush = (nextUrl: string, soft: boolean, title = "", parameter
 
             if (value) {
                 const cleanedValue = encodeURIComponent(decodeURIComponent(value));
+
                 queryStringCleanedList.push(`${key}=${cleanedValue}`);
             } else {
                 queryStringCleanedList.push(key);

@@ -1,4 +1,4 @@
-import { IvariableState } from "@cimo/jsmvcfw/dist/JsMvcFwInterface";
+import { IvariableState } from "../JsMvcFwInterface";
 
 // Source
 import * as ModelTester from "../model/Tester";

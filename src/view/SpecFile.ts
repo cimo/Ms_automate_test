@@ -1,4 +1,4 @@
-import { Iview } from "@cimo/jsmvcfw/dist/JsMvcFwInterface";
+import { Iview } from "../JsMvcFwInterface";
 
 // Source
 import { IvariableList } from "../model/Index";
@@ -169,7 +169,7 @@ const viewSpecFile = (variableList: IvariableList): Iview => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="mdc-touch-target-wrapper" data-bind="serverDataOutputStatus">
+                            <div class="mdc-touch-target-wrapper" data-bind="serverDataOutput">
                                  ${(() => {
                                      const result: string[] = [];
 
