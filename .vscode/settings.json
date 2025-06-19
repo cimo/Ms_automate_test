@@ -25,7 +25,7 @@
         "editor.formatOnSave": false
     },
     "[html]": {
-        "editor.defaultFormatter": "vscode.html-language-features"
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
     },
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"
@@ -36,15 +36,16 @@
         ".cache",
         ".config",
         ".local",
+        ".ms_cronjob-volume",
         ".npm",
         ".pki",
-        "node_modules",
-        "log",
         "dist",
         "file/document",
+        "file/download",
         "file/input",
         "file/output",
-        "file/web_app",
+        "log",
+        "node_modules",
         "public/file",
         "public/js",
         "public/style",
