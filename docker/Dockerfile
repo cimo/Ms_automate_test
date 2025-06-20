@@ -60,7 +60,8 @@ USER node
 
 WORKDIR ${PATH_ROOT}
 
-RUN npm install \
+RUN rm -rf node_modules package-lock.json \
+    && npm install \
     && npx playwright install \
     && npm run build
 
