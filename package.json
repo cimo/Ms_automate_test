@@ -21,11 +21,11 @@
         "execute_ui": "npx playwright test --ui --config=./src/playwright.config.ts"
     },
     "dependencies": {
-        "@cimo/authentication": "1.1.16",
-        "@cimo/pid": "1.0.9",
-        "@cimo/websocket": "1.2.38",
-        "@cimo/jsmvcfw": "1.1.5",
-        "@cimo/environment": "1.0.7",
+        "@cimo/authentication": "1.1.19",
+        "@cimo/pid": "1.0.12",
+        "@cimo/websocket": "1.2.41",
+        "@cimo/jsmvcfw": "1.1.8",
+        "@cimo/environment": "1.0.11",
         "express": "4.21.2",
         "express-rate-limit": "7.5.0",
         "cookie-parser": "1.4.7",
