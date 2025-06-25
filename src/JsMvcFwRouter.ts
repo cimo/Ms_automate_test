@@ -1,6 +1,6 @@
 import { Irouter, Icontroller, IvariableState } from "./JsMvcFwInterface";
 import { writeLog, urlRoot } from "./JsMvcFw";
-import { updateDataBind } from "./JsMvcFwDom";
+//import { updateDataBind } from "./JsMvcFwDom";
 
 let elementRoot: Element | null = null;
 let routerList: Irouter[] = [];
@@ -74,13 +74,13 @@ const populatePage = (
                     document.title = value.title;
 
                     if (controller && Object.keys(controller).length > 0 && variableMethod) {
-                        for (const name of Object.keys(variableMethod)) {
+                        /*for (const name of Object.keys(variableMethod)) {
                             document.addEventListener(name, () => {
                                 if (controller && Object.keys(controller).length > 0 && variableMethod) {
                                     updateDataBind(controller.view(variableMethod), name);
                                 }
                             });
-                        }
+                        }*/
                         elementRoot.innerHTML = controller.view(variableMethod);
                     } else {
                         elementRoot.innerHTML = "";

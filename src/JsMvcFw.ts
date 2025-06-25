@@ -1,7 +1,7 @@
 import { IvariableState } from "./JsMvcFwInterface";
 
 let isDebug = false;
-const variableStateEventList = new Set<string>();
+//const variableStateEventList = new Set<string>();
 
 export let urlRoot = "";
 export let systemLabel = "";
@@ -14,7 +14,7 @@ export const mainInit = (isDebugValue = false, urlRootValue = "/", labelValue = 
     writeLog("@cimo/jsmvcfw => JsMvcFw.ts => mainInit()", { isDebug, urlRoot, labelValue });
 };
 
-export const variableState = <T>(name: string, value: T): IvariableState<T> => {
+/*export const variableState = <T>(name: string, value: T): IvariableState<T> => {
     if (variableStateEventList.has(name)) {
         throw new Error(`JsMvcFw.ts - variableState: Event "${name}" already exists!`);
     }
@@ -45,7 +45,45 @@ export const variableState = <T>(name: string, value: T): IvariableState<T> => {
             });
         }
     };
-};
+};*/
+
+export function variableState<T>(name: string, initialValue: T, renderSelector?: string): IvariableState<T> {
+    let internalValue = initialValue;
+    const listeners: ((value: T) => void)[] = [];
+
+    const notify = () => {
+        if (renderSelector) {
+            const element = document.querySelector(renderSelector);
+            if (element) {
+                element.innerHTML = String(internalValue);
+            }
+        }
+        listeners.forEach((callback) => callback(internalValue));
+    };
+
+    return new Proxy(
+        {
+            state: internalValue,
+            listener(callback: (value: T) => void) {
+                listeners.push(callback);
+            }
+        },
+        {
+            get(target, prop) {
+                if (prop === "state") return internalValue;
+                return Reflect.get(target, prop);
+            },
+            set(target, prop, value) {
+                if (prop === "state") {
+                    internalValue = value;
+                    notify();
+                    return true;
+                }
+                return Reflect.set(target, prop, value);
+            }
+        }
+    ) as IvariableState<T>;
+}
 
 export const writeLog = (tag: string, value: string | Record<string, unknown> | Error): void => {
     if (isDebug) {

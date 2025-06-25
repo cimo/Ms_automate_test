@@ -1,6 +1,6 @@
-import { writeLog } from "./JsMvcFw";
+//import { writeLog } from "./JsMvcFw";
 
-export const updateDataBind = (template: string, name: string): void => {
+/*export const updateDataBind = (template: string, name: string): void => {
     const elementDataBind = document.querySelector<HTMLElement>(`[data-bind="${name}"]`);
 
     if (elementDataBind) {
@@ -12,4 +12,18 @@ export const updateDataBind = (template: string, name: string): void => {
     } else {
         writeLog("@cimo/jsmvcfw => JsMvcFwDom.ts => updateDataBind()", `data-bind="${name}" don't exists in the DOM!`);
     }
+};*/
+
+export const updateDataBind = (value: unknown, name: string): void => {
+    const elements = document.querySelectorAll<HTMLElement>(`[data-bind="${name}"]`);
+
+    elements.forEach((element) => {
+        if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
+            element.value = String(value);
+        } else if (element instanceof HTMLImageElement) {
+            element.src = String(value);
+        } else {
+            element.textContent = String(value);
+        }
+    });
 };

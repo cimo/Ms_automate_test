@@ -29,7 +29,7 @@ const viewSpecFile = (variableList: IvariableList): Iview => {
                 </th>
             </tr>
         </thead>
-        <tbody data-bind="specFileList">
+        <tbody>
             ${(() => {
                 const result: string[] = [];
 
