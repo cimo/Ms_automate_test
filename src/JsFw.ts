@@ -1,13 +1,8 @@
-// framework.ts
+import { IvariableStateA } from "./JsFwInterface";
+import { IvNodeProps, IvNode } from "./JsFwInterface";
 
-type VNode = {
-    type: string;
-    props: Record<string, any>;
-    children: Array<VNode | string>;
-};
-
-function createVNodeFromElement(el: Element): VNode {
-    const children: Array<VNode | string> = [];
+function createVNodeFromElement(el: Element): IvNode {
+    const children: Array<IvNode | string> = [];
     el.childNodes.forEach((child) => {
         if (child.nodeType === Node.TEXT_NODE) {
             children.push(child.textContent || "");
@@ -16,7 +11,7 @@ function createVNodeFromElement(el: Element): VNode {
         }
     });
 
-    const props: Record<string, any> = {};
+    const props: IvNodeProps = {};
     for (const attr of el.attributes) {
         props[attr.name] = attr.value;
     }
@@ -28,13 +23,13 @@ function createVNodeFromElement(el: Element): VNode {
     };
 }
 
-function createVNodeFromHTML(html: string): VNode {
+function createVNodeFromHTML(html: string): IvNode {
     const template = document.createElement("template");
     template.innerHTML = html.trim();
     return createVNodeFromElement(template.content.firstElementChild!);
 }
 
-function updateDOM(el: Element, newVNode: VNode, oldVNode: VNode) {
+function updateDOM(el: Element, newVNode: IvNode, oldVNode: IvNode) {
     if (newVNode.type !== oldVNode.type) {
         const newEl = createElement(newVNode);
         el.replaceWith(newEl);
@@ -44,7 +39,7 @@ function updateDOM(el: Element, newVNode: VNode, oldVNode: VNode) {
     // Update attributes
     for (const [key, value] of Object.entries(newVNode.props)) {
         if (el.getAttribute(key) !== value) {
-            el.setAttribute(key, value);
+            el.setAttribute(key, String(value));
         }
     }
 
@@ -73,17 +68,17 @@ function updateDOM(el: Element, newVNode: VNode, oldVNode: VNode) {
                 domChild.textContent = newChild;
             }
         } else if (typeof newChild === "string" || typeof oldChild === "string") {
-            el.replaceChild(typeof newChild === "string" ? document.createTextNode(newChild) : createElement(newChild as VNode), domChild);
+            el.replaceChild(typeof newChild === "string" ? document.createTextNode(newChild) : createElement(newChild as IvNode), domChild);
         } else {
-            updateDOM(domChild as Element, newChild as VNode, oldChild as VNode);
+            updateDOM(domChild as Element, newChild as IvNode, oldChild as IvNode);
         }
     }
 }
 
-function createElement(vnode: VNode): Element {
+function createElement(vnode: IvNode): Element {
     const el = document.createElement(vnode.type);
     for (const [key, value] of Object.entries(vnode.props)) {
-        el.setAttribute(key, value);
+        el.setAttribute(key, String(value));
     }
 
     vnode.children.forEach((child) => {
@@ -97,7 +92,7 @@ function createElement(vnode: VNode): Element {
     return el;
 }
 
-let oldVNode: VNode | null = null;
+let oldVNode: IvNode | null = null;
 let root: HTMLElement;
 
 export function initFramework(rootElement: HTMLElement) {
@@ -113,4 +108,32 @@ export function renderTemplate(template: string) {
         updateDOM(root.firstElementChild!, newVNode, oldVNode);
     }
     oldVNode = newVNode;
+}
+
+export function reactive<T>(initial: { state: T }, onChange: () => void): IvariableStateA<T> {
+    let listeners: Array<(value: T) => void> = [];
+
+    const proxy = new Proxy(initial, {
+        set(target, prop, value) {
+            if (prop === "state") {
+                target[prop] = value;
+                onChange();
+                listeners.forEach((fn) => fn(value));
+                return true;
+            }
+            return false;
+        }
+    });
+
+    return {
+        get state() {
+            return proxy.state;
+        },
+        set state(value: T) {
+            proxy.state = value;
+        },
+        listener(callback: (value: T) => void) {
+            listeners.push(callback);
+        }
+    };
 }

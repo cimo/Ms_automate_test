@@ -1,19 +1,25 @@
-// view.ts
+import { IviewA } from "../JsFwInterface";
 
-export const pageIndex = (vars: Record<string, any>): { template: string } => {
+// Soruce
+import { IvariableListA } from "../model/Test";
+
+const viewTest = (variableList: IvariableListA): IviewA => {
     return {
         template: `
             <div>
                 <h1>Benvenuto nel framework!</h1>
                 <div>
-                    <p>Contatore: <span>${vars.count.state}</span></p>
+                    <p>Contatore: <span>${variableList.count.state}</span></p>
                     <button id="btn">Incrementa</button>
                     ${(() => {
                         const result: string[] = [];
-                        for (const [key, value] of Object.entries(vars.list.state)) {
+
+                        for (const [key, value] of Object.entries(variableList.list.state)) {
                             const index = parseInt(key);
+
                             result.push(`<p>${index} - ${value}</p>`);
                         }
+
                         return result.join("");
                     })()}
                 </div>
@@ -21,3 +27,5 @@ export const pageIndex = (vars: Record<string, any>): { template: string } => {
         `
     };
 };
+
+export default viewTest;
