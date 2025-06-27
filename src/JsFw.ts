@@ -1,5 +1,4 @@
-import { IvariableStateA } from "./JsFwInterface";
-import { IvNodeProps, IvNode } from "./JsFwInterface";
+import { IvNodeProps, IvNode, IvariableStateA } from "./JsFwInterface";
 
 function createVNodeFromElement(el: Element): IvNode {
     const children: Array<IvNode | string> = [];
@@ -92,35 +91,67 @@ function createElement(vnode: IvNode): Element {
     return el;
 }
 
+let isDebug: boolean = false;
+let urlRoot: string = "";
+let elementRoot: HTMLElement | null = null;
 let oldVNode: IvNode | null = null;
-let root: HTMLElement;
 
-export function initFramework(rootElement: HTMLElement) {
-    root = rootElement;
+export const getIsDebug = () => {
+    return isDebug;
+};
+
+export const getUrlRoot = () => {
+    return urlRoot;
+};
+
+export const getElementRoot = () => {
+    return elementRoot;
+};
+
+export const writeLog = (tag: string, value: string | string[] | Record<string, unknown> | Error): void => {
+    if (isDebug) {
+        // eslint-disable-next-line no-console
+        console.log(`${tag} `, value);
+    }
+};
+
+export function frameworkInit(isDebugValue: boolean, urlRootValue: string, elementRootValue: string) {
+    isDebug = isDebugValue;
+    urlRoot = urlRootValue;
+    elementRoot = document.getElementById(elementRootValue);
 }
 
 export function renderTemplate(template: string) {
     const newVNode = createVNodeFromHTML(template);
-    if (!oldVNode) {
-        const dom = createElement(newVNode);
-        root.appendChild(dom);
-    } else {
-        updateDOM(root.firstElementChild!, newVNode, oldVNode);
+
+    if (elementRoot) {
+        if (!oldVNode) {
+            const dom = createElement(newVNode);
+
+            elementRoot.appendChild(dom);
+        } else {
+            updateDOM(elementRoot.firstElementChild!, newVNode, oldVNode);
+        }
     }
+
     oldVNode = newVNode;
 }
 
-export function reactive<T>(initial: { state: T }, onChange: () => void): IvariableStateA<T> {
+export function bindState<T>(initial: { state: T }, template: () => string): IvariableStateA<T> {
     let listeners: Array<(value: T) => void> = [];
 
     const proxy = new Proxy(initial, {
         set(target, prop, value) {
             if (prop === "state") {
                 target[prop] = value;
-                onChange();
+
+                renderTemplate(template());
+
                 listeners.forEach((fn) => fn(value));
+
                 return true;
             }
+
             return false;
         }
     });

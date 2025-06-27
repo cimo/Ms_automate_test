@@ -10,22 +10,18 @@ export interface IvNode {
 
 export interface IvariableStateA<T> {
     state: T;
-    listener: (callback: (value: T) => void) => void;
-}
-
-export interface IviewA {
-    template: string;
+    listener(callback: (value: T) => void): void;
 }
 
 export interface IcontrollerA {
-    variable: () => void;
-    view: () => void;
-    event: () => void;
-    destroy: () => void;
+    variable(): void;
+    view(): () => string;
+    event(): void;
+    destroy(): void;
 }
 
-/*export interface IrouterA {
+export interface IrouterA {
     title: string;
     path: string;
     controller(): IcontrollerA;
-}*/
+}

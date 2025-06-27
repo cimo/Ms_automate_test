@@ -14,21 +14,18 @@ const controllerRouter = new ControllerRouter(cwsClient);
 
 routerInit(controllerRouter.dataMain);*/
 
-import { initFramework } from "../JsFw";
+import { frameworkInit } from "../JsFw";
+import { routerInit } from "../JsFwRouter";
 
 // Source
 import ControllerTest from "../controller/Test";
 
-document.addEventListener("DOMContentLoaded", () => {
-    const root = document.getElementById("jsmvcfw_app")!;
+frameworkInit(true, "/", "jsmvcfw_app");
 
-    if (root) {
-        initFramework(root);
-
-        const controllerTest = new ControllerTest();
-        controllerTest.variable();
-        controllerTest.view();
-        controllerTest.event();
-        //controllerTest.destroy();
+routerInit([
+    {
+        title: "Index",
+        path: `/ui`,
+        controller: () => new ControllerTest()
     }
-});
+]);
