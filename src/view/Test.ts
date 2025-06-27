@@ -5,7 +5,7 @@ const viewTest = (variableList: IvariableListA): string => {
     return `<div>
         <h1>Benvenuto nel framework!</h1>
         <div>
-            <p>Contatore: <span>${variableList.count.state}</span></p>
+            <p class="${variableList.className.state}">Contatore: <span>${variableList.count.state}</span></p>
             <button id="btn">Incrementa</button>
             ${(() => {
                 const result: string[] = [];

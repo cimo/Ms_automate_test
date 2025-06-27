@@ -21,7 +21,8 @@ export default class ControllerTest implements IcontrollerA {
     variable(): void {
         this.variableList = {
             count: bindState({ state: 0 }, this.template),
-            list: bindState({ state: ["uno", "due"] }, this.template)
+            list: bindState({ state: ["uno", "due"] }, this.template),
+            className: bindState({ state: "" }, this.template)
         };
     }
 
@@ -43,6 +44,7 @@ export default class ControllerTest implements IcontrollerA {
                 if (target) {
                     this.variableList.count.state++;
                     this.variableList.list.state = ["uno", "due", "tre"];
+                    this.variableList.className.state = "cimo";
                 }
             });
         }

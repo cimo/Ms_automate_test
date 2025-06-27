@@ -5,4 +5,5 @@ import { IvariableStateA } from "../JsFwInterface";
 export type IvariableListA = {
     count: IvariableStateA<number>;
     list: IvariableStateA<string[]>;
+    className: IvariableStateA<string>;
 };
