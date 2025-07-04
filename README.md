@@ -41,6 +41,7 @@ npm run execute_ui
     - package-lock.json
     - certificate/tls.crt
     - certificate/tls.key
+    - certificate/tls.pem
 
 2. Follow the "Installation" instructions.
 
