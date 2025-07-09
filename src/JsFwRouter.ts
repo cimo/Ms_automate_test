@@ -4,38 +4,50 @@ import { writeLog, renderTemplate, getUrlRoot, getElementRoot } from "./JsFw";
 let routerList: IrouterA[] = [];
 let controller: IcontrollerA | null = null;
 
-export const routerInit = (routerListValue: IrouterA[]) => {
-    routerList = routerListValue;
+const routerHistoryPush = (nextUrl: string, soft: boolean, title = "", parameterListValue?: Record<string, unknown>): void => {
+    let url = nextUrl;
 
-    window.onload = (event: Event) => {
-        writeLog("@cimo/jsmvcfw => JsMvcFwRouter.ts => onload()", window.location.pathname);
+    if (nextUrl.charAt(0) === "/") {
+        url = nextUrl.slice(1);
+    }
 
-        if (event) {
-            populatePage(false, window.location.pathname, false);
-        }
-    };
+    if (url === "") {
+        url = "/";
+    }
 
-    window.onpopstate = (event: PopStateEvent) => {
-        writeLog("@cimo/jsmvcfw => JsMvcFwRouter.ts => onpopstate()", window.location.pathname);
+    const [path, queryString] = url.split("?");
+    const queryStringCleanedList: string[] = [];
 
-        if (event) {
-            populatePage(false, window.location.pathname, false);
-        }
-    };
+    if (queryString) {
+        const params = queryString.split("&");
 
-    window.onbeforeunload = (event: Event) => {
-        writeLog("@cimo/jsmvcfw => JsMvcFwRouter.ts => onbeforeunload()", { event });
+        params.forEach((param) => {
+            const [key, value] = param.split("=");
 
-        if (event && controller && Object.keys(controller).length > 0) {
-            controller.destroy();
-        }
-    };
-};
+            if (value) {
+                const cleanedValue = encodeURIComponent(decodeURIComponent(value));
 
-export const navigateTo = (nextUrl: string, soft = false, parameterList?: Record<string, unknown>, parameterSearch?: string) => {
-    writeLog("@cimo/jsmvcfw => JsMvcFwRouter.ts => navigateTo()", { nextUrl, parameterList, parameterSearch });
+                queryStringCleanedList.push(`${key}=${cleanedValue}`);
+            } else {
+                queryStringCleanedList.push(key);
+            }
+        });
+    }
 
-    populatePage(true, nextUrl, soft, parameterList, parameterSearch);
+    const urlCleaned = path + (queryStringCleanedList.length > 0 ? "?" + queryStringCleanedList.join("&") : "");
+
+    window.history.pushState(
+        {
+            prevUrl: window.location.pathname,
+            parameterList: parameterListValue
+        },
+        title,
+        urlCleaned
+    );
+
+    if (!soft) {
+        window.location.href = urlCleaned;
+    }
 };
 
 const populatePage = (
@@ -44,7 +56,7 @@ const populatePage = (
     soft: boolean,
     parameterList?: Record<string, unknown>,
     parameterSearch?: string
-) => {
+): void => {
     let isNotFound = false;
 
     const urlRoot = getUrlRoot();
@@ -109,48 +121,36 @@ const populatePage = (
     }
 };
 
-const routerHistoryPush = (nextUrl: string, soft: boolean, title = "", parameterListValue?: Record<string, unknown>): void => {
-    let url = nextUrl;
+export const routerInit = (routerListValue: IrouterA[]): void => {
+    routerList = routerListValue;
 
-    if (nextUrl.charAt(0) === "/") {
-        url = nextUrl.slice(1);
-    }
+    window.onload = (event: Event) => {
+        writeLog("@cimo/jsmvcfw => JsMvcFwRouter.ts => onload()", window.location.pathname);
 
-    if (url === "") {
-        url = "/";
-    }
+        if (event) {
+            populatePage(false, window.location.pathname, false);
+        }
+    };
 
-    const [path, queryString] = url.split("?");
-    const queryStringCleanedList: string[] = [];
+    window.onpopstate = (event: PopStateEvent) => {
+        writeLog("@cimo/jsmvcfw => JsMvcFwRouter.ts => onpopstate()", window.location.pathname);
 
-    if (queryString) {
-        const params = queryString.split("&");
+        if (event) {
+            populatePage(false, window.location.pathname, false);
+        }
+    };
 
-        params.forEach((param) => {
-            const [key, value] = param.split("=");
+    window.onbeforeunload = (event: Event) => {
+        writeLog("@cimo/jsmvcfw => JsMvcFwRouter.ts => onbeforeunload()", { event });
 
-            if (value) {
-                const cleanedValue = encodeURIComponent(decodeURIComponent(value));
+        if (event && controller && Object.keys(controller).length > 0) {
+            controller.destroy();
+        }
+    };
+};
 
-                queryStringCleanedList.push(`${key}=${cleanedValue}`);
-            } else {
-                queryStringCleanedList.push(key);
-            }
-        });
-    }
+export const navigateTo = (nextUrl: string, soft = false, parameterList?: Record<string, unknown>, parameterSearch?: string): void => {
+    writeLog("@cimo/jsmvcfw => JsMvcFwRouter.ts => navigateTo()", { nextUrl, parameterList, parameterSearch });
 
-    const urlCleaned = path + (queryStringCleanedList.length > 0 ? "?" + queryStringCleanedList.join("&") : "");
-
-    window.history.pushState(
-        {
-            prevUrl: window.location.pathname,
-            parameterList: parameterListValue
-        },
-        title,
-        urlCleaned
-    );
-
-    if (!soft) {
-        window.location.href = urlCleaned;
-    }
+    populatePage(true, nextUrl, soft, parameterList, parameterSearch);
 };

@@ -1,11 +1,11 @@
-export interface IvNodeProps {
+export interface IvirtualNodeProps {
     [key: string]: string | number | boolean | null;
 }
 
-export interface IvNode {
+export interface IvirtualNode {
     type: string;
-    props: IvNodeProps;
-    children: Array<IvNode | string>;
+    props: IvirtualNodeProps;
+    children: Array<IvirtualNode | string>;
 }
 
 export interface IvariableStateA<T> {
