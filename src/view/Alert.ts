@@ -1,10 +1,5 @@
-import { Iview } from "../JsMvcFwInterface";
-
-// Source
-
-const viewAlert = (): Iview => {
-    const template = String.raw`
-    <aside class="mdc-snackbar mdc-snackbar--stacked view_alert">
+const viewAlert = (): string => {
+    return `<aside class="mdc-snackbar mdc-snackbar--stacked view_alert">
         <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
             <div class="mdc-snackbar__label" aria-atomic="false"></div>
             <div class="mdc-snackbar__actions" aria-atomic="true">
@@ -15,10 +10,6 @@ const viewAlert = (): Iview => {
             </div>
         </div>
     </aside>`;
-
-    return {
-        template
-    };
 };
 
 export default viewAlert;

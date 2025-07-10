@@ -1,20 +1,8 @@
 @use "../color.scss" as color;
 @use "../media.scss" as media;
 
-.page_container {
-    & > .left {
-        display: none !important;
-    }
-
-    & > .right {
-        width: 100% !important;
-    }
-}
-
 .view_index {
-    text-align: center;
-
-    .left {
+    & > .left {
         display: inline-block;
         margin: 10px;
         text-align: left;
@@ -72,7 +60,7 @@
         }
     }
 
-    .right {
+    & > .right {
         display: inline-block;
         margin: 10px;
         text-align: left;

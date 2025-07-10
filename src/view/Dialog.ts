@@ -1,10 +1,5 @@
-import { Iview } from "../JsMvcFwInterface";
-
-// Source
-
-const viewDialog = (): Iview => {
-    const template = String.raw`
-    <aside class="mdc-dialog view_dialog">
+const viewDialog = (): string => {
+    return `<aside class="mdc-dialog view_dialog">
         <div class="mdc-dialog__container">
             <div class="mdc-dialog__surface"
                 role="alertdialog"
@@ -31,10 +26,6 @@ const viewDialog = (): Iview => {
         </div>
         <div class="mdc-dialog__scrim"></div>
     </aside>`;
-
-    return {
-        template
-    };
 };
 
 export default viewDialog;

@@ -1,39 +1,14 @@
-import { Icontroller } from "../JsMvcFwInterface";
-import { writeLog } from "../JsMvcFw";
 import { MDCSnackbar } from "@material/snackbar";
 
-// Source
-import { IvariableList } from "../model/Alert";
-
-export default class ControllerAlert implements Icontroller<IvariableList> {
+export default class ControllerAlert {
     // Variable
-    private variableList: IvariableList;
     private mdcSnackbar: MDCSnackbar | null;
 
     // Method
     constructor() {
-        this.variableList = {} as IvariableList;
         this.mdcSnackbar = null;
 
         this.initializeHtmlElement();
-    }
-
-    variable(): IvariableList {
-        return this.variableList;
-    }
-
-    view(variableList: IvariableList): string {
-        writeLog("Alert.ts => view()", variableList);
-
-        return "";
-    }
-
-    event(variableList: IvariableList): void {
-        writeLog("Alert.ts => event()", variableList);
-    }
-
-    destroy(variableList: IvariableList): void {
-        writeLog("Alert.ts => destroy()", variableList);
     }
 
     private initializeHtmlElement = (): void => {
@@ -48,7 +23,7 @@ export default class ControllerAlert implements Icontroller<IvariableList> {
         }
     };
 
-    open = (className: string, text: string, timeout = -1) => {
+    open = (className: string, text: string, timeout = -1): void => {
         this.close();
 
         if (this.mdcSnackbar) {
@@ -59,7 +34,7 @@ export default class ControllerAlert implements Icontroller<IvariableList> {
         }
     };
 
-    close = () => {
+    close = (): void => {
         if (this.mdcSnackbar) {
             this.mdcSnackbar.close();
             this.mdcSnackbar.root.classList.remove("success");

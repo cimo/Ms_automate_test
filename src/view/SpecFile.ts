@@ -1,14 +1,11 @@
-import { Iview } from "../JsMvcFwInterface";
-
 // Source
-import { IvariableList } from "../model/Index";
+import * as ModelIndex from "../model/Index";
 
-const viewSpecFile = (variableList: IvariableList): Iview => {
+const viewSpecFile = (variableList: ModelIndex.IvariableList): string => {
     const specFileListState = variableList.specFileList.state;
-    const serverDataOutputState = variableList.serverDataOutput.state;
+    const serverDataOutputState = variableList.serverDataOutputList.state;
 
-    const template = String.raw`
-    <table class="table_data">
+    return `<table class="table_data">
         <thead class="filter">
             <tr className="row filter_action"></tr>
             <tr class="row not_hover">
@@ -220,10 +217,6 @@ const viewSpecFile = (variableList: IvariableList): Iview => {
             })()}
         </tbody>
     </table>`;
-
-    return {
-        template
-    };
 };
 
 export default viewSpecFile;

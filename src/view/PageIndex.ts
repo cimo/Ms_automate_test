@@ -1,40 +1,25 @@
-import { Iview } from "../JsMvcFwInterface";
+// Soruce
+import * as ModelIndex from "../model/Index";
+import viewLoader from "./Loader";
+import viewAlert from "./Alert";
+import viewDialog from "./Dialog";
+import viewSpecFile from "./SpecFile";
 
-// Source
-
-const viewPageIndex = (
-    viewLoaderTemplate: string,
-    viewAlertTemplate: string,
-    viewDialogTemplate: string,
-    viewSpecFileTemplate: string,
-    viewClientTemplate: string,
-    viewVideoTemplate: string,
-    viewUploadTemplate: string
-): Iview => {
-    const template = String.raw`
-    ${viewLoaderTemplate}
-    ${viewAlertTemplate}
-    ${viewDialogTemplate}
-    <div class="page_container">
+const viewPageIndex = (variableList: ModelIndex.IvariableList): string => {
+    return `${viewLoader()}
+    ${viewAlert()}
+    ${viewDialog()}
+    <div class="page_container view_index">
         <div class="header"></div>
-        <div class="left"></div>
+        <div class="left">
+            ${viewSpecFile(variableList)}
+        </div>
         <div class="right">
-            <div class="view_index">
-                <div class="left">
-                    ${viewSpecFileTemplate}
-                </div>
-                <div class="right">
-                    ${viewClientTemplate}
-                    ${viewVideoTemplate}
-                    ${viewUploadTemplate}
-                </div>
-            </div>
+            ${/*viewClientTemplate*/ ""}
+            ${/*viewVideoTemplate*/ ""}
+            ${/*viewUploadTemplate*/ ""}
         </div>
     </div>`;
-
-    return {
-        template
-    };
 };
 
 export default viewPageIndex;
