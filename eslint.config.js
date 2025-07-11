@@ -45,7 +45,7 @@ const configBase = {
 
 const configFile = {
     ...configBase,
-    files: ["**/*.{ts,js}"],
+    files: ["**/*.{ts,tsx,js,jsx}"],
     ignores: [".*/**/*", "public/**/*", "dist/**/*", "eslint.config.js", "webpack.build.js"],
     languageOptions: {
         ...configBase.languageOptions,

@@ -474,7 +474,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
 }
 */
 
-import { Icontroller } from "../JsMvcFwInterface";
+import { Icontroller, IvirtualNode } from "../JsMvcFwInterface";
 import { writeLog, bindState } from "../JsMvcFw";
 import CwsClient from "@cimo/websocket/dist/client/Manager";
 import { MDCRipple } from "@material/ripple";
@@ -491,14 +491,14 @@ import ControllerDialog from "./Dialog";
 
 export default class ControllerIndex implements Icontroller {
     // Variable
-    private template: () => string;
+    private template: () => IvirtualNode;
     private variableList: ModelIndex.IvariableList;
+    private methodList: ModelIndex.ImethodList;
     private cwsClient: CwsClient;
     private controllerAlert: ControllerAlert | null;
     private controllerDialog: ControllerDialog | null;
 
-    private elementButtonExecuteList: HTMLButtonElement[] | null;
-    private elementLoader: HTMLElement | null;
+    //private elementButtonExecuteList: HTMLButtonElement[] | null;
     //private elementTableData: HTMLElement | null;
     //private elementTableDataRowList: NodeListOf<HTMLElement> | null;
     private elementTableVideo: HTMLElement | null;
@@ -512,157 +512,9 @@ export default class ControllerIndex implements Icontroller {
     private elementTableUploadInput: HTMLInputElement | null;
 
     // Method
-    constructor(cwsClientValue: CwsClient) {
-        this.template = () => viewPageIndex(this.variableList);
-        this.variableList = {} as ModelIndex.IvariableList;
-        this.cwsClient = cwsClientValue;
-        this.controllerAlert = null;
-        this.controllerDialog = null;
-
-        this.elementButtonExecuteList = null;
-        this.elementLoader = null;
-        //this.elementTableData = null;
-        //this.elementTableDataRowList = null;
-        this.elementTableVideo = null;
-        this.elementTableVideoButtonLoad = null;
-        this.elementTableVideoInput = null;
-        this.elementTableVideoItem = null;
-        this.elementTableVideoPlayer = null;
-        this.elementTableUpload = null;
-        this.elementTableUploadButton = null;
-        this.elementTableUploadButtonFake = null;
-        this.elementTableUploadInput = null;
-
-        this.cwsClient.checkConnection((mode) => {
-            this.broadcast();
-
-            if (mode === "connection") {
-                this.specFileListData();
-
-                this.runData();
-
-                this.videoData();
-
-                this.uploadData();
-            }
-        });
-    }
-
-    variable(): void {
-        this.variableList = {
-            specFileList: bindState({ state: [] }, this.template),
-            clientList: bindState({ state: [] }, this.template),
-            serverDataOutputList: bindState({ state: [] }, this.template)
-        };
-    }
-
-    view(): () => string {
-        writeLog("Index.ts => view()", this.variableList);
-
-        return this.template;
-    }
-
-    event(): void {
-        writeLog("Index.ts => event()", this.variableList);
-
-        this.variableList.specFileList.listener(() => {
-            this.htmlElementInitialize();
-            this.htmlElementAction();
-        });
-    }
-
-    destroy(): void {
-        writeLog("Index.ts => destroy()", this.variableList);
-    }
-
-    private htmlElementInitialize = (): void => {
-        this.controllerAlert = new ControllerAlert();
-        this.controllerDialog = new ControllerDialog();
-
-        this.elementLoader = document.querySelector<HTMLElement>(".view_loader");
-
-        if (this.elementLoader) {
-            this.elementLoader.style.setProperty("display", "none");
-        }
-
-        this.elementButtonExecuteList = Array.from(document.querySelectorAll<HTMLButtonElement>(".button_execute"));
-
-        /*this.elementTableData = document.querySelector<HTMLElement>(".table_data");
-
-        if (this.elementTableData) {
-            this.elementTableDataRowList = this.elementTableData.querySelectorAll<HTMLElement>("tbody .row");
-        }*/
-
-        this.elementTableVideo = document.querySelector<HTMLElement>(".table_video");
-
-        if (this.elementTableVideo) {
-            this.elementTableVideoButtonLoad = this.elementTableVideo.querySelector<HTMLButtonElement>(".button_load");
-            this.elementTableVideoInput = this.elementTableVideo.querySelector<HTMLInputElement>(".input_video input");
-            this.elementTableVideoItem = this.elementTableVideo.querySelector<HTMLElement>(".item");
-            this.elementTableVideoPlayer = this.elementTableVideo.querySelector<HTMLVideoElement>("video");
-        }
-
-        this.elementTableUpload = document.querySelector<HTMLElement>(".table_upload");
-
-        if (this.elementTableUpload) {
-            this.elementTableUploadButton = this.elementTableUpload.querySelector<HTMLButtonElement>(".button_upload");
-            this.elementTableUploadButtonFake = this.elementTableUpload.querySelector<HTMLButtonElement>(".button_input_upload_fake");
-            this.elementTableUploadInput = this.elementTableUpload.querySelector<HTMLInputElement>(".input_upload");
-        }
-
-        const elementMdcButtonList = document.querySelectorAll<HTMLElement>(".mdc-button");
-
-        for (const elementMdcButton of elementMdcButtonList) {
-            new MDCRipple(elementMdcButton);
-        }
-
-        const elementMdcTextFieldList = document.querySelectorAll<HTMLElement>(".mdc-text-field");
-
-        for (const elementMdcTextField of elementMdcTextFieldList) {
-            new MDCTextField(elementMdcTextField);
-        }
-
-        const elementMdcSelectList = document.querySelectorAll<HTMLElement>(".mdc-select");
-
-        for (const elementMdcSelect of elementMdcSelectList) {
-            new MDCSelect(elementMdcSelect);
-        }
-    };
-
-    private htmlElementAction = (): void => {
-        if (this.elementButtonExecuteList) {
-            for (const [, buttonExecuteValue] of Object.entries(this.elementButtonExecuteList)) {
-                buttonExecuteValue.onclick = () => {
-                    if (this.controllerAlert) {
-                        this.controllerAlert.close();
-                    }
-
-                    const elementRow = buttonExecuteValue.closest<HTMLElement>(".row");
-
-                    if (elementRow) {
-                        if (buttonExecuteValue.classList.contains("start")) {
-                            const elementName = elementRow.querySelector<HTMLElement>(".name");
-                            const mdcSelectBrowser = new MDCSelect(elementRow.querySelector(".select_browser") as Element);
-
-                            if (elementName && mdcSelectBrowser) {
-                                const clientData: ModelTester.IclientDataRun = {
-                                    index: parseInt(elementRow.getAttribute("data-index") as string),
-                                    name: elementName.textContent ? elementName.textContent.trim() : "",
-                                    browser: mdcSelectBrowser.value
-                                };
-                                this.cwsClient.sendData(1, JSON.stringify(clientData), "run");
-                            }
-                        } else {
-                            const clientData: ModelTester.IclientDataStop = {
-                                index: parseInt(elementRow.getAttribute("data-index") as string)
-                            };
-
-                            this.cwsClient.sendData(1, JSON.stringify(clientData), "stop");
-                        }
-                    }
-                };
-            }
-        }
+    private onClickTest = (): void => {
+        // eslint-disable-next-line no-console
+        console.log("cimo");
     };
 
     private broadcast = (): void => {
@@ -687,7 +539,7 @@ export default class ControllerIndex implements Icontroller {
         this.cwsClient.sendData(1, "", "output", 200);
     };
 
-    private specFileListData = (): void => {
+    private specFileListReceiveData = (): void => {
         this.cwsClient.receiveData("specFileList", (data) => {
             if (typeof data === "string") {
                 const serverData = JSON.parse(data) as ModelTester.IserverData;
@@ -697,7 +549,7 @@ export default class ControllerIndex implements Icontroller {
         });
     };
 
-    private runData = (): void => {
+    private runReceiveData = (): void => {
         this.cwsClient.receiveData("run", (data) => {
             if (typeof data === "string") {
                 const serverData = JSON.parse(data) as ModelTester.IserverDataRun;
@@ -725,7 +577,7 @@ export default class ControllerIndex implements Icontroller {
         });
     };
 
-    private videoData = (): void => {
+    private videoReceiveData = (): void => {
         this.cwsClient.receiveData("video_list", (data) => {
             if (typeof data === "string" && this.elementTableVideoItem && this.elementTableVideoPlayer) {
                 const serverData = JSON.parse(data) as ModelTester.IserverData;
@@ -806,7 +658,7 @@ export default class ControllerIndex implements Icontroller {
         }
     };
 
-    private uploadData = (): void => {
+    private uploadReceiveData = (): void => {
         this.cwsClient.receiveData("upload", (data) => {
             if (typeof data === "string") {
                 const serverData = JSON.parse(data) as ModelTester.IserverData;
@@ -857,4 +709,158 @@ export default class ControllerIndex implements Icontroller {
             };
         }
     };
+
+    private elementHtmlUpdate = (): void => {
+        this.controllerAlert = new ControllerAlert();
+        this.controllerDialog = new ControllerDialog();
+
+        this.variableList.isLoading.state = false;
+
+        //this.elementButtonExecuteList = Array.from(document.querySelectorAll<HTMLButtonElement>(".button_execute"));
+
+        /*this.elementTableData = document.querySelector<HTMLElement>(".table_data");
+
+        if (this.elementTableData) {
+            this.elementTableDataRowList = this.elementTableData.querySelectorAll<HTMLElement>("tbody .row");
+        }
+
+        this.elementTableVideo = document.querySelector<HTMLElement>(".table_video");
+
+        if (this.elementTableVideo) {
+            this.elementTableVideoButtonLoad = this.elementTableVideo.querySelector<HTMLButtonElement>(".button_load");
+            this.elementTableVideoInput = this.elementTableVideo.querySelector<HTMLInputElement>(".input_video input");
+            this.elementTableVideoItem = this.elementTableVideo.querySelector<HTMLElement>(".item");
+            this.elementTableVideoPlayer = this.elementTableVideo.querySelector<HTMLVideoElement>("video");
+        }
+
+        this.elementTableUpload = document.querySelector<HTMLElement>(".table_upload");
+
+        if (this.elementTableUpload) {
+            this.elementTableUploadButton = this.elementTableUpload.querySelector<HTMLButtonElement>(".button_upload");
+            this.elementTableUploadButtonFake = this.elementTableUpload.querySelector<HTMLButtonElement>(".button_input_upload_fake");
+            this.elementTableUploadInput = this.elementTableUpload.querySelector<HTMLInputElement>(".input_upload");
+        }*/
+
+        const elementMdcButtonList = document.querySelectorAll<HTMLElement>(".mdc-button");
+
+        for (const elementMdcButton of elementMdcButtonList) {
+            new MDCRipple(elementMdcButton);
+        }
+
+        const elementMdcTextFieldList = document.querySelectorAll<HTMLElement>(".mdc-text-field");
+
+        for (const elementMdcTextField of elementMdcTextFieldList) {
+            new MDCTextField(elementMdcTextField);
+        }
+
+        const elementMdcSelectList = document.querySelectorAll<HTMLElement>(".mdc-select");
+
+        for (const elementMdcSelect of elementMdcSelectList) {
+            new MDCSelect(elementMdcSelect);
+        }
+    };
+
+    private elementHtmlAction = (): void => {
+        /*if (this.elementButtonExecuteList) {
+            for (const [, buttonExecuteValue] of Object.entries(this.elementButtonExecuteList)) {
+                buttonExecuteValue.onclick = () => {
+                    if (this.controllerAlert) {
+                        this.controllerAlert.close();
+                    }
+
+                    const elementRow = buttonExecuteValue.closest<HTMLElement>(".row");
+
+                    if (elementRow) {
+                        if (buttonExecuteValue.classList.contains("start")) {
+                            const elementName = elementRow.querySelector<HTMLElement>(".name");
+                            const mdcSelectBrowser = new MDCSelect(elementRow.querySelector(".select_browser") as Element);
+
+                            if (elementName && mdcSelectBrowser) {
+                                const clientData: ModelTester.IclientDataRun = {
+                                    index: parseInt(elementRow.getAttribute("data-index") as string),
+                                    name: elementName.textContent ? elementName.textContent.trim() : "",
+                                    browser: mdcSelectBrowser.value
+                                };
+                                this.cwsClient.sendData(1, JSON.stringify(clientData), "run");
+                            }
+                        } else {
+                            const clientData: ModelTester.IclientDataStop = {
+                                index: parseInt(elementRow.getAttribute("data-index") as string)
+                            };
+
+                            this.cwsClient.sendData(1, JSON.stringify(clientData), "stop");
+                        }
+                    }
+                };
+            }
+        }*/
+    };
+
+    constructor(cwsClientValue: CwsClient) {
+        this.template = () => viewPageIndex(this.variableList, this.methodList);
+        this.variableList = {} as ModelIndex.IvariableList;
+        this.methodList = {} as ModelIndex.ImethodList;
+        this.cwsClient = cwsClientValue;
+        this.controllerAlert = null;
+        this.controllerDialog = null;
+
+        //this.elementButtonExecuteList = null;
+        //this.elementTableData = null;
+        //this.elementTableDataRowList = null;
+        this.elementTableVideo = null;
+        this.elementTableVideoButtonLoad = null;
+        this.elementTableVideoInput = null;
+        this.elementTableVideoItem = null;
+        this.elementTableVideoPlayer = null;
+        this.elementTableUpload = null;
+        this.elementTableUploadButton = null;
+        this.elementTableUploadButtonFake = null;
+        this.elementTableUploadInput = null;
+
+        this.cwsClient.checkConnection((mode) => {
+            this.broadcast();
+
+            if (mode === "connection") {
+                this.specFileListReceiveData();
+
+                this.runReceiveData();
+
+                this.videoReceiveData();
+
+                this.uploadReceiveData();
+            }
+        });
+    }
+
+    variable(): void {
+        this.variableList = {
+            specFileList: bindState({ state: [] }, this.template),
+            clientList: bindState({ state: [] }, this.template),
+            serverDataOutputList: bindState({ state: [] }, this.template),
+            isLoading: bindState({ state: true }, this.template)
+        };
+
+        this.methodList = {
+            onClickTest: this.onClickTest
+        };
+    }
+
+    view(): IvirtualNode {
+        writeLog("Index.ts => view()", this.variableList);
+
+        return this.template();
+    }
+
+    event(): void {
+        writeLog("Index.ts => event()", this.variableList);
+
+        /*this.variableList.specFileList.listener(() => {
+            this.elementHtmlUpdate();
+            this.elementHtmlAction();
+        });*/
+    }
+
+    destroy(): void {
+        writeLog("Index.ts => destroy()", this.variableList);
+    }
 }

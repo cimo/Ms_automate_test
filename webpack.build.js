@@ -47,7 +47,7 @@ module.exports = {
         publicPath: URL_ROOT
     },
     resolve: {
-        extensions: [".ts", ".js"],
+        extensions: [".ts", ".tsx", ".js", "jsx"],
         fallback: {
             fs: false
         }
@@ -56,6 +56,11 @@ module.exports = {
         rules: [
             {
                 test: /\.ts$/,
+                use: "ts-loader",
+                exclude: /(node_modules)/
+            },
+            {
+                test: /\.tsx$/,
                 use: "ts-loader",
                 exclude: /(node_modules)/
             }
@@ -92,7 +97,7 @@ module.exports = {
             }
         }),
         new EsLintPlugin({
-            extensions: ["ts", "js"],
+            extensions: ["ts", "tsx", "js", "jsx"],
             configType: "flat",
             overrideConfigFile: `${Path.resolve(__dirname)}/eslint.config.js`
         }),
