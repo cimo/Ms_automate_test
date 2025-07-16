@@ -7,6 +7,7 @@ export interface IvirtualNode {
     type: string;
     props: IvirtualNodeProps;
     children: Array<IvirtualNode | string>;
+    key?: string | number;
 }
 
 export interface IvariableState<T> {

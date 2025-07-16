@@ -21,7 +21,7 @@ export default class ControllerAlert implements Icontroller {
         this.mdcSnackbar = null;
     }
 
-    private initializeHtmlElement = (): void => {
+    private initializeMdc = (): void => {
         const elementMdcSnackbar = document.querySelector<HTMLElement>(".mdc-snackbar");
 
         if (elementMdcSnackbar) {
@@ -33,36 +33,31 @@ export default class ControllerAlert implements Icontroller {
         }
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     open = (className: string, text: string, timeout = -1): void => {
-        /*this.close();
+        this.close();
+
+        this.variableList.className.state = className;
+        this.variableList.label.state = text;
 
         if (this.mdcSnackbar) {
-            this.mdcSnackbar.root.classList.add(className);
-            this.mdcSnackbar.labelText = text;
             this.mdcSnackbar.timeoutMs = timeout;
             this.mdcSnackbar.open();
-        }*/
-
-        this.variableList.test.state = text;
-
-        //if (this.mdcSnackbar) {
-        //this.mdcSnackbar.open();
-        //}
+        }
     };
 
     close = (): void => {
+        this.variableList.className.state = "";
+        this.variableList.label.state = "";
+
         if (this.mdcSnackbar) {
             this.mdcSnackbar.close();
-            this.mdcSnackbar.root.classList.remove("success");
-            this.mdcSnackbar.root.classList.remove("error");
-            this.mdcSnackbar.labelText = "";
         }
     };
 
     variable(): void {
         this.variableList = {
-            test: bindVariableState({ state: "" }, this.template)
+            className: bindVariableState({ state: "" }, this.template, "subViewAlert", this.initializeMdc),
+            label: bindVariableState({ state: "" }, this.template, "subViewAlert", this.initializeMdc)
         };
     }
 
@@ -74,8 +69,6 @@ export default class ControllerAlert implements Icontroller {
 
     event(): void {
         writeLog("Alert.ts => event()", this.variableList);
-
-        this.initializeHtmlElement();
     }
 
     destroy(): void {

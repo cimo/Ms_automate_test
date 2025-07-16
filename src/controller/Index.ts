@@ -499,30 +499,18 @@ export default class ControllerIndex implements Icontroller {
     private controllerDialog: ControllerDialog | null;
 
     private cwsClient: CwsClient;
-    //private elementButtonExecuteList: HTMLButtonElement[] | null;
-    //private elementTableData: HTMLElement | null;
-    //private elementTableDataRowList: NodeListOf<HTMLElement> | null;
-    private elementTableVideo: HTMLElement | null;
-    private elementTableVideoButtonLoad: HTMLButtonElement | null;
-    private elementTableVideoInput: HTMLInputElement | null;
-    private elementTableVideoItem: HTMLElement | null;
-    private elementTableVideoPlayer: HTMLVideoElement | null;
-    private elementTableUpload: HTMLElement | null;
-    private elementTableUploadButton: HTMLButtonElement | null;
-    private elementTableUploadButtonFake: HTMLButtonElement | null;
-    private elementTableUploadInput: HTMLInputElement | null;
 
     // Method
     private onClickTest = (): void => {
+        this.variableList.userList.state = ["cimo"];
+
         if (this.controllerAlert) {
             this.controllerAlert.open("success", "text");
         }
 
-        /*if (this.controllerDialog) {
+        if (this.controllerDialog) {
             this.controllerDialog.open("title", "message", true);
-
-            this.variableList.isLoading.state = true;
-        }*/
+        }
     };
 
     private broadcast = (): void => {
@@ -586,7 +574,7 @@ export default class ControllerIndex implements Icontroller {
     };
 
     private videoReceiveData = (): void => {
-        this.cwsClient.receiveData("video_list", (data) => {
+        /*this.cwsClient.receiveData("video_list", (data) => {
             if (typeof data === "string" && this.elementTableVideoItem && this.elementTableVideoPlayer) {
                 const serverData = JSON.parse(data) as ModelTester.IserverData;
 
@@ -648,7 +636,7 @@ export default class ControllerIndex implements Icontroller {
                     this.controllerAlert.open(serverData.status, serverData.result as string);
                 }
             }
-        });
+        });*/
     };
 
     private uploadReceiveData = (): void => {
@@ -664,7 +652,7 @@ export default class ControllerIndex implements Icontroller {
     };
 
     private videoEvent = (): void => {
-        if (this.elementTableVideoButtonLoad) {
+        /*if (this.elementTableVideoButtonLoad) {
             this.elementTableVideoButtonLoad.onclick = () => {
                 if (this.controllerAlert) {
                     this.controllerAlert.close();
@@ -675,11 +663,11 @@ export default class ControllerIndex implements Icontroller {
                     this.cwsClient.sendData(1, JSON.stringify(clientData), "video_list");
                 }
             };
-        }
+        }*/
     };
 
     private uploadEvent = (): void => {
-        if (this.elementTableUploadButton && this.elementTableUploadButtonFake) {
+        /*if (this.elementTableUploadButton && this.elementTableUploadButtonFake) {
             this.elementTableUploadButtonFake.onclick = () => {
                 if (this.elementTableUploadInput) {
                     this.elementTableUploadInput.click();
@@ -715,7 +703,7 @@ export default class ControllerIndex implements Icontroller {
                     }
                 }
             };
-        }
+        }*/
     };
 
     private elementHtmlUpdate = (): void => {
@@ -808,18 +796,6 @@ export default class ControllerIndex implements Icontroller {
         this.controllerDialog = new ControllerDialog();
 
         this.cwsClient = cwsClientValue;
-        //this.elementButtonExecuteList = null;
-        //this.elementTableData = null;
-        //this.elementTableDataRowList = null;
-        this.elementTableVideo = null;
-        this.elementTableVideoButtonLoad = null;
-        this.elementTableVideoInput = null;
-        this.elementTableVideoItem = null;
-        this.elementTableVideoPlayer = null;
-        this.elementTableUpload = null;
-        this.elementTableUploadButton = null;
-        this.elementTableUploadButtonFake = null;
-        this.elementTableUploadInput = null;
 
         this.cwsClient.checkConnection((mode) => {
             this.broadcast();
@@ -850,17 +826,19 @@ export default class ControllerIndex implements Icontroller {
             onClickTest: this.onClickTest
         };
 
-        if (this.controllerAlert) {
+        if (this.controllerAlert && this.controllerDialog) {
             this.controllerAlert.variable();
+            this.controllerDialog.variable();
         }
     }
 
     view(): IvirtualNode {
         writeLog("Index.ts => view()", this.variableList);
 
-        if (this.controllerAlert) {
+        if (this.controllerAlert && this.controllerDialog) {
             this.subViewList = {
-                viewAlert: this.controllerAlert.view()
+                alert: this.controllerAlert.view(),
+                dialog: this.controllerDialog.view()
             };
         }
 
@@ -870,16 +848,18 @@ export default class ControllerIndex implements Icontroller {
     event(): void {
         writeLog("Index.ts => event()", this.variableList);
 
-        if (this.controllerAlert) {
+        if (this.controllerAlert && this.controllerDialog) {
             this.controllerAlert.event();
+            this.controllerDialog.event();
         }
     }
 
     destroy(): void {
         writeLog("Index.ts => destroy()", this.variableList);
 
-        if (this.controllerAlert) {
+        if (this.controllerAlert && this.controllerDialog) {
             this.controllerAlert.destroy();
+            this.controllerDialog.destroy();
         }
     }
 }

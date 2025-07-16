@@ -8,9 +8,12 @@ export const createVirtualNode = (virtualNode: IvirtualNode): HTMLElement => {
             Object.assign(element.style, value);
         } else if (key.startsWith("on") && typeof value === "function") {
             const eventName = key.slice(2).toLowerCase();
+
             element.addEventListener(eventName, value);
         } else if (key !== "children" && typeof value !== "function") {
-            element.setAttribute(key, String(value));
+            if (element && element.getAttribute(key) !== String(value)) {
+                element.setAttribute(key, String(value));
+            }
         }
     }
 
@@ -28,16 +31,23 @@ export const createVirtualNode = (virtualNode: IvirtualNode): HTMLElement => {
 export const updateVirtualNode = (element: Element, virtualNode: IvirtualNode, virtualNodeOld: IvirtualNode): void => {
     if (virtualNode.type !== virtualNodeOld.type) {
         const newElement = createVirtualNode(virtualNode);
+
         element.replaceWith(newElement);
 
         return;
     }
 
     for (const [key, value] of Object.entries(virtualNode.props)) {
-        if (typeof value === "function") continue;
+        if (key === "style" && typeof value === "object") {
+            Object.assign((element as HTMLElement).style, value);
+        } else if (key.startsWith("on") && typeof value === "function") {
+            const eventName = key.slice(2).toLowerCase();
 
-        if (element.getAttribute(key) !== String(value)) {
-            element.setAttribute(key, String(value));
+            element.addEventListener(eventName, value);
+        } else if (key !== "children" && typeof value !== "function") {
+            if (element && element.getAttribute(key) !== String(value)) {
+                element.setAttribute(key, String(value));
+            }
         }
     }
 
@@ -52,25 +62,22 @@ export const updateVirtualNode = (element: Element, virtualNode: IvirtualNode, v
     const maxLength = Math.max(newChildrenList.length, oldChildrenList.length);
 
     for (let i = 0; i < maxLength; i++) {
-        const newChildren = newChildrenList[i];
-        const oldChildren = oldChildrenList[i];
-        const elementChildren = element.childNodes[i];
+        const newChild = newChildrenList[i];
+        const oldChild = oldChildrenList[i];
+        const elementChild = element.childNodes[i];
 
-        if (newChildren && !oldChildren) {
-            element.appendChild(typeof newChildren === "string" ? document.createTextNode(newChildren) : createVirtualNode(newChildren));
-        } else if (!newChildren && oldChildren) {
-            element.removeChild(elementChildren);
-        } else if (typeof newChildren === "string" && typeof oldChildren === "string") {
-            if (newChildren !== oldChildren) {
-                elementChildren.textContent = newChildren;
+        if (newChild && !oldChild) {
+            element.appendChild(typeof newChild === "string" ? document.createTextNode(newChild) : createVirtualNode(newChild));
+        } else if (!newChild && oldChild) {
+            element.removeChild(elementChild);
+        } else if (typeof newChild === "string" && typeof oldChild === "string") {
+            if (elementChild.textContent !== newChild) {
+                elementChild.textContent = newChild;
             }
-        } else if (typeof newChildren === "string" || typeof oldChildren === "string") {
-            element.replaceChild(
-                typeof newChildren === "string" ? document.createTextNode(newChildren) : createVirtualNode(newChildren),
-                elementChildren
-            );
+        } else if (typeof newChild === "string" || typeof oldChild === "string") {
+            element.replaceChild(typeof newChild === "string" ? document.createTextNode(newChild) : createVirtualNode(newChild), elementChild);
         } else {
-            updateVirtualNode(elementChildren as Element, newChildren as IvirtualNode, oldChildren as IvirtualNode);
+            updateVirtualNode(elementChild as Element, newChild as IvirtualNode, oldChild as IvirtualNode);
         }
     }
 };

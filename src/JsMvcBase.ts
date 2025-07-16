@@ -5,6 +5,31 @@ let isDebug = false;
 let urlRoot = "";
 let elementRoot: HTMLElement | null = null;
 let virtualNodeOld: IvirtualNode | null = null;
+const subViewMap = new Map<string, { element: Element | null; oldNode: IvirtualNode | null }>();
+
+const renderSubView = (template: () => IvirtualNode, id: string): void => {
+    const virtualNode = template();
+    const container = document.getElementById(id);
+
+    if (!container) {
+        writeLog("renderSubView => container not found", id);
+
+        return;
+    }
+
+    const currentElement = container.firstElementChild;
+    const subView = subViewMap.get(id);
+
+    if (!currentElement || !subView) {
+        const element = createVirtualNode(virtualNode);
+        container.innerHTML = "";
+        container.appendChild(element);
+        subViewMap.set(id, { element, oldNode: virtualNode });
+    } else {
+        updateVirtualNode(currentElement, virtualNode, subView.oldNode!);
+        subViewMap.set(id, { element: currentElement, oldNode: virtualNode });
+    }
+};
 
 export const getIsDebug = () => isDebug;
 export const getUrlRoot = () => urlRoot;
@@ -29,7 +54,6 @@ export const renderTemplate = (template: () => IvirtualNode): void => {
     if (elementRoot) {
         if (!virtualNodeOld) {
             const element = createVirtualNode(virtualNode);
-
             elementRoot.appendChild(element);
         } else {
             if (elementRoot.firstElementChild) {
@@ -41,7 +65,7 @@ export const renderTemplate = (template: () => IvirtualNode): void => {
     virtualNodeOld = virtualNode;
 };
 
-export const bindVariableState = <T>(data: { state: T }, template: () => IvirtualNode): IvariableState<T> => {
+export const bindVariableState = <T>(data: { state: T }, template: () => IvirtualNode, id?: string, callback?: () => void): IvariableState<T> => {
     const listenerList: Array<(value: T) => void> = [];
 
     const proxy = new Proxy(data, {
@@ -49,7 +73,15 @@ export const bindVariableState = <T>(data: { state: T }, template: () => Ivirtua
             if (property === "state") {
                 target[property] = receiver;
 
-                renderTemplate(template);
+                if (!id) {
+                    renderTemplate(template);
+                } else {
+                    renderSubView(template, id);
+                }
+
+                if (callback) {
+                    callback();
+                }
 
                 for (const listener of listenerList) {
                     listener(receiver);

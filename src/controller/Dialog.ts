@@ -1,17 +1,29 @@
+import { Icontroller, IvirtualNode } from "../JsMvcFwInterface";
+import { writeLog, bindVariableState } from "../JsMvcBase";
 import { MDCDialog } from "@material/dialog";
 
-export default class ControllerDialog {
+// Source
+import * as ModelDialog from "../model/Dialog";
+import viewDialog from "../view/Dialog";
+
+export default class ControllerDialog implements Icontroller {
     // Variable
+    private template: () => IvirtualNode;
+    private variableList: ModelDialog.IvariableList;
+    private methodList: ModelDialog.ImethodList;
+
     private mdcDialog: MDCDialog | null;
 
     // Method
     constructor() {
-        this.mdcDialog = null;
+        this.template = () => viewDialog(this.variableList, this.methodList);
+        this.variableList = {} as ModelDialog.IvariableList;
+        this.methodList = {} as ModelDialog.ImethodList;
 
-        this.initializeHtmlElement();
+        this.mdcDialog = null;
     }
 
-    private initializeHtmlElement = (): void => {
+    private initializeMdc = (): void => {
         const elementMdcDialog = document.querySelector<HTMLElement>(".mdc-dialog");
 
         if (elementMdcDialog) {
@@ -19,13 +31,34 @@ export default class ControllerDialog {
         }
     };
 
+    private resetMdcContent = (): void => {
+        this.variableList.title.state = "";
+        this.variableList.content.state = "";
+    };
+
+    private onClickAccept = (): void => {
+        this.resetMdcContent();
+
+        writeLog("cimo", "accept");
+    };
+
+    private onClickClose = (): void => {
+        this.resetMdcContent();
+
+        writeLog("cimo", "close");
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     open = (title: string, message: string, isSingleButton = false, callbackAccept?: () => void, callbackClose?: () => void): void => {
         this.close();
+
+        this.variableList.title.state = title;
+        this.variableList.content.state = message;
 
         if (this.mdcDialog) {
             this.mdcDialog.open();
 
-            const elementTitle = this.mdcDialog.root.querySelector<HTMLElement>(".mdc-dialog__title");
+            /*const elementTitle = this.mdcDialog.root.querySelector<HTMLElement>(".mdc-dialog__title");
             const elementContent = this.mdcDialog.root.querySelector<HTMLElement>(".mdc-dialog__content");
             const elementAction = this.mdcDialog.root.querySelector<HTMLElement>(".mdc-dialog__actions");
 
@@ -53,13 +86,41 @@ export default class ControllerDialog {
                         elementButtonClose.style.setProperty("display", "none", "important");
                     }
                 }
-            }
+            }*/
         }
     };
 
     close = (): void => {
+        this.resetMdcContent();
+
         if (this.mdcDialog) {
             this.mdcDialog.close();
         }
     };
+
+    variable(): void {
+        this.variableList = {
+            title: bindVariableState({ state: "" }, this.template, "subViewDialog", this.initializeMdc),
+            content: bindVariableState({ state: "" }, this.template, "subViewDialog", this.initializeMdc)
+        };
+
+        this.methodList = {
+            onClickAccept: this.onClickAccept,
+            onClickClose: this.onClickClose
+        };
+    }
+
+    view(): IvirtualNode {
+        writeLog("Dialog.ts => view()", this.variableList);
+
+        return this.template();
+    }
+
+    event(): void {
+        writeLog("Dialog.ts => event()", this.variableList);
+    }
+
+    destroy(): void {
+        writeLog("Dialog.ts => destroy()", this.variableList);
+    }
 }

@@ -1,5 +1,6 @@
 import { IvariableState } from "../JsMvcFwInterface";
 
 export interface IvariableList {
-    test: IvariableState<string>;
+    className: IvariableState<string>;
+    label: IvariableState<string>;
 }

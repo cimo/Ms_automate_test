@@ -4,7 +4,6 @@ import jsxFactory from "../JsMvcFwJsx";
 // Soruce
 import * as ModelIndex from "../model/Index";
 import viewLoader from "./Loader";
-//import viewDialog from "./Dialog";
 //import viewSpecFile from "./SpecFile";
 
 const viewPageIndex = (
@@ -30,13 +29,14 @@ const viewPageIndex = (
     return (
         <div>
             {viewLoader(variableList)}
-            {subViewList.viewAlert}
+            <div id="subViewAlert">{subViewList.alert}</div>
+            <div id="subViewDialog">{subViewList.dialog}</div>
             <div class="page_container view_index">
                 <div class="header"></div>
                 <div class="left">
                     <button onClick={methodList.onClickTest}>Click</button>
                 </div>
-                <div class="right"></div>
+                <div class="right">{variableList.userList.state}</div>
             </div>
         </div>
     );

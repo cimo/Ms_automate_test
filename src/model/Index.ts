@@ -15,5 +15,6 @@ export interface ImethodList {
 }
 
 export interface IsubViewList {
-    viewAlert: IvirtualNode;
+    alert: IvirtualNode;
+    dialog: IvirtualNode;
 }
