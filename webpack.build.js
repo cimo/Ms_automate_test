@@ -55,12 +55,7 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.ts$/,
-                use: "ts-loader",
-                exclude: /(node_modules)/
-            },
-            {
-                test: /\.tsx$/,
+                test: /\.tsx?$/,
                 use: "ts-loader",
                 exclude: /(node_modules)/
             }
@@ -103,7 +98,7 @@ module.exports = {
         }),
         new CompressionPlugin({
             algorithm: "gzip",
-            test: /\.js$|\.css$|\.html$/,
+            test: /\.(js|jsx|css|html)$/,
             threshold: 10240,
             minRatio: 0.8
         })

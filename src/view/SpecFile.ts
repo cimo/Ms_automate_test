@@ -3,7 +3,7 @@ import * as ModelIndex from "../model/Index";
 
 const viewSpecFile = (variableList: ModelIndex.IvariableList): string => {
     const specFileListState = variableList.specFileList.state;
-    const serverDataOutputState = variableList.serverDataOutputList.state;
+    const serverDataOutputState = variableList.outputList.state;
 
     return `<table class="table_data">
         <thead class="filter">

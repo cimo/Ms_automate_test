@@ -1,15 +1,17 @@
 import { IvirtualNode } from "../JsMvcFwInterface";
-/** @jsx createVirtualNodeFromJsx */
-import createVirtualNodeFromJsx from "../JsMvcFwJsx";
+import jsxFactory from "../JsMvcFwJsx";
 
 // Soruce
 import * as ModelIndex from "../model/Index";
-//import viewLoader from "./Loader";
-/*import viewAlert from "./Alert";
-import viewDialog from "./Dialog";
-import viewSpecFile from "./SpecFile";*/
+import viewLoader from "./Loader";
+//import viewDialog from "./Dialog";
+//import viewSpecFile from "./SpecFile";
 
-const viewPageIndex = (variableList: ModelIndex.IvariableList, methodList: ModelIndex.ImethodList): IvirtualNode => {
+const viewPageIndex = (
+    variableList: ModelIndex.IvariableList,
+    methodList: ModelIndex.ImethodList,
+    subViewList: ModelIndex.IsubViewList
+): IvirtualNode => {
     /*return `${viewLoader(variableList)}
     ${viewAlert()}
     ${viewDialog()}
@@ -27,9 +29,15 @@ const viewPageIndex = (variableList: ModelIndex.IvariableList, methodList: Model
 
     return (
         <div>
-            <p>Ciao cimo.</p>
-            {/*viewLoader(variableList)*/}
-            <button onClick={methodList.onClickTest}>Click</button>
+            {viewLoader(variableList)}
+            {subViewList.viewAlert}
+            <div class="page_container view_index">
+                <div class="header"></div>
+                <div class="left">
+                    <button onClick={methodList.onClickTest}>Click</button>
+                </div>
+                <div class="right"></div>
+            </div>
         </div>
     );
 };

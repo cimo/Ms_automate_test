@@ -1,4 +1,4 @@
-import { frameworkInit } from "../JsMvcFw";
+import { frameworkInit } from "../JsMvcBase";
 import { routerInit } from "../JsMvcFwRouter";
 import CwsClient from "@cimo/websocket/dist/client/Manager";
 

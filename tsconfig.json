@@ -16,6 +16,6 @@
         "noImplicitAny": false,
         "sourceMap": true,
         "jsx": "react",
-        "jsxFactory": "createVirtualNodeFromJsx"
+        "jsxFactory": "jsxFactory"
     }
 }

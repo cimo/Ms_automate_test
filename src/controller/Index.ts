@@ -475,7 +475,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
 */
 
 import { Icontroller, IvirtualNode } from "../JsMvcFwInterface";
-import { writeLog, bindState } from "../JsMvcFw";
+import { writeLog, bindVariableState } from "../JsMvcBase";
 import CwsClient from "@cimo/websocket/dist/client/Manager";
 import { MDCRipple } from "@material/ripple";
 import { MDCTextField } from "@material/textfield";
@@ -494,10 +494,11 @@ export default class ControllerIndex implements Icontroller {
     private template: () => IvirtualNode;
     private variableList: ModelIndex.IvariableList;
     private methodList: ModelIndex.ImethodList;
-    private cwsClient: CwsClient;
+    private subViewList: ModelIndex.IsubViewList;
     private controllerAlert: ControllerAlert | null;
     private controllerDialog: ControllerDialog | null;
 
+    private cwsClient: CwsClient;
     //private elementButtonExecuteList: HTMLButtonElement[] | null;
     //private elementTableData: HTMLElement | null;
     //private elementTableDataRowList: NodeListOf<HTMLElement> | null;
@@ -513,8 +514,15 @@ export default class ControllerIndex implements Icontroller {
 
     // Method
     private onClickTest = (): void => {
-        // eslint-disable-next-line no-console
-        console.log("cimo");
+        if (this.controllerAlert) {
+            this.controllerAlert.open("success", "text");
+        }
+
+        /*if (this.controllerDialog) {
+            this.controllerDialog.open("title", "message", true);
+
+            this.variableList.isLoading.state = true;
+        }*/
     };
 
     private broadcast = (): void => {
@@ -527,9 +535,9 @@ export default class ControllerIndex implements Icontroller {
                     this.cwsClient.sendData(1, "", "user", 100);
                     this.cwsClient.sendData(1, "", "output", 200);
                 } else if (serverData.tag === "user") {
-                    this.variableList.clientList.state = serverData.result as string[];
+                    this.variableList.userList.state = serverData.result as string[];
                 } else if (serverData.tag === "output") {
-                    this.variableList.serverDataOutputList.state = serverData.result as ModelTester.IserverDataOutput[];
+                    this.variableList.outputList.state = serverData.result as ModelTester.IserverDataOutput[];
                 }
             }
         });
@@ -643,6 +651,18 @@ export default class ControllerIndex implements Icontroller {
         });
     };
 
+    private uploadReceiveData = (): void => {
+        this.cwsClient.receiveData("upload", (data) => {
+            if (typeof data === "string") {
+                const serverData = JSON.parse(data) as ModelTester.IserverData;
+
+                if (this.controllerAlert) {
+                    this.controllerAlert.open(serverData.status, serverData.result as string);
+                }
+            }
+        });
+    };
+
     private videoEvent = (): void => {
         if (this.elementTableVideoButtonLoad) {
             this.elementTableVideoButtonLoad.onclick = () => {
@@ -656,18 +676,6 @@ export default class ControllerIndex implements Icontroller {
                 }
             };
         }
-    };
-
-    private uploadReceiveData = (): void => {
-        this.cwsClient.receiveData("upload", (data) => {
-            if (typeof data === "string") {
-                const serverData = JSON.parse(data) as ModelTester.IserverData;
-
-                if (this.controllerAlert) {
-                    this.controllerAlert.open(serverData.status, serverData.result as string);
-                }
-            }
-        });
     };
 
     private uploadEvent = (): void => {
@@ -711,11 +719,6 @@ export default class ControllerIndex implements Icontroller {
     };
 
     private elementHtmlUpdate = (): void => {
-        this.controllerAlert = new ControllerAlert();
-        this.controllerDialog = new ControllerDialog();
-
-        this.variableList.isLoading.state = false;
-
         //this.elementButtonExecuteList = Array.from(document.querySelectorAll<HTMLButtonElement>(".button_execute"));
 
         /*this.elementTableData = document.querySelector<HTMLElement>(".table_data");
@@ -797,13 +800,14 @@ export default class ControllerIndex implements Icontroller {
     };
 
     constructor(cwsClientValue: CwsClient) {
-        this.template = () => viewPageIndex(this.variableList, this.methodList);
+        this.template = () => viewPageIndex(this.variableList, this.methodList, this.subViewList);
         this.variableList = {} as ModelIndex.IvariableList;
         this.methodList = {} as ModelIndex.ImethodList;
-        this.cwsClient = cwsClientValue;
-        this.controllerAlert = null;
-        this.controllerDialog = null;
+        this.subViewList = {} as ModelIndex.IsubViewList;
+        this.controllerAlert = new ControllerAlert();
+        this.controllerDialog = new ControllerDialog();
 
+        this.cwsClient = cwsClientValue;
         //this.elementButtonExecuteList = null;
         //this.elementTableData = null;
         //this.elementTableDataRowList = null;
@@ -821,32 +825,44 @@ export default class ControllerIndex implements Icontroller {
             this.broadcast();
 
             if (mode === "connection") {
-                this.specFileListReceiveData();
+                //this.specFileListReceiveData();
 
-                this.runReceiveData();
+                //this.runReceiveData();
 
-                this.videoReceiveData();
+                //this.videoReceiveData();
 
-                this.uploadReceiveData();
+                //this.uploadReceiveData();
+
+                this.variableList.isLoading.state = false;
             }
         });
     }
 
     variable(): void {
         this.variableList = {
-            specFileList: bindState({ state: [] }, this.template),
-            clientList: bindState({ state: [] }, this.template),
-            serverDataOutputList: bindState({ state: [] }, this.template),
-            isLoading: bindState({ state: true }, this.template)
+            specFileList: bindVariableState({ state: [] }, this.template),
+            userList: bindVariableState({ state: [] }, this.template),
+            outputList: bindVariableState({ state: [] }, this.template),
+            isLoading: bindVariableState({ state: true }, this.template)
         };
 
         this.methodList = {
             onClickTest: this.onClickTest
         };
+
+        if (this.controllerAlert) {
+            this.controllerAlert.variable();
+        }
     }
 
     view(): IvirtualNode {
         writeLog("Index.ts => view()", this.variableList);
+
+        if (this.controllerAlert) {
+            this.subViewList = {
+                viewAlert: this.controllerAlert.view()
+            };
+        }
 
         return this.template();
     }
@@ -854,13 +870,16 @@ export default class ControllerIndex implements Icontroller {
     event(): void {
         writeLog("Index.ts => event()", this.variableList);
 
-        /*this.variableList.specFileList.listener(() => {
-            this.elementHtmlUpdate();
-            this.elementHtmlAction();
-        });*/
+        if (this.controllerAlert) {
+            this.controllerAlert.event();
+        }
     }
 
     destroy(): void {
         writeLog("Index.ts => destroy()", this.variableList);
+
+        if (this.controllerAlert) {
+            this.controllerAlert.destroy();
+        }
     }
 }

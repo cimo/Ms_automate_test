@@ -1,19 +1,28 @@
-import { IvirtualNode } from "./JsMvcFwInterface";
+import { IvirtualNodeProps, IvirtualNode } from "./JsMvcFwInterface";
 
-export default function createVirtualNodeFromJsx(tag: any, props: any, ...children: any[]): IvirtualNode {
+type Component = (props: IvirtualNodeProps) => IvirtualNode;
+type Child = IvirtualNode | string | number;
+
+const jsxFactory = (tag: string | Component, property: IvirtualNodeProps | null, ...childrenList: Child[]): IvirtualNode => {
+    const normalizedChildrenList: Array<IvirtualNode | string> = [];
+
+    for (const child of childrenList.flat()) {
+        if (typeof child === "string" || typeof child === "number") {
+            normalizedChildrenList.push(String(child));
+        } else {
+            normalizedChildrenList.push(child);
+        }
+    }
+
     if (typeof tag === "function") {
-        return tag({ ...props, children });
+        return tag({ ...(property ?? {}), children: normalizedChildrenList });
     }
 
     return {
         type: tag,
-        props: props ?? {},
-        children: children.flat().map((child) => {
-            if (typeof child === "string" || typeof child === "number") {
-                return String(child);
-            } else {
-                return child; // assume child is already a virtual node
-            }
-        })
+        props: property ?? {},
+        children: normalizedChildrenList
     };
-}
+};
+
+export default jsxFactory;

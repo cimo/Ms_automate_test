@@ -23,7 +23,12 @@ const configBase = {
     rules: {
         "no-console": "error",
         "no-debugger": "error",
-        "@typescript-eslint/no-unused-vars": "error",
+        "@typescript-eslint/no-unused-vars": [
+            "error",
+            {
+                varsIgnorePattern: "^jsxFactory$"
+            }
+        ],
         "prettier/prettier": [
             "error",
             {
