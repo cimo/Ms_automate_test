@@ -25,10 +25,9 @@ docker compose -f docker-compose.yaml --env-file ./env/local.env up --detach --p
 
     - .cache
     - .config
-    - .local
+    - .ms_cronjob-volume
     - .npm
     - .pki
-    - .ms_cronjob-volume
     - node_modules
     - package-lock.json
     - certificate/tls.crt
