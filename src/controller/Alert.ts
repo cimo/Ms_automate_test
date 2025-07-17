@@ -1,5 +1,5 @@
 import { Icontroller, IvirtualNode } from "../JsMvcFwInterface";
-import { writeLog, bindVariableState } from "../JsMvcBase";
+import { bindVariable } from "../JsMvcBase";
 import { MDCSnackbar } from "@material/snackbar";
 
 // Source
@@ -8,20 +8,12 @@ import viewAlert from "../view/Alert";
 
 export default class ControllerAlert implements Icontroller {
     // Variable
-    private template: () => IvirtualNode;
     private variableList: ModelAlert.IvariableList;
 
     private mdcSnackbar: MDCSnackbar | null;
 
     // Method
-    constructor() {
-        this.template = () => viewAlert(this.variableList);
-        this.variableList = {} as ModelAlert.IvariableList;
-
-        this.mdcSnackbar = null;
-    }
-
-    private initializeMdc = (): void => {
+    private mdcView = (): void => {
         const elementMdcSnackbar = document.querySelector<HTMLElement>(".mdc-snackbar");
 
         if (elementMdcSnackbar) {
@@ -32,6 +24,12 @@ export default class ControllerAlert implements Icontroller {
             }
         }
     };
+
+    constructor() {
+        this.variableList = {} as ModelAlert.IvariableList;
+
+        this.mdcSnackbar = null;
+    }
 
     open = (className: string, text: string, timeout = -1): void => {
         this.close();
@@ -55,23 +53,31 @@ export default class ControllerAlert implements Icontroller {
     };
 
     variable(): void {
+        // eslint-disable-next-line no-console
+        console.log("Alert.ts => variable()");
+
         this.variableList = {
-            className: bindVariableState({ state: "" }, this.template, "subViewAlert", this.initializeMdc),
-            label: bindVariableState({ state: "" }, this.template, "subViewAlert", this.initializeMdc)
+            className: bindVariable(""),
+            label: bindVariable("")
         };
     }
 
     view(): IvirtualNode {
-        writeLog("Alert.ts => view()", this.variableList);
+        // eslint-disable-next-line no-console
+        console.log("Alert.ts => view()", this.variableList);
 
-        return this.template();
+        this.mdcView();
+
+        return viewAlert(this.variableList);
     }
 
     event(): void {
-        writeLog("Alert.ts => event()", this.variableList);
+        // eslint-disable-next-line no-console
+        console.log("Alert.ts => event()", this.variableList);
     }
 
     destroy(): void {
-        writeLog("Alert.ts => destroy()", this.variableList);
+        // eslint-disable-next-line no-console
+        console.log("Alert.ts => destroy()");
     }
 }

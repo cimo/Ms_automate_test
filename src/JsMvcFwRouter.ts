@@ -1,30 +1,43 @@
 import { Irouter, Icontroller } from "./JsMvcFwInterface";
-import { writeLog, getUrlRoot, getElementRoot, renderTemplate } from "./JsMvcBase";
+import { getElementRoot, getUrlRoot, renderTemplate } from "./JsMvcBase";
 
 let routerList: Irouter[] = [];
 let controller: Icontroller;
 
 const routerHistoryPush = (nextUrl: string, soft: boolean, title = "", parameterListValue?: Record<string, unknown>): void => {
-    let url = nextUrl.startsWith("/") ? nextUrl.slice(1) : nextUrl;
-    if (url === "") url = "/";
+    let url = nextUrl;
+
+    if (nextUrl.charAt(0) === "/") {
+        url = nextUrl.slice(1);
+    }
 
     const [path, queryString] = url.split("?");
     const queryStringCleanedList: string[] = [];
 
     if (queryString) {
         const params = queryString.split("&");
+
         params.forEach((param) => {
             const [key, value] = param.split("=");
+
+            const keyCleaned = encodeURIComponent(
+                decodeURIComponent(key.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"))
+            );
+
             if (value) {
-                const cleanedValue = encodeURIComponent(decodeURIComponent(value));
-                queryStringCleanedList.push(`${key}=${cleanedValue}`);
+                const valueCleaned = encodeURIComponent(
+                    decodeURIComponent(value.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"))
+                );
+
+                queryStringCleanedList.push(`${keyCleaned}=${valueCleaned}`);
             } else {
-                queryStringCleanedList.push(key);
+                queryStringCleanedList.push(keyCleaned);
             }
         });
     }
 
-    const urlCleaned = path + (queryStringCleanedList.length > 0 ? "?" + queryStringCleanedList.join("&") : "");
+    const pathCleaned = path.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    const urlCleaned = pathCleaned + (queryStringCleanedList.length > 0 ? "?" + queryStringCleanedList.join("&") : "");
 
     window.history.pushState(
         {
@@ -100,24 +113,18 @@ export const routerInit = (routerListValue: Irouter[]): void => {
     routerList = routerListValue;
 
     window.onload = (event: Event) => {
-        writeLog("JsMvcFwRouter.ts => onload()", window.location.pathname);
-
         if (event) {
             populatePage(false, window.location.pathname, false);
         }
     };
 
     window.onpopstate = (event: PopStateEvent) => {
-        writeLog("JsMvcFwRouter.ts => onpopstate()", window.location.pathname);
-
         if (event) {
             populatePage(false, window.location.pathname, false);
         }
     };
 
-    window.onbeforeunload = (event: Event) => {
-        writeLog("JsMvcFwRouter.ts => onbeforeunload()", { event });
-
+    window.onbeforeunload = () => {
         if (controller) {
             controller.destroy();
         }
@@ -125,7 +132,5 @@ export const routerInit = (routerListValue: Irouter[]): void => {
 };
 
 export const navigateTo = (nextUrl: string, soft = false, parameterList?: Record<string, unknown>, parameterSearch?: string): void => {
-    writeLog("JsMvcFwRouter.ts => navigateTo()", { nextUrl, parameterList, parameterSearch });
-
     populatePage(true, nextUrl, soft, parameterList, parameterSearch);
 };

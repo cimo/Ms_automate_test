@@ -1,108 +1,87 @@
-import { IvariableState, IvirtualNode } from "./JsMvcFwInterface";
+import { IvirtualNode, IbindVariable } from "./JsMvcFwInterface";
 import { createVirtualNode, updateVirtualNode } from "./JsMvcFwDom";
 
 let isDebug = false;
-let urlRoot = "";
 let elementRoot: HTMLElement | null = null;
-let virtualNodeOld: IvirtualNode | null = null;
-const subViewMap = new Map<string, { element: Element | null; oldNode: IvirtualNode | null }>();
+let urlRoot = "";
 
-const renderSubView = (template: () => IvirtualNode, id: string): void => {
-    const virtualNode = template();
-    const container = document.getElementById(id);
-
-    if (!container) {
-        writeLog("renderSubView => container not found", id);
-
-        return;
-    }
-
-    const currentElement = container.firstElementChild;
-    const subView = subViewMap.get(id);
-
-    if (!currentElement || !subView) {
-        const element = createVirtualNode(virtualNode);
-        container.innerHTML = "";
-        container.appendChild(element);
-        subViewMap.set(id, { element, oldNode: virtualNode });
-    } else {
-        updateVirtualNode(currentElement, virtualNode, subView.oldNode!);
-        subViewMap.set(id, { element: currentElement, oldNode: virtualNode });
-    }
-};
+let stateVariableCurrent: any;
+let renderExecute: () => void;
 
 export const getIsDebug = () => isDebug;
-export const getUrlRoot = () => urlRoot;
 export const getElementRoot = () => elementRoot;
+export const getUrlRoot = () => urlRoot;
 
-export const writeLog = (tag: string, value: unknown): void => {
-    if (isDebug) {
-        // eslint-disable-next-line no-console
-        console.log(`${tag} `, value);
-    }
-};
-
-export const frameworkInit = (isDebugValue: boolean, urlRootValue: string, elementRootId: string): void => {
+export const frameworkInit = (isDebugValue: boolean, elementRootId: string, urlRootValue: string): void => {
     isDebug = isDebugValue;
-    urlRoot = urlRootValue;
     elementRoot = document.getElementById(elementRootId);
+    urlRoot = urlRootValue;
 };
 
-export const renderTemplate = (template: () => IvirtualNode): void => {
-    const virtualNode = template();
+export function renderTemplate(virtualNode: () => IvirtualNode): void {
+    let virtualNodeOld: IvirtualNode | null = null;
 
-    if (elementRoot) {
+    renderExecute = () => {
+        const virtualNodeNew = virtualNode();
+
+        if (!elementRoot) {
+            throw new Error("JsMvcFwBase.ts => Element root not found!");
+        }
+
         if (!virtualNodeOld) {
-            const element = createVirtualNode(virtualNode);
-            elementRoot.appendChild(element);
+            const elementVirtualNode = createVirtualNode(virtualNodeNew);
+
+            elementRoot.innerHTML = "";
+            elementRoot.appendChild(elementVirtualNode);
         } else {
-            if (elementRoot.firstElementChild) {
-                updateVirtualNode(elementRoot.firstElementChild, virtualNode, virtualNodeOld);
+            const rootChild = elementRoot.firstElementChild;
+
+            if (rootChild) {
+                updateVirtualNode(rootChild, virtualNodeOld, virtualNodeNew);
             }
         }
-    }
 
-    virtualNodeOld = virtualNode;
-};
+        virtualNodeOld = virtualNodeNew;
+    };
 
-export const bindVariableState = <T>(data: { state: T }, template: () => IvirtualNode, id?: string, callback?: () => void): IvariableState<T> => {
-    const listenerList: Array<(value: T) => void> = [];
+    renderExecute();
+}
 
-    const proxy = new Proxy(data, {
-        set(target, property, receiver) {
-            if (property === "state") {
-                target[property] = receiver;
-
-                if (!id) {
-                    renderTemplate(template);
-                } else {
-                    renderSubView(template, id);
-                }
-
-                if (callback) {
-                    callback();
-                }
-
-                for (const listener of listenerList) {
-                    listener(receiver);
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-    });
+export function bindVariable<T>(initial: T): IbindVariable<T> {
+    let _state = initial;
+    let _listener: ((value: T) => void) | null = null;
 
     return {
-        get state() {
-            return proxy.state;
+        get state(): T {
+            return _state;
         },
-        set state(value: T) {
-            proxy.state = value;
+        set state(val: T) {
+            _state = val;
+
+            if (_listener) _listener(val);
+
+            if (renderExecute) {
+                renderExecute();
+            }
         },
-        listener(callback: (value: T) => void) {
-            listenerList.push(callback);
+        listener(callback: (value: T) => void): void {
+            _listener = callback;
         }
     };
-};
+}
+
+export function stateVariable<T>(initial: T): [T, (val: T) => void] {
+    if (stateVariableCurrent === undefined) {
+        stateVariableCurrent = initial;
+    }
+
+    const setState = (val: T) => {
+        stateVariableCurrent = val;
+
+        if (renderExecute) {
+            renderExecute();
+        }
+    };
+
+    return [stateVariableCurrent, setState];
+}

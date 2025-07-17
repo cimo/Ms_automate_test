@@ -4,7 +4,7 @@ export interface IvirtualNode {
     children: Array<IvirtualNode | string>;
 }
 
-export interface IvariableState<T> {
+export interface IbindVariable<T> {
     state: T;
     listener(callback: (value: T) => void): void;
 }

@@ -475,30 +475,85 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
 */
 
 import { Icontroller, IvirtualNode } from "../JsMvcFwInterface";
-import { bindVariable } from "../FwBase";
+import { bindVariable } from "../JsMvcBase";
+import CwsClient from "@cimo/websocket/dist/client/Manager";
 
 // Source
+import * as HelperSrc from "../HelperSrc";
 import * as ModelIndex from "../model/Index";
-import viewPageIndex from "../view/PageIndex";
+import * as ModelTester from "../model/Tester";
+import viewIndex from "../view/Index";
+import ControllerAlert from "./Alert";
 
 export default class ControllerIndex implements Icontroller {
     // Variable
-    private variableList: ModelIndex.Itest;
+    private variableList: ModelIndex.IvariableList;
     private methodList: ModelIndex.ImethodList;
+    private subViewList: ModelIndex.IsubViewList;
+    private controllerAlert: ControllerAlert | null;
+
+    private cwsClient: CwsClient;
 
     // Method
-    private onClickTest = (): void => {
-        // eslint-disable-next-line no-console
-        console.log("cimo");
+    private broadcast = (): void => {
+        this.cwsClient.receiveData("broadcast", (data) => {
+            if (typeof data === "string" && HelperSrc.isJson(data)) {
+                const serverData = JSON.parse(data) as ModelTester.IserverDataBroadcast;
+
+                if (serverData.tag === "disconnection") {
+                    this.cwsClient.sendData(1, "", "specFileList");
+                    this.cwsClient.sendData(1, "", "user", 100);
+                    this.cwsClient.sendData(1, "", "output", 200);
+                } else if (serverData.tag === "user") {
+                    this.variableList.userList.state = serverData.result as string[];
+                } else if (serverData.tag === "output") {
+                    this.variableList.outputList.state = serverData.result as ModelTester.IserverDataOutput[];
+                }
+            }
+        });
+
+        this.cwsClient.sendData(1, "", "specFileList");
+        this.cwsClient.sendData(1, "", "user", 100);
+        this.cwsClient.sendData(1, "", "output", 200);
     };
 
-    private updateName = (newName: string) => {
+    private onClickTest = (): void => {
+        this.variableList.count.state++;
+    };
+
+    private onInputUpdateName = (newName: string) => {
         this.variableList.name.state = newName;
     };
 
-    constructor() {
-        this.variableList = {} as ModelIndex.Itest;
+    private onClickOpen = (): void => {
+        if (this.controllerAlert) {
+            this.controllerAlert.open("success", "text");
+        }
+    };
+
+    constructor(cwsClientValue: CwsClient) {
+        this.variableList = {} as ModelIndex.IvariableList;
         this.methodList = {} as ModelIndex.ImethodList;
+        this.subViewList = {} as ModelIndex.IsubViewList;
+        this.controllerAlert = new ControllerAlert();
+
+        this.cwsClient = cwsClientValue;
+
+        this.cwsClient.checkConnection((mode) => {
+            this.broadcast();
+
+            if (mode === "connection") {
+                //this.specFileListReceiveData();
+
+                //this.runReceiveData();
+
+                //this.videoReceiveData();
+
+                //this.uploadReceiveData();
+
+                this.variableList.isLoading.state = false;
+            }
+        });
     }
 
     variable(): void {
@@ -506,29 +561,58 @@ export default class ControllerIndex implements Icontroller {
         console.log("Index.ts => variable()");
 
         this.variableList = {
-            name: bindVariable("cimo")
+            specFileList: bindVariable([]),
+            userList: bindVariable([]),
+            outputList: bindVariable([]),
+            isLoading: bindVariable(true),
+            name: bindVariable("cimo"),
+            count: bindVariable(0)
         };
 
         this.methodList = {
             onClickTest: this.onClickTest,
-            updateName: this.updateName
+            onInputUpdateName: this.onInputUpdateName,
+            onClickOpen: this.onClickOpen
         };
+
+        if (this.controllerAlert) {
+            this.controllerAlert.variable();
+        }
     }
 
     view(): IvirtualNode {
         // eslint-disable-next-line no-console
         console.log("Index.ts => view()", this.variableList);
 
-        return viewPageIndex(this.variableList, this.methodList);
+        if (this.controllerAlert) {
+            this.subViewList = {
+                alert: this.controllerAlert.view()
+            };
+        }
+
+        return viewIndex(this.variableList, this.methodList, this.subViewList);
     }
 
     event(): void {
         // eslint-disable-next-line no-console
         console.log("Index.ts => event()", this.variableList);
+
+        this.variableList.count.listener((value) => {
+            // eslint-disable-next-line no-console
+            console.log("count", value);
+        });
+
+        if (this.controllerAlert) {
+            this.controllerAlert.event();
+        }
     }
 
     destroy(): void {
         // eslint-disable-next-line no-console
         console.log("Index.ts => destroy()");
+
+        if (this.controllerAlert) {
+            this.controllerAlert.destroy();
+        }
     }
 }

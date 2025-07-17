@@ -1,8 +1,8 @@
-import { IvariableState } from "../JsMvcFwInterface";
+import { IbindVariable } from "../JsMvcFwInterface";
 
 export interface IvariableList {
-    title: IvariableState<string>;
-    content: IvariableState<string>;
+    title: IbindVariable<string>;
+    content: IbindVariable<string>;
 }
 
 export interface ImethodList {

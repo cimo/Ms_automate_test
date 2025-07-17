@@ -1,5 +1,5 @@
 import { Icontroller, IvirtualNode } from "../JsMvcFwInterface";
-import { writeLog, bindVariableState } from "../JsMvcBase";
+import { bindVariable } from "../JsMvcBase";
 import { MDCDialog } from "@material/dialog";
 
 // Source
@@ -39,13 +39,15 @@ export default class ControllerDialog implements Icontroller {
     private onClickAccept = (): void => {
         this.resetMdcContent();
 
-        writeLog("cimo", "accept");
+        // eslint-disable-next-line no-console
+        console.log("cimo", "accept");
     };
 
     private onClickClose = (): void => {
         this.resetMdcContent();
 
-        writeLog("cimo", "close");
+        // eslint-disable-next-line no-console
+        console.log("cimo", "close");
     };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -100,8 +102,8 @@ export default class ControllerDialog implements Icontroller {
 
     variable(): void {
         this.variableList = {
-            title: bindVariableState({ state: "" }, this.template, "subViewDialog", this.initializeMdc),
-            content: bindVariableState({ state: "" }, this.template, "subViewDialog", this.initializeMdc)
+            title: bindVariable(""),
+            content: bindVariable("")
         };
 
         this.methodList = {
@@ -111,16 +113,19 @@ export default class ControllerDialog implements Icontroller {
     }
 
     view(): IvirtualNode {
-        writeLog("Dialog.ts => view()", this.variableList);
+        // eslint-disable-next-line no-console
+        console.log("Dialog.ts => view()", this.variableList);
 
         return this.template();
     }
 
     event(): void {
-        writeLog("Dialog.ts => event()", this.variableList);
+        // eslint-disable-next-line no-console
+        console.log("Dialog.ts => event()", this.variableList);
     }
 
     destroy(): void {
-        writeLog("Dialog.ts => destroy()", this.variableList);
+        // eslint-disable-next-line no-console
+        console.log("Dialog.ts => destroy()", this.variableList);
     }
 }

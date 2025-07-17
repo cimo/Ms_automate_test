@@ -1,0 +1,70 @@
+import { IvirtualNode } from "../JsMvcFwInterface";
+import { stateVariable } from "../JsMvcBase";
+import jsxFactory from "../JsMvcFwJsx";
+
+// Source
+import * as ModelIndex from "../model/Index";
+import viewLoader from "../view/Loader";
+
+const viewIndex = (
+    variableList: ModelIndex.IvariableList,
+    methodList: ModelIndex.ImethodList,
+    subViewList: ModelIndex.IsubViewList
+): IvirtualNode => {
+    /*return `${viewLoader(variableList)}
+    ${viewAlert()}
+    ${viewDialog()}
+    <div class="page_container view_index">
+        <div class="header"></div>
+        <div class="left">
+            ${viewSpecFile(variableList)}
+        </div>
+        <div class="right">
+           ${viewClientTemplate}
+           ${viewVideoTemplate}
+           ${viewUploadTemplate}
+       </div>
+    </div>`;
+
+    return (
+        <div>
+            {viewLoader(variableList)}
+            <div id="subViewAlert">{subViewList.alert}</div>
+            <div id="subViewDialog">{subViewList.dialog}</div>
+            <div class="page_container view_index">
+                <div class="header"></div>
+                <div class="left">
+                    <button onClick={methodList.onClickTest}>Click</button>
+                </div>
+                <div class="right">{variableList.userList.state}</div>
+            </div>
+        </div>
+    );*/
+
+    const [name, onInputUpdateName] = stateVariable("Simone");
+
+    return (
+        <div>
+            {viewLoader(variableList)}
+            {subViewList.alert}
+            <div>
+                <p>Test1 {name}</p>
+                <input type="text" name="name1" value={name} onInput={(e) => onInputUpdateName((e.target as HTMLInputElement).value)} />
+            </div>
+            <div>
+                <p>Test2 {variableList.name.state}</p>
+                <input
+                    type="text"
+                    name="name2"
+                    value={variableList.name.state}
+                    onInput={(e) => methodList.onInputUpdateName((e.target as HTMLInputElement).value)}
+                />
+                <p>{variableList.count.state}</p>
+                <button onClick={methodList.onClickTest}>Increment</button>
+                <button onClick={methodList.onClickOpen}>Open</button>
+            </div>
+        </div>
+    );
+};
+
+export default viewIndex;
