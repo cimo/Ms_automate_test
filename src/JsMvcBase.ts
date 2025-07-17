@@ -35,7 +35,7 @@ export const getIsDebug = () => isDebug;
 export const getUrlRoot = () => urlRoot;
 export const getElementRoot = () => elementRoot;
 
-export const writeLog = (tag: string, value: any): void => {
+export const writeLog = (tag: string, value: unknown): void => {
     if (isDebug) {
         // eslint-disable-next-line no-console
         console.log(`${tag} `, value);

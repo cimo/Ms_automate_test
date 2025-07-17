@@ -1,13 +1,7 @@
-export interface IvirtualNodeProps {
-    children?: Array<IvirtualNode | string>;
-    [key: string]: string | number | boolean | null | ((event: Event) => void) | Array<IvirtualNode | string> | undefined;
-}
-
 export interface IvirtualNode {
-    type: string;
-    props: IvirtualNodeProps;
+    tag: string;
+    property: { [key: string]: string | number | boolean | null | ((event: Event) => void) | Array<IvirtualNode | string> | undefined };
     children: Array<IvirtualNode | string>;
-    key?: string | number;
 }
 
 export interface IvariableState<T> {

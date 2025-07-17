@@ -1,4 +1,4 @@
-import { frameworkInit } from "../JsMvcBase";
+/*import { frameworkInit } from "../JsMvcBase";
 import { routerInit } from "../JsMvcFwRouter";
 import CwsClient from "@cimo/websocket/dist/client/Manager";
 
@@ -16,4 +16,19 @@ routerInit([
         path: `${HelperSrc.URL_ROOT}/ui`,
         controller: () => new ControllerIndex(cwsClient)
     }
-]);
+]);*/
+
+import { renderTemplate } from "../FwBase";
+import controllerIndex from "../controller/Index";
+
+const controller = new controllerIndex();
+
+controller.variable();
+
+const root = document.getElementById("jsmvcfw_app");
+
+if (root) {
+    renderTemplate(() => controller.view(), root);
+}
+
+controller.event();

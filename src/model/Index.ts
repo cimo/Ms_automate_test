@@ -12,9 +12,14 @@ export interface IvariableList {
 
 export interface ImethodList {
     onClickTest: () => void;
+    updateName: (value: string) => void;
 }
 
 export interface IsubViewList {
     alert: IvirtualNode;
     dialog: IvirtualNode;
+}
+
+export interface Itest {
+    name: IvariableState<string>;
 }

@@ -2,7 +2,7 @@ import { Irouter, Icontroller } from "./JsMvcFwInterface";
 import { writeLog, getUrlRoot, getElementRoot, renderTemplate } from "./JsMvcBase";
 
 let routerList: Irouter[] = [];
-let controller: Icontroller | null = null;
+let controller: Icontroller;
 
 const routerHistoryPush = (nextUrl: string, soft: boolean, title = "", parameterListValue?: Record<string, unknown>): void => {
     let url = nextUrl.startsWith("/") ? nextUrl.slice(1) : nextUrl;
@@ -60,13 +60,10 @@ const populatePage = (
         if (route.path === nextUrl) {
             controller = route.controller();
 
-            if (controller && Object.keys(controller).length > 0) {
-                controller.variable();
-            }
+            controller.variable();
 
             if (urlRoot && isHistoryPushEnabled) {
-                const urlRootReplace = urlRoot.replace(/\/+$/, "");
-                routerHistoryPush(`${urlRootReplace}${nextUrl}`, soft, route.title, parameterList);
+                routerHistoryPush(`${urlRoot.replace(/\/+$/, "")}${nextUrl}`, soft, route.title, parameterList);
 
                 if (parameterSearch) {
                     window.location.search = parameterSearch;
@@ -76,20 +73,13 @@ const populatePage = (
             if (!isHistoryPushEnabled || soft) {
                 document.title = route.title;
 
-                if (controller && controller.view) {
-                    const component = controller.view();
-
-                    renderTemplate(() => component);
-                } else {
-                    elementRoot.innerHTML = "";
-                }
+                renderTemplate(() => controller.view());
             }
 
-            if (controller && controller.event) {
-                controller.event();
-            }
+            controller.event();
 
             isNotFound = false;
+
             break;
         }
     }
@@ -111,6 +101,7 @@ export const routerInit = (routerListValue: Irouter[]): void => {
 
     window.onload = (event: Event) => {
         writeLog("JsMvcFwRouter.ts => onload()", window.location.pathname);
+
         if (event) {
             populatePage(false, window.location.pathname, false);
         }
@@ -118,6 +109,7 @@ export const routerInit = (routerListValue: Irouter[]): void => {
 
     window.onpopstate = (event: PopStateEvent) => {
         writeLog("JsMvcFwRouter.ts => onpopstate()", window.location.pathname);
+
         if (event) {
             populatePage(false, window.location.pathname, false);
         }
@@ -125,7 +117,8 @@ export const routerInit = (routerListValue: Irouter[]): void => {
 
     window.onbeforeunload = (event: Event) => {
         writeLog("JsMvcFwRouter.ts => onbeforeunload()", { event });
-        if (event && controller && controller.destroy) {
+
+        if (controller) {
             controller.destroy();
         }
     };
@@ -133,5 +126,6 @@ export const routerInit = (routerListValue: Irouter[]): void => {
 
 export const navigateTo = (nextUrl: string, soft = false, parameterList?: Record<string, unknown>, parameterSearch?: string): void => {
     writeLog("JsMvcFwRouter.ts => navigateTo()", { nextUrl, parameterList, parameterSearch });
+
     populatePage(true, nextUrl, soft, parameterList, parameterSearch);
 };

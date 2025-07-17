@@ -1,83 +1,101 @@
 import { IvirtualNode } from "./JsMvcFwInterface";
 
 export const createVirtualNode = (virtualNode: IvirtualNode): HTMLElement => {
-    const element = document.createElement(virtualNode.type);
+    const el = document.createElement(virtualNode.tag);
 
-    for (const [key, value] of Object.entries(virtualNode.props)) {
-        if (key === "style" && typeof value === "object") {
-            Object.assign(element.style, value);
-        } else if (key.startsWith("on") && typeof value === "function") {
-            const eventName = key.slice(2).toLowerCase();
-
-            element.addEventListener(eventName, value);
-        } else if (key !== "children" && typeof value !== "function") {
-            if (element && element.getAttribute(key) !== String(value)) {
-                element.setAttribute(key, String(value));
-            }
+    for (const [key, value] of Object.entries(virtualNode.property || {})) {
+        if (typeof value === "function" && key.startsWith("on")) {
+            el.addEventListener(key.slice(2).toLowerCase(), value);
+        } else if (typeof value === "boolean") {
+            if (value) el.setAttribute(key, "");
+            else el.removeAttribute(key);
+        } else if (value !== null && value !== undefined && typeof value !== "object") {
+            el.setAttribute(key, value.toString());
         }
     }
 
-    for (const children of virtualNode.children) {
-        if (typeof children === "string") {
-            element.appendChild(document.createTextNode(children));
+    for (const child of virtualNode.children) {
+        if (typeof child === "string") {
+            el.appendChild(document.createTextNode(child));
         } else {
-            element.appendChild(createVirtualNode(children));
+            el.appendChild(createVirtualNode(child));
         }
     }
 
-    return element;
+    return el;
 };
 
-export const updateVirtualNode = (element: Element, virtualNode: IvirtualNode, virtualNodeOld: IvirtualNode): void => {
-    if (virtualNode.type !== virtualNodeOld.type) {
-        const newElement = createVirtualNode(virtualNode);
-
-        element.replaceWith(newElement);
-
+export const updateVirtualNode = (element: Element, newVNode: IvirtualNode, oldVNode: IvirtualNode): void => {
+    if (newVNode.tag !== oldVNode.tag) {
+        const newEl = createVirtualNode(newVNode);
+        element.replaceWith(newEl);
         return;
     }
 
-    for (const [key, value] of Object.entries(virtualNode.props)) {
-        if (key === "style" && typeof value === "object") {
-            Object.assign((element as HTMLElement).style, value);
-        } else if (key.startsWith("on") && typeof value === "function") {
-            const eventName = key.slice(2).toLowerCase();
+    const newProps = newVNode.property || {};
+    const oldProps = oldVNode.property || {};
 
-            element.addEventListener(eventName, value);
-        } else if (key !== "children" && typeof value !== "function") {
-            if (element && element.getAttribute(key) !== String(value)) {
-                element.setAttribute(key, String(value));
+    for (const key in oldProps) {
+        if (!(key in newProps)) {
+            if (key.startsWith("on") && typeof oldProps[key] === "function") {
+                element.removeEventListener(key.slice(2).toLowerCase(), oldProps[key] as EventListener);
+            } else {
+                element.removeAttribute(key);
             }
         }
     }
 
-    for (const key of Object.keys(virtualNodeOld.props)) {
-        if (!(key in virtualNode.props) && typeof virtualNodeOld.props[key] !== "function") {
-            element.removeAttribute(key);
+    for (const [key, value] of Object.entries(newProps)) {
+        const oldValue = oldProps[key];
+
+        if (value !== oldValue) {
+            if (key.startsWith("on") && typeof value === "function") {
+                if (typeof oldValue === "function") {
+                    element.removeEventListener(key.slice(2).toLowerCase(), oldValue);
+                }
+                element.addEventListener(key.slice(2).toLowerCase(), value);
+            } else if (typeof value === "boolean") {
+                if (value) element.setAttribute(key, "");
+                else element.removeAttribute(key);
+            } else if (value !== null && value !== undefined && typeof value !== "object") {
+                element.setAttribute(key, value.toString());
+            }
         }
     }
 
-    const newChildrenList = virtualNode.children;
-    const oldChildrenList = virtualNodeOld.children;
-    const maxLength = Math.max(newChildrenList.length, oldChildrenList.length);
+    const newChildren = newVNode.children;
+    const oldChildren = oldVNode.children;
+    const domChildren = Array.from(element.childNodes);
 
-    for (let i = 0; i < maxLength; i++) {
-        const newChild = newChildrenList[i];
-        const oldChild = oldChildrenList[i];
-        const elementChild = element.childNodes[i];
+    const max = Math.max(newChildren.length, oldChildren.length);
 
-        if (newChild && !oldChild) {
-            element.appendChild(typeof newChild === "string" ? document.createTextNode(newChild) : createVirtualNode(newChild));
-        } else if (!newChild && oldChild) {
-            element.removeChild(elementChild);
-        } else if (typeof newChild === "string" && typeof oldChild === "string") {
-            if (elementChild.textContent !== newChild) {
-                elementChild.textContent = newChild;
+    for (let i = 0; i < max; i++) {
+        const newChild = newChildren[i];
+        const oldChild = oldChildren[i];
+        const domChild = domChildren[i];
+
+        if (!newChild && domChild) {
+            element.removeChild(domChild);
+        } else if (typeof newChild === "string") {
+            if (!domChild) {
+                element.appendChild(document.createTextNode(newChild));
+            } else if (domChild.nodeType === Node.TEXT_NODE) {
+                if (domChild.textContent !== newChild) {
+                    domChild.textContent = newChild;
+                }
+            } else {
+                const textNode = document.createTextNode(newChild);
+                element.replaceChild(textNode, domChild);
             }
-        } else if (typeof newChild === "string" || typeof oldChild === "string") {
-            element.replaceChild(typeof newChild === "string" ? document.createTextNode(newChild) : createVirtualNode(newChild), elementChild);
-        } else {
-            updateVirtualNode(elementChild as Element, newChild as IvirtualNode, oldChild as IvirtualNode);
+        } else if (typeof newChild === "object") {
+            if (!domChild) {
+                element.appendChild(createVirtualNode(newChild));
+            } else if (typeof oldChild === "object") {
+                updateVirtualNode(domChild as Element, newChild, oldChild);
+            } else {
+                const newEl = createVirtualNode(newChild);
+                element.replaceChild(newEl, domChild);
+            }
         }
     }
 };
