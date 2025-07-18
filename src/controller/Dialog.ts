@@ -8,47 +8,34 @@ import viewDialog from "../view/Dialog";
 
 export default class ControllerDialog implements Icontroller {
     // Variable
-    private template: () => IvirtualNode;
     private variableList: ModelDialog.IvariableList;
     private methodList: ModelDialog.ImethodList;
 
     private mdcDialog: MDCDialog | null;
 
     // Method
+    private mdcView = (): void => {
+        const elementMdcDialog = document.querySelector<HTMLElement>(".mdc-dialog");
+
+        if (!this.mdcDialog && elementMdcDialog) {
+            this.mdcDialog = new MDCDialog(elementMdcDialog);
+        }
+    };
+
+    private onClickAccept = (): void => {
+        this.close();
+    };
+
+    private onClickClose = (): void => {
+        this.close();
+    };
+
     constructor() {
-        this.template = () => viewDialog(this.variableList, this.methodList);
         this.variableList = {} as ModelDialog.IvariableList;
         this.methodList = {} as ModelDialog.ImethodList;
 
         this.mdcDialog = null;
     }
-
-    private initializeMdc = (): void => {
-        const elementMdcDialog = document.querySelector<HTMLElement>(".mdc-dialog");
-
-        if (elementMdcDialog) {
-            this.mdcDialog = new MDCDialog(elementMdcDialog);
-        }
-    };
-
-    private resetMdcContent = (): void => {
-        this.variableList.title.state = "";
-        this.variableList.content.state = "";
-    };
-
-    private onClickAccept = (): void => {
-        this.resetMdcContent();
-
-        // eslint-disable-next-line no-console
-        console.log("cimo", "accept");
-    };
-
-    private onClickClose = (): void => {
-        this.resetMdcContent();
-
-        // eslint-disable-next-line no-console
-        console.log("cimo", "close");
-    };
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     open = (title: string, message: string, isSingleButton = false, callbackAccept?: () => void, callbackClose?: () => void): void => {
@@ -93,7 +80,8 @@ export default class ControllerDialog implements Icontroller {
     };
 
     close = (): void => {
-        this.resetMdcContent();
+        this.variableList.title.state = "";
+        this.variableList.content.state = "";
 
         if (this.mdcDialog) {
             this.mdcDialog.close();
@@ -101,6 +89,9 @@ export default class ControllerDialog implements Icontroller {
     };
 
     variable(): void {
+        // eslint-disable-next-line no-console
+        console.log("Dialog.ts => variable()");
+
         this.variableList = {
             title: bindVariable(""),
             content: bindVariable("")
@@ -116,7 +107,9 @@ export default class ControllerDialog implements Icontroller {
         // eslint-disable-next-line no-console
         console.log("Dialog.ts => view()", this.variableList);
 
-        return this.template();
+        this.mdcView();
+
+        return viewDialog(this.variableList, this.methodList);
     }
 
     event(): void {
@@ -126,6 +119,6 @@ export default class ControllerDialog implements Icontroller {
 
     destroy(): void {
         // eslint-disable-next-line no-console
-        console.log("Dialog.ts => destroy()", this.variableList);
+        console.log("Dialog.ts => destroy()");
     }
 }

@@ -47,6 +47,7 @@ const viewIndex = (
         <div>
             {viewLoader(variableList)}
             {subViewList.alert}
+            {subViewList.dialog}
             <div>
                 <p>Test1 {name}</p>
                 <input type="text" name="name1" value={name} onInput={(e) => onInputUpdateName((e.target as HTMLInputElement).value)} />
@@ -60,7 +61,7 @@ const viewIndex = (
                     onInput={(e) => methodList.onInputUpdateName((e.target as HTMLInputElement).value)}
                 />
                 <p>{variableList.count.state}</p>
-                <button onClick={methodList.onClickTest}>Increment</button>
+                <button onClick={methodList.onClickCount}>Count</button>
                 <button onClick={methodList.onClickOpen}>Open</button>
             </div>
         </div>

@@ -13,11 +13,12 @@ export interface IvariableList {
 }
 
 export interface ImethodList {
-    onClickTest: () => void;
     onInputUpdateName: (value: string) => void;
+    onClickCount: () => void;
     onClickOpen: () => void;
 }
 
 export interface IsubViewList {
     alert: IvirtualNode;
+    dialog: IvirtualNode;
 }

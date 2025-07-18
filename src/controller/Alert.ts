@@ -9,6 +9,7 @@ import viewAlert from "../view/Alert";
 export default class ControllerAlert implements Icontroller {
     // Variable
     private variableList: ModelAlert.IvariableList;
+    private methodList: ModelAlert.ImethodList;
 
     private mdcSnackbar: MDCSnackbar | null;
 
@@ -16,7 +17,7 @@ export default class ControllerAlert implements Icontroller {
     private mdcView = (): void => {
         const elementMdcSnackbar = document.querySelector<HTMLElement>(".mdc-snackbar");
 
-        if (elementMdcSnackbar) {
+        if (!this.mdcSnackbar && elementMdcSnackbar) {
             this.mdcSnackbar = new MDCSnackbar(elementMdcSnackbar);
 
             if (this.mdcSnackbar) {
@@ -25,8 +26,13 @@ export default class ControllerAlert implements Icontroller {
         }
     };
 
+    private onClickClose = (): void => {
+        this.close();
+    };
+
     constructor() {
         this.variableList = {} as ModelAlert.IvariableList;
+        this.methodList = {} as ModelAlert.ImethodList;
 
         this.mdcSnackbar = null;
     }
@@ -60,6 +66,10 @@ export default class ControllerAlert implements Icontroller {
             className: bindVariable(""),
             label: bindVariable("")
         };
+
+        this.methodList = {
+            onClickClose: this.onClickClose
+        };
     }
 
     view(): IvirtualNode {
@@ -68,7 +78,7 @@ export default class ControllerAlert implements Icontroller {
 
         this.mdcView();
 
-        return viewAlert(this.variableList);
+        return viewAlert(this.variableList, this.methodList);
     }
 
     event(): void {

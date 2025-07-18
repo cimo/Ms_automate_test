@@ -29,6 +29,32 @@ export const createVirtualNode = (virtualNode: IvirtualNode): HTMLElement => {
 };
 
 export const updateVirtualNode = (element: Element, nodeOld: IvirtualNode, nodeNew: IvirtualNode): void => {
+    const shouldSkipFullUpdate = element.hasAttribute("data-jsMvcFw_skip") || element.closest("[data-jsMvcFw_skip]");
+
+    if (shouldSkipFullUpdate) {
+        const updateTargets = element.querySelectorAll("[data-jsMvcFw_state]");
+
+        if (element.hasAttribute("data-jsMvcFw_skip") || element.closest("[data-jsMvcFw_skip]")) {
+            updateTargets.forEach((target) => {
+                const targetIndex = Array.from(updateTargets).indexOf(target);
+                const newChild = nodeNew.children[targetIndex];
+
+                if (typeof newChild === "string") {
+                    if (target.textContent !== newChild) {
+                        target.textContent = newChild;
+                    }
+                } else if (typeof newChild === "object") {
+                    const oldChild = nodeOld.children[targetIndex];
+                    if (typeof oldChild === "object") {
+                        updateVirtualNode(target as Element, oldChild, newChild);
+                    }
+                }
+            });
+
+            return;
+        }
+    }
+
     if (nodeOld.tag !== nodeNew.tag) {
         const elementNew = createVirtualNode(nodeNew);
 

@@ -484,6 +484,7 @@ import * as ModelIndex from "../model/Index";
 import * as ModelTester from "../model/Tester";
 import viewIndex from "../view/Index";
 import ControllerAlert from "./Alert";
+import ControllerDialog from "./Dialog";
 
 export default class ControllerIndex implements Icontroller {
     // Variable
@@ -491,6 +492,7 @@ export default class ControllerIndex implements Icontroller {
     private methodList: ModelIndex.ImethodList;
     private subViewList: ModelIndex.IsubViewList;
     private controllerAlert: ControllerAlert | null;
+    private controllerDialog: ControllerDialog | null;
 
     private cwsClient: CwsClient;
 
@@ -517,17 +519,21 @@ export default class ControllerIndex implements Icontroller {
         this.cwsClient.sendData(1, "", "output", 200);
     };
 
-    private onClickTest = (): void => {
-        this.variableList.count.state++;
-    };
-
     private onInputUpdateName = (newName: string) => {
         this.variableList.name.state = newName;
+    };
+
+    private onClickCount = (): void => {
+        this.variableList.count.state++;
     };
 
     private onClickOpen = (): void => {
         if (this.controllerAlert) {
             this.controllerAlert.open("success", "text");
+        }
+
+        if (this.controllerDialog) {
+            this.controllerDialog.open("title", "message");
         }
     };
 
@@ -536,6 +542,7 @@ export default class ControllerIndex implements Icontroller {
         this.methodList = {} as ModelIndex.ImethodList;
         this.subViewList = {} as ModelIndex.IsubViewList;
         this.controllerAlert = new ControllerAlert();
+        this.controllerDialog = new ControllerDialog();
 
         this.cwsClient = cwsClientValue;
 
@@ -570,13 +577,14 @@ export default class ControllerIndex implements Icontroller {
         };
 
         this.methodList = {
-            onClickTest: this.onClickTest,
+            onClickCount: this.onClickCount,
             onInputUpdateName: this.onInputUpdateName,
             onClickOpen: this.onClickOpen
         };
 
-        if (this.controllerAlert) {
+        if (this.controllerAlert && this.controllerDialog) {
             this.controllerAlert.variable();
+            this.controllerDialog.variable();
         }
     }
 
@@ -584,9 +592,10 @@ export default class ControllerIndex implements Icontroller {
         // eslint-disable-next-line no-console
         console.log("Index.ts => view()", this.variableList);
 
-        if (this.controllerAlert) {
+        if (this.controllerAlert && this.controllerDialog) {
             this.subViewList = {
-                alert: this.controllerAlert.view()
+                alert: this.controllerAlert.view(),
+                dialog: this.controllerDialog.view()
             };
         }
 
@@ -602,8 +611,9 @@ export default class ControllerIndex implements Icontroller {
             console.log("count", value);
         });
 
-        if (this.controllerAlert) {
+        if (this.controllerAlert && this.controllerDialog) {
             this.controllerAlert.event();
+            this.controllerDialog.event();
         }
     }
 
@@ -611,8 +621,9 @@ export default class ControllerIndex implements Icontroller {
         // eslint-disable-next-line no-console
         console.log("Index.ts => destroy()");
 
-        if (this.controllerAlert) {
+        if (this.controllerAlert && this.controllerDialog) {
             this.controllerAlert.destroy();
+            this.controllerDialog.destroy();
         }
     }
 }
