@@ -1,22 +1,20 @@
-import { IvirtualNode } from "./JsMvcFwInterface";
+import { IvirtualNode, TvirtualNodeChildren } from "./JsMvcFwInterface";
 
-type Child = IvirtualNode | string | number;
+const jsxFactory = (tag: string, property: IvirtualNode["property"] = {}, ...childrenList: TvirtualNodeChildren[]): IvirtualNode => {
+    const childrenNormalized: Array<IvirtualNode | string> = [];
 
-const jsxFactory = (tag: string, property: IvirtualNode["property"] = {}, ...children: Child[]): IvirtualNode => {
-    const normalizedChildren: Array<IvirtualNode | string> = [];
-
-    for (const child of children) {
-        if (typeof child === "number") {
-            normalizedChildren.push(String(child));
+    for (const children of childrenList) {
+        if (typeof children === "number") {
+            childrenNormalized.push(String(children));
         } else {
-            normalizedChildren.push(child);
+            childrenNormalized.push(children);
         }
     }
 
     return {
         tag,
         property,
-        children: normalizedChildren
+        children: childrenNormalized
     };
 };
 

@@ -14,11 +14,18 @@ export default class ControllerDialog implements Icontroller {
     private mdcDialog: MDCDialog | null;
 
     // Method
-    private mdcView = (): void => {
+    private mdcEvent = (): void => {
         const elementMdcDialog = document.querySelector<HTMLElement>(".mdc-dialog");
 
-        if (!this.mdcDialog && elementMdcDialog) {
+        if (elementMdcDialog && !this.mdcDialog) {
             this.mdcDialog = new MDCDialog(elementMdcDialog);
+        }
+
+        if (this.mdcDialog) {
+            this.mdcDialog.listen("MDCDialog:closed", () => {
+                this.variableList.title.state = "";
+                this.variableList.content.state = "";
+            });
         }
     };
 
@@ -80,15 +87,12 @@ export default class ControllerDialog implements Icontroller {
     };
 
     close = (): void => {
-        this.variableList.title.state = "";
-        this.variableList.content.state = "";
-
         if (this.mdcDialog) {
             this.mdcDialog.close();
         }
     };
 
-    scopeId(): string {
+    name(): string {
         return "dialog";
     }
 
@@ -97,8 +101,8 @@ export default class ControllerDialog implements Icontroller {
         console.log("Dialog.ts => variable()");
 
         this.variableList = {
-            title: bindVariable("", this.scopeId()),
-            content: bindVariable("", this.scopeId())
+            title: bindVariable("", this.name()),
+            content: bindVariable("", this.name())
         };
 
         this.methodList = {
@@ -111,14 +115,14 @@ export default class ControllerDialog implements Icontroller {
         // eslint-disable-next-line no-console
         console.log("Dialog.ts => view()", this.variableList);
 
-        this.mdcView();
-
         return viewDialog(this.variableList, this.methodList);
     }
 
     event(): void {
         // eslint-disable-next-line no-console
         console.log("Dialog.ts => event()", this.variableList);
+
+        this.mdcEvent();
     }
 
     destroy(): void {

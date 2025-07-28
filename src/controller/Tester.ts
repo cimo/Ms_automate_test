@@ -49,15 +49,17 @@ export default class ControllerTester {
             const fileList = Fs.readdirSync(`${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_INPUT}`);
 
             const fileFiltered: string[] = [];
-            for (let i = 0; i < fileList.length; i++) {
-                if (fileList[i].endsWith(".spec.ts")) {
-                    fileFiltered.push(fileList[i]);
+
+            for (let a = 0; a < fileList.length; a++) {
+                if (fileList[a].endsWith(".spec.ts")) {
+                    fileFiltered.push(fileList[a]);
                 }
             }
 
             const resultList: string[] = [];
-            for (let i = 0; i < fileFiltered.length; i++) {
-                resultList.push(fileFiltered[i].replace(/\.spec\.ts$/, ""));
+
+            for (let a = 0; a < fileFiltered.length; a++) {
+                resultList.push(fileFiltered[a].replace(/\.spec\.ts$/, ""));
             }
 
             const serverData: ModelTester.IserverData = { status: "", result: resultList };

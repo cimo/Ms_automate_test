@@ -8,8 +8,7 @@ import viewLoader from "../view/Loader";
 
 const viewIndex = (
     variableList: ModelIndex.IvariableList,
-    methodList: ModelIndex.ImethodList,
-    subViewList: ModelIndex.IsubViewList
+    methodList: ModelIndex.ImethodList
 ): IvirtualNode => {
     /*return `${viewLoader(variableList)}
     ${viewAlert()}
@@ -44,10 +43,10 @@ const viewIndex = (
     const [name, onInputUpdateName] = stateVariable("Simone", "index");
 
     return (
-        <div>
+        <div data-jsmvcfw-controllerName="index">
             {viewLoader(variableList)}
-            {subViewList.alert}
-            {subViewList.dialog}
+            <aside data-jsmvcfw-controllerName="alert"/>
+            <aside data-jsmvcfw-controllerName="dialog"/>
             <div>
                 <p>Test1 {name}</p>
                 <input type="text" name="name1" value={name} onInput={(e) => onInputUpdateName((e.target as HTMLInputElement).value)} />

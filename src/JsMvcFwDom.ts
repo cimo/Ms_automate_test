@@ -1,84 +1,80 @@
-import { IvirtualNode } from "./JsMvcFwInterface";
+import { TvirtualNodeProperty, IvirtualNode } from "./JsMvcFwInterface";
 
-const applyProperty = (element: Element, key: string, value: any): void => {
-    if (key.startsWith("on") && typeof value === "function") {
-        element.addEventListener(key.slice(2).toLowerCase(), value);
-    } else if (typeof value === "boolean") {
-        value ? element.setAttribute(key, "") : element.removeAttribute(key);
-    } else if (value !== null && value !== undefined && typeof value !== "object") {
-        element.setAttribute(key, value.toString());
+const applyProperty = (element: Element, key: string, valueNew: TvirtualNodeProperty, valueOld?: TvirtualNodeProperty): void => {
+    if (key.startsWith("on") && typeof valueNew === "function") {
+        if (typeof valueOld === "function") {
+            element.removeEventListener(key.slice(2).toLowerCase(), valueOld);
+        }
+
+        element.addEventListener(key.slice(2).toLowerCase(), valueNew);
+    } else if (typeof valueNew === "boolean") {
+        valueNew ? element.setAttribute(key, "") : element.removeAttribute(key);
+    } else if (typeof valueNew === "string" || typeof valueNew === "number") {
+        element.setAttribute(key, valueNew.toString());
     }
 };
 
-const updateProperties = (element: Element, oldProps: Record<string, any>, newProps: Record<string, any>): void => {
-    for (const key in oldProps) {
-        if (!(key in newProps)) {
-            if (key.startsWith("on") && typeof oldProps[key] === "function") {
-                element.removeEventListener(key.slice(2).toLowerCase(), oldProps[key]);
+const updateProperty = (element: Element, oldList: Record<string, TvirtualNodeProperty>, newList: Record<string, TvirtualNodeProperty>): void => {
+    for (const key in oldList) {
+        if (!(key in newList)) {
+            if (key.startsWith("on") && typeof oldList[key] === "function") {
+                element.removeEventListener(key.slice(2).toLowerCase(), oldList[key]);
             } else {
                 element.removeAttribute(key);
             }
         }
     }
 
-    for (const [key, value] of Object.entries(newProps)) {
-        const oldValue = oldProps[key];
-        if (value !== oldValue) {
-            if (key.startsWith("on") && typeof value === "function") {
-                if (typeof oldValue === "function") {
-                    element.removeEventListener(key.slice(2).toLowerCase(), oldValue);
+    for (const [key, value] of Object.entries(newList)) {
+        const valueOld = oldList[key];
+
+        if (value !== valueOld) {
+            applyProperty(element, key, value, valueOld);
+        }
+    }
+};
+
+const updateChildren = (element: Element, nodeOldList: IvirtualNode["children"], nodeNewList: IvirtualNode["children"]): void => {
+    const nodeList = Array.from(element.childNodes);
+    const nodeMaxLength = Math.max(nodeOldList.length, nodeNewList.length);
+
+    for (let a = 0; a < nodeMaxLength; a++) {
+        const nodeOld = nodeOldList[a];
+        const nodeNew = nodeNewList[a];
+        const nodeDom = nodeList[a];
+
+        if (!nodeNew && nodeDom) {
+            element.removeChild(nodeDom);
+        } else if (typeof nodeNew === "string") {
+            if (!nodeDom) {
+                element.appendChild(document.createTextNode(nodeNew));
+            } else if (nodeDom.nodeType === Node.TEXT_NODE) {
+                if (nodeDom.textContent !== nodeNew) {
+                    nodeDom.textContent = nodeNew;
                 }
-                element.addEventListener(key.slice(2).toLowerCase(), value);
-            } else if (typeof value === "boolean") {
-                value ? element.setAttribute(key, "") : element.removeAttribute(key);
-            } else if (value !== null && value !== undefined && typeof value !== "object") {
-                element.setAttribute(key, value.toString());
+            } else {
+                element.replaceChild(document.createTextNode(nodeNew), nodeDom);
+            }
+        } else if (typeof nodeNew === "object") {
+            if (!nodeDom) {
+                element.appendChild(createVirtualNode(nodeNew));
+            } else if (typeof nodeOld === "object") {
+                updateVirtualNode(nodeDom as Element, nodeOld, nodeNew);
+            } else {
+                element.replaceChild(createVirtualNode(nodeNew), nodeDom);
             }
         }
     }
 };
 
-const updateChildren = (element: Element, oldChildren: IvirtualNode["children"], newChildren: IvirtualNode["children"]): void => {
-    const domChildren = Array.from(element.childNodes);
-    const maxLength = Math.max(oldChildren.length, newChildren.length);
+export const createVirtualNode = (node: IvirtualNode): HTMLElement => {
+    const element = document.createElement(node.tag);
 
-    for (let i = 0; i < maxLength; i++) {
-        const oldChild = oldChildren[i];
-        const newChild = newChildren[i];
-        const domChild = domChildren[i];
-
-        if (!newChild && domChild) {
-            element.removeChild(domChild);
-        } else if (typeof newChild === "string") {
-            if (!domChild) {
-                element.appendChild(document.createTextNode(newChild));
-            } else if (domChild.nodeType === Node.TEXT_NODE) {
-                if (domChild.textContent !== newChild) {
-                    domChild.textContent = newChild;
-                }
-            } else {
-                element.replaceChild(document.createTextNode(newChild), domChild);
-            }
-        } else if (typeof newChild === "object") {
-            if (!domChild) {
-                element.appendChild(createVirtualNode(newChild));
-            } else if (typeof oldChild === "object") {
-                updateVirtualNode(domChild as Element, oldChild, newChild);
-            } else {
-                element.replaceChild(createVirtualNode(newChild), domChild);
-            }
-        }
-    }
-};
-
-export const createVirtualNode = (virtualNode: IvirtualNode): HTMLElement => {
-    const element = document.createElement(virtualNode.tag);
-
-    for (const [key, value] of Object.entries(virtualNode.property || {})) {
+    for (const [key, value] of Object.entries(node.property || {})) {
         applyProperty(element, key, value);
     }
 
-    for (const child of virtualNode.children) {
+    for (const child of node.children) {
         if (typeof child === "string") {
             element.appendChild(document.createTextNode(child));
         } else {
@@ -92,10 +88,13 @@ export const createVirtualNode = (virtualNode: IvirtualNode): HTMLElement => {
 export const updateVirtualNode = (element: Element, nodeOld: IvirtualNode, nodeNew: IvirtualNode): void => {
     if (nodeOld.tag !== nodeNew.tag) {
         const elementNew = createVirtualNode(nodeNew);
+
         element.replaceWith(elementNew);
+
         return;
     }
 
-    updateProperties(element, nodeOld.property || {}, nodeNew.property || {});
+    updateProperty(element, nodeOld.property || {}, nodeNew.property || {});
+
     updateChildren(element, nodeOld.children, nodeNew.children);
 };

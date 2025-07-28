@@ -14,15 +14,19 @@ export default class ControllerAlert implements Icontroller {
     private mdcSnackbar: MDCSnackbar | null;
 
     // Method
-    private mdcView = (): void => {
+    private mdcEvent = (): void => {
         const elementMdcSnackbar = document.querySelector<HTMLElement>(".mdc-snackbar");
 
-        if (!this.mdcSnackbar && elementMdcSnackbar) {
+        if (elementMdcSnackbar && !this.mdcSnackbar) {
             this.mdcSnackbar = new MDCSnackbar(elementMdcSnackbar);
+            this.mdcSnackbar.timeoutMs = -1;
+        }
 
-            if (this.mdcSnackbar) {
-                this.mdcSnackbar.timeoutMs = -1;
-            }
+        if (this.mdcSnackbar) {
+            this.mdcSnackbar.listen("MDCSnackbar:closed", () => {
+                this.variableList.className.state = "";
+                this.variableList.label.state = "";
+            });
         }
     };
 
@@ -50,15 +54,12 @@ export default class ControllerAlert implements Icontroller {
     };
 
     close = (): void => {
-        this.variableList.className.state = "";
-        this.variableList.label.state = "";
-
         if (this.mdcSnackbar) {
             this.mdcSnackbar.close();
         }
     };
 
-    scopeId(): string {
+    name(): string {
         return "alert";
     }
 
@@ -67,8 +68,8 @@ export default class ControllerAlert implements Icontroller {
         console.log("Alert.ts => variable()");
 
         this.variableList = {
-            className: bindVariable("", this.scopeId()),
-            label: bindVariable("", this.scopeId())
+            className: bindVariable("", this.name()),
+            label: bindVariable("", this.name())
         };
 
         this.methodList = {
@@ -80,14 +81,14 @@ export default class ControllerAlert implements Icontroller {
         // eslint-disable-next-line no-console
         console.log("Alert.ts => view()", this.variableList);
 
-        this.mdcView();
-
         return viewAlert(this.variableList, this.methodList);
     }
 
     event(): void {
         // eslint-disable-next-line no-console
         console.log("Alert.ts => event()", this.variableList);
+
+        this.mdcEvent();
     }
 
     destroy(): void {

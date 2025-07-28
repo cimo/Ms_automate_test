@@ -6,7 +6,7 @@ import * as ModelDialog from "../model/Dialog";
 
 const viewDialog = (variableList: ModelDialog.IvariableList, methodList: ModelDialog.ImethodList): IvirtualNode => {
     return (
-        <aside class="mdc-dialog view_dialog">
+        <div class="mdc-dialog view_dialog">
             <div class="mdc-dialog__container">
                 <div
                     class="mdc-dialog__surface"
@@ -30,7 +30,7 @@ const viewDialog = (variableList: ModelDialog.IvariableList, methodList: ModelDi
                 </div>
             </div>
             <div class="mdc-dialog__scrim"></div>
-        </aside>
+        </div>
     );
 };
 

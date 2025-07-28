@@ -1,6 +1,6 @@
 export interface IvirtualNode {
     tag: string;
-    property: { [key: string]: string | number | boolean | null | ((event: Event) => void) | Array<IvirtualNode | string> | undefined };
+    property: { [key: string]: TvirtualNodeProperty };
     children: Array<IvirtualNode | string>;
 }
 
@@ -10,11 +10,12 @@ export interface IbindVariable<T> {
 }
 
 export interface Icontroller {
-    scopeId(): string;
+    name(): string;
     variable(): void;
     view(): IvirtualNode;
     event(): void;
     destroy(): void;
+    subControllerList?(): Icontroller[];
 }
 
 export interface Irouter {
@@ -22,3 +23,7 @@ export interface Irouter {
     path: string;
     controller(): Icontroller;
 }
+
+export type TvirtualNodeProperty = string | number | boolean | (string | IvirtualNode)[] | ((event: Event) => void) | null | undefined;
+
+export type TvirtualNodeChildren = IvirtualNode | string | number;

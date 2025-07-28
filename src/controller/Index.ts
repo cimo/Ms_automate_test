@@ -490,7 +490,6 @@ export default class ControllerIndex implements Icontroller {
     // Variable
     private variableList: ModelIndex.IvariableList;
     private methodList: ModelIndex.ImethodList;
-    private subViewList: ModelIndex.IsubViewList;
     private controllerAlert: ControllerAlert | null;
     private controllerDialog: ControllerDialog | null;
 
@@ -540,7 +539,6 @@ export default class ControllerIndex implements Icontroller {
     constructor(cwsClientValue: CwsClient) {
         this.variableList = {} as ModelIndex.IvariableList;
         this.methodList = {} as ModelIndex.ImethodList;
-        this.subViewList = {} as ModelIndex.IsubViewList;
         this.controllerAlert = new ControllerAlert();
         this.controllerDialog = new ControllerDialog();
 
@@ -563,7 +561,7 @@ export default class ControllerIndex implements Icontroller {
         });
     }
 
-    scopeId(): string {
+    name(): string {
         return "index";
     }
 
@@ -572,12 +570,12 @@ export default class ControllerIndex implements Icontroller {
         console.log("Index.ts => variable()");
 
         this.variableList = {
-            specFileList: bindVariable([], this.scopeId()),
-            userList: bindVariable([], this.scopeId()),
-            outputList: bindVariable([], this.scopeId()),
-            isLoading: bindVariable(true, this.scopeId()),
-            name: bindVariable("cimo", this.scopeId()),
-            count: bindVariable(0, this.scopeId())
+            specFileList: bindVariable([], this.name()),
+            userList: bindVariable([], this.name()),
+            outputList: bindVariable([], this.name()),
+            isLoading: bindVariable(true, this.name()),
+            name: bindVariable("cimo", this.name()),
+            count: bindVariable(0, this.name())
         };
 
         this.methodList = {
@@ -596,14 +594,7 @@ export default class ControllerIndex implements Icontroller {
         // eslint-disable-next-line no-console
         console.log("Index.ts => view()", this.variableList);
 
-        if (this.controllerAlert && this.controllerDialog) {
-            this.subViewList = {
-                alert: this.controllerAlert.view(),
-                dialog: this.controllerDialog.view()
-            };
-        }
-
-        return viewIndex(this.variableList, this.methodList, this.subViewList);
+        return viewIndex(this.variableList, this.methodList);
     }
 
     event(): void {
@@ -629,5 +620,19 @@ export default class ControllerIndex implements Icontroller {
             this.controllerAlert.destroy();
             this.controllerDialog.destroy();
         }
+    }
+
+    subControllerList(): Icontroller[] {
+        // eslint-disable-next-line no-console
+        console.log("Index.ts => subController()");
+
+        const list: Icontroller[] = [];
+
+        if (this.controllerAlert && this.controllerDialog) {
+            list.push(this.controllerAlert);
+            list.push(this.controllerDialog);
+        }
+
+        return list;
     }
 }

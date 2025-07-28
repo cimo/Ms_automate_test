@@ -4,7 +4,12 @@ import { getElementRoot, getUrlRoot, renderTemplate } from "./JsMvcBase";
 let routerList: Irouter[] = [];
 let controller: Icontroller;
 
-const routerHistoryPush = (nextUrl: string, soft: boolean, title = "", parameterListValue?: Record<string, unknown>): void => {
+const historyPush = (
+    nextUrl: string,
+    soft: boolean,
+    title = "",
+    parameterListValue?: Record<string, unknown>
+): void => {
     let url = nextUrl;
 
     if (nextUrl.charAt(0) === "/") {
@@ -15,29 +20,49 @@ const routerHistoryPush = (nextUrl: string, soft: boolean, title = "", parameter
     const queryStringCleanedList: string[] = [];
 
     if (queryString) {
-        const params = queryString.split("&");
+        const queryStringList = queryString.split("&");
 
-        params.forEach((param) => {
+        for (let a = 0; a < queryStringList.length; a++) {
+            const param = queryStringList[a];
             const [key, value] = param.split("=");
 
             const keyCleaned = encodeURIComponent(
-                decodeURIComponent(key.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"))
+                decodeURIComponent(
+                    key
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/"/g, "&quot;")
+                        .replace(/'/g, "&#39;")
+                )
             );
 
             if (value) {
                 const valueCleaned = encodeURIComponent(
-                    decodeURIComponent(value.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"))
+                    decodeURIComponent(
+                        value
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;")
+                            .replace(/"/g, "&quot;")
+                            .replace(/'/g, "&#39;")
+                    )
                 );
-
                 queryStringCleanedList.push(`${keyCleaned}=${valueCleaned}`);
             } else {
                 queryStringCleanedList.push(keyCleaned);
             }
-        });
+        }
     }
 
-    const pathCleaned = path.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
-    const urlCleaned = pathCleaned + (queryStringCleanedList.length > 0 ? "?" + queryStringCleanedList.join("&") : "");
+    const pathCleaned = path
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    const urlCleaned =
+        pathCleaned +
+        (queryStringCleanedList.length > 0
+            ? "?" + queryStringCleanedList.join("&")
+            : "");
 
     window.history.pushState(
         {
@@ -71,12 +96,8 @@ const populatePage = (
 
     for (const route of routerList) {
         if (route.path === nextUrl) {
-            controller = route.controller();
-
-            controller.variable();
-
             if (urlRoot && isHistoryPushEnabled) {
-                routerHistoryPush(`${urlRoot.replace(/\/+$/, "")}${nextUrl}`, soft, route.title, parameterList);
+                historyPush(`${urlRoot.replace(/\/+$/, "")}${nextUrl}`, soft, route.title, parameterList);
 
                 if (parameterSearch) {
                     window.location.search = parameterSearch;
@@ -86,10 +107,14 @@ const populatePage = (
             if (!isHistoryPushEnabled || soft) {
                 document.title = route.title;
 
-                renderTemplate(() => controller.view(), controller.scopeId());
-            }
+                controller = route.controller();
 
-            controller.event();
+                controller.variable();
+
+                renderTemplate(controller);
+
+                controller.event();
+            }
 
             isNotFound = false;
 
@@ -99,7 +124,7 @@ const populatePage = (
 
     if (isNotFound) {
         if (isHistoryPushEnabled) {
-            routerHistoryPush("/404", soft, "404", parameterList);
+            historyPush("/404", soft, "404", parameterList);
         }
 
         if (!isHistoryPushEnabled || soft) {
