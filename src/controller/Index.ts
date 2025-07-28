@@ -563,17 +563,21 @@ export default class ControllerIndex implements Icontroller {
         });
     }
 
+    scopeId(): string {
+        return "index";
+    }
+
     variable(): void {
         // eslint-disable-next-line no-console
         console.log("Index.ts => variable()");
 
         this.variableList = {
-            specFileList: bindVariable([]),
-            userList: bindVariable([]),
-            outputList: bindVariable([]),
-            isLoading: bindVariable(true),
-            name: bindVariable("cimo"),
-            count: bindVariable(0)
+            specFileList: bindVariable([], this.scopeId()),
+            userList: bindVariable([], this.scopeId()),
+            outputList: bindVariable([], this.scopeId()),
+            isLoading: bindVariable(true, this.scopeId()),
+            name: bindVariable("cimo", this.scopeId()),
+            count: bindVariable(0, this.scopeId())
         };
 
         this.methodList = {

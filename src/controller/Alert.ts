@@ -58,13 +58,17 @@ export default class ControllerAlert implements Icontroller {
         }
     };
 
+    scopeId(): string {
+        return "alert";
+    }
+
     variable(): void {
         // eslint-disable-next-line no-console
         console.log("Alert.ts => variable()");
 
         this.variableList = {
-            className: bindVariable(""),
-            label: bindVariable("")
+            className: bindVariable("", this.scopeId()),
+            label: bindVariable("", this.scopeId())
         };
 
         this.methodList = {

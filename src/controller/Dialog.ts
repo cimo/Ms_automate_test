@@ -88,13 +88,17 @@ export default class ControllerDialog implements Icontroller {
         }
     };
 
+    scopeId(): string {
+        return "dialog";
+    }
+
     variable(): void {
         // eslint-disable-next-line no-console
         console.log("Dialog.ts => variable()");
 
         this.variableList = {
-            title: bindVariable(""),
-            content: bindVariable("")
+            title: bindVariable("", this.scopeId()),
+            content: bindVariable("", this.scopeId())
         };
 
         this.methodList = {

@@ -10,6 +10,7 @@ export interface IbindVariable<T> {
 }
 
 export interface Icontroller {
+    scopeId(): string;
     variable(): void;
     view(): IvirtualNode;
     event(): void;

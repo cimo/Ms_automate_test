@@ -6,7 +6,7 @@ import * as ModelDialog from "../model/Dialog";
 
 const viewDialog = (variableList: ModelDialog.IvariableList, methodList: ModelDialog.ImethodList): IvirtualNode => {
     return (
-        <aside class="mdc-dialog view_dialog" data-jsMvcFw_skip>
+        <aside class="mdc-dialog view_dialog">
             <div class="mdc-dialog__container">
                 <div
                     class="mdc-dialog__surface"
@@ -15,12 +15,8 @@ const viewDialog = (variableList: ModelDialog.IvariableList, methodList: ModelDi
                     aria-labelledby="my-dialog-title"
                     aria-describedby="my-dialog-content"
                 >
-                    <h2 class="mdc-dialog__title" data-jsMvcFw_state>
-                        {variableList.title.state}
-                    </h2>
-                    <div class="mdc-dialog__content" data-jsMvcFw_state>
-                        {variableList.content.state}
-                    </div>
+                    <h2 class="mdc-dialog__title">{variableList.title.state}</h2>
+                    <div class="mdc-dialog__content">{variableList.content.state}</div>
                     <div class="mdc-dialog__actions">
                         <button type="button" class="mdc-button mdc-dialog__button button_primary" onClick={methodList.onClickAccept}>
                             <div class="mdc-button__ripple"></div>

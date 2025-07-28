@@ -41,7 +41,7 @@ const viewIndex = (
         </div>
     );*/
 
-    const [name, onInputUpdateName] = stateVariable("Simone");
+    const [name, onInputUpdateName] = stateVariable("Simone", "index");
 
     return (
         <div>

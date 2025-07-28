@@ -5,8 +5,8 @@ let isDebug = false;
 let elementRoot: HTMLElement | null = null;
 let urlRoot = "";
 
-let stateVariableCurrent: any;
-let renderExecute: () => void;
+const renderExecuteMap = new Map<string, () => void>();
+const stateVariableMap = new Map<string, any>();
 
 export const getIsDebug = () => isDebug;
 export const getElementRoot = () => elementRoot;
@@ -18,24 +18,22 @@ export const frameworkInit = (isDebugValue: boolean, elementRootId: string, urlR
     urlRoot = urlRootValue;
 };
 
-export function renderTemplate(virtualNode: () => IvirtualNode): void {
+export function renderTemplate(virtualNode: () => IvirtualNode, scopeId: string): void {
     let virtualNodeOld: IvirtualNode | null = null;
 
-    renderExecute = () => {
+    const renderExecute = () => {
         const virtualNodeNew = virtualNode();
 
         if (!elementRoot) {
-            throw new Error("JsMvcFwBase.ts => Element root not found!");
+            throw new Error("JsMvcBase.ts => Element root not found!");
         }
 
         if (!virtualNodeOld) {
             const elementVirtualNode = createVirtualNode(virtualNodeNew);
-
             elementRoot.innerHTML = "";
             elementRoot.appendChild(elementVirtualNode);
         } else {
             const rootChild = elementRoot.firstElementChild;
-
             if (rootChild) {
                 updateVirtualNode(rootChild, virtualNodeOld, virtualNodeNew);
             }
@@ -44,10 +42,11 @@ export function renderTemplate(virtualNode: () => IvirtualNode): void {
         virtualNodeOld = virtualNodeNew;
     };
 
+    renderExecuteMap.set(scopeId, renderExecute);
     renderExecute();
 }
 
-export function bindVariable<T>(initial: T): IbindVariable<T> {
+export function bindVariable<T>(initial: T, scopeId: string): IbindVariable<T> {
     let _state = initial;
     let _listener: ((value: T) => void) | null = null;
 
@@ -60,6 +59,7 @@ export function bindVariable<T>(initial: T): IbindVariable<T> {
 
             if (_listener) _listener(val);
 
+            const renderExecute = renderExecuteMap.get(scopeId);
             if (renderExecute) {
                 renderExecute();
             }
@@ -70,18 +70,19 @@ export function bindVariable<T>(initial: T): IbindVariable<T> {
     };
 }
 
-export function stateVariable<T>(initial: T): [T, (val: T) => void] {
-    if (stateVariableCurrent === undefined) {
-        stateVariableCurrent = initial;
+export function stateVariable<T>(initial: T, scopeId: string): [T, (val: T) => void] {
+    if (!stateVariableMap.has(scopeId)) {
+        stateVariableMap.set(scopeId, initial);
     }
 
     const setState = (val: T) => {
-        stateVariableCurrent = val;
+        stateVariableMap.set(scopeId, val);
 
+        const renderExecute = renderExecuteMap.get(scopeId);
         if (renderExecute) {
             renderExecute();
         }
     };
 
-    return [stateVariableCurrent, setState];
+    return [stateVariableMap.get(scopeId), setState];
 }

@@ -86,7 +86,7 @@ const populatePage = (
             if (!isHistoryPushEnabled || soft) {
                 document.title = route.title;
 
-                renderTemplate(() => controller.view());
+                renderTemplate(() => controller.view(), controller.scopeId());
             }
 
             controller.event();
