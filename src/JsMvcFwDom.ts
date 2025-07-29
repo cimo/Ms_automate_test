@@ -34,14 +34,16 @@ const updateProperty = (element: Element, oldList: Record<string, TvirtualNodePr
     }
 };
 
-const updateChildren = (element: Element, nodeOldList: IvirtualNode["children"], nodeNewList: IvirtualNode["children"]): void => {
-    const nodeList = Array.from(element.childNodes);
+const updateChildren = (element: Element, nodeOldListValue: IvirtualNode["children"], nodeNewListValue: IvirtualNode["children"]): void => {
+    const nodeOldList = Array.isArray(nodeOldListValue) ? nodeOldListValue : [];
+    const nodeNewList = Array.isArray(nodeNewListValue) ? nodeNewListValue : [];
+
     const nodeMaxLength = Math.max(nodeOldList.length, nodeNewList.length);
 
     for (let a = 0; a < nodeMaxLength; a++) {
         const nodeOld = nodeOldList[a];
         const nodeNew = nodeNewList[a];
-        const nodeDom = nodeList[a];
+        const nodeDom = element.childNodes[a];
 
         if (!nodeNew && nodeDom) {
             element.removeChild(nodeDom);
@@ -74,11 +76,13 @@ export const createVirtualNode = (node: IvirtualNode): HTMLElement => {
         applyProperty(element, key, value);
     }
 
-    for (const child of node.children) {
-        if (typeof child === "string") {
-            element.appendChild(document.createTextNode(child));
-        } else {
-            element.appendChild(createVirtualNode(child));
+    if (Array.isArray(node.children)) {
+        for (const child of node.children) {
+            if (typeof child === "string") {
+                element.appendChild(document.createTextNode(child));
+            } else {
+                element.appendChild(createVirtualNode(child));
+            }
         }
     }
 

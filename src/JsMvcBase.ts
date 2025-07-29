@@ -86,22 +86,44 @@ export function bindVariable<T>(stateValue: T, controllerName: string): IbindVar
     let _state = stateValue;
     let _listener: ((value: T) => void) | null = null;
 
+    const triggerUpdate = () => {
+        if (_listener) _listener(_state);
+        const executeRenderTemplate = executeRenderTemplateList[controllerName];
+        if (executeRenderTemplate) executeRenderTemplate();
+    };
+
+    const wrapWithProxy = (value: any): any => {
+        if (typeof value !== 'object' || value === null) return value;
+
+        return new Proxy(value, {
+            get(target, prop, receiver) {
+                const result = Reflect.get(target, prop, receiver);
+                return typeof result === 'object' && result !== null
+                    ? wrapWithProxy(result)
+                    : result;
+            },
+            set(target, prop, newValue, receiver) {
+                const result = Reflect.set(target, prop, newValue, receiver);
+                triggerUpdate();
+                return result;
+            },
+            deleteProperty(target, prop) {
+                const result = Reflect.deleteProperty(target, prop);
+                triggerUpdate();
+                return result;
+            }
+        });
+    };
+
+    _state = wrapWithProxy(_state);
+
     return {
         get state(): T {
             return _state;
         },
         set state(value: T) {
-            _state = value;
-
-            if (_listener) {
-                _listener(value);
-            }
-
-            const executeRenderTemplate = executeRenderTemplateList[controllerName];
-
-            if (executeRenderTemplate) {
-                executeRenderTemplate();
-            }
+            _state = wrapWithProxy(value);
+            triggerUpdate();
         },
         listener(callback: (value: T) => void): void {
             _listener = callback;

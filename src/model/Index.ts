@@ -17,8 +17,3 @@ export interface ImethodList {
     onClickCount: () => void;
     onClickOpen: () => void;
 }
-
-export interface IsubViewList {
-    alert: IvirtualNode;
-    dialog: IvirtualNode;
-}

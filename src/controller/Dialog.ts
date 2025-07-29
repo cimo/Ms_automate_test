@@ -12,6 +12,8 @@ export default class ControllerDialog implements Icontroller {
     private methodList: ModelDialog.ImethodList;
 
     private mdcDialog: MDCDialog | null;
+    private callbackAccept: (() => void) | null;
+    private callbackClose: (() => void) | null;
 
     // Method
     private mdcEvent = (): void => {
@@ -30,10 +32,18 @@ export default class ControllerDialog implements Icontroller {
     };
 
     private onClickAccept = (): void => {
+        if (this.callbackAccept) {
+            this.callbackAccept();
+        }
+
         this.close();
     };
 
     private onClickClose = (): void => {
+        if (this.callbackClose) {
+            this.callbackClose();
+        }
+
         this.close();
     };
 
@@ -42,10 +52,11 @@ export default class ControllerDialog implements Icontroller {
         this.methodList = {} as ModelDialog.ImethodList;
 
         this.mdcDialog = null;
+        this.callbackAccept = null;
+        this.callbackClose = null;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    open = (title: string, message: string, isSingleButton = false, callbackAccept?: () => void, callbackClose?: () => void): void => {
+    open = (title: string, message: string, isSingleButton = false, callbackAcceptValue?: () => void, callbackCloseValue?: () => void): void => {
         this.close();
 
         this.variableList.title.state = title;
@@ -54,35 +65,15 @@ export default class ControllerDialog implements Icontroller {
         if (this.mdcDialog) {
             this.mdcDialog.open();
 
-            /*const elementTitle = this.mdcDialog.root.querySelector<HTMLElement>(".mdc-dialog__title");
-            const elementContent = this.mdcDialog.root.querySelector<HTMLElement>(".mdc-dialog__content");
-            const elementAction = this.mdcDialog.root.querySelector<HTMLElement>(".mdc-dialog__actions");
+            this.variableList.isSingleButton.state = isSingleButton;
 
-            if (elementTitle && elementContent && elementAction) {
-                elementTitle.innerHTML = title;
-                elementContent.innerHTML = message;
+            if (callbackAcceptValue) {
+                this.callbackAccept = callbackAcceptValue;
+            }
 
-                const elementButtonAccept = elementAction.querySelector<HTMLButtonElement>("[data-mdc-dialog-action=accept]");
-                const elementButtonClose = elementAction.querySelector<HTMLButtonElement>("[data-mdc-dialog-action=close]");
-
-                if (elementButtonAccept && elementButtonClose) {
-                    elementButtonAccept.onclick = () => {
-                        if (callbackAccept) {
-                            callbackAccept();
-                        }
-                    };
-
-                    elementButtonClose.onclick = () => {
-                        if (callbackClose) {
-                            callbackClose();
-                        }
-                    };
-
-                    if (isSingleButton) {
-                        elementButtonClose.style.setProperty("display", "none", "important");
-                    }
-                }
-            }*/
+            if (callbackCloseValue) {
+                this.callbackClose = callbackCloseValue;
+            }
         }
     };
 
@@ -102,7 +93,8 @@ export default class ControllerDialog implements Icontroller {
 
         this.variableList = {
             title: bindVariable("", this.name()),
-            content: bindVariable("", this.name())
+            content: bindVariable("", this.name()),
+            isSingleButton: bindVariable(false, this.name())
         };
 
         this.methodList = {

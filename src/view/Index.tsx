@@ -63,6 +63,20 @@ const viewIndex = (
                 <button onClick={methodList.onClickCount}>Count</button>
                 <button onClick={methodList.onClickOpen}>Open</button>
             </div>
+            <div>
+                <h3>List</h3>
+                <ul>
+                    {(() => {
+                        const result: IvirtualNode[] = [];
+
+                        for (const user of variableList.userList.state) {
+                            result.push(<li>{user}</li>);
+                        }
+
+                        return result;
+                    })()}
+                </ul>
+            </div>
         </div>
     );
 };

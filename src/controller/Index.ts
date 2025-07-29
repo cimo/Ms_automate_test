@@ -506,7 +506,7 @@ export default class ControllerIndex implements Icontroller {
                     this.cwsClient.sendData(1, "", "user", 100);
                     this.cwsClient.sendData(1, "", "output", 200);
                 } else if (serverData.tag === "user") {
-                    this.variableList.userList.state = serverData.result as string[];
+                    //this.variableList.userList.state = serverData.result as string[];
                 } else if (serverData.tag === "output") {
                     this.variableList.outputList.state = serverData.result as ModelTester.IserverDataOutput[];
                 }
@@ -524,6 +524,13 @@ export default class ControllerIndex implements Icontroller {
 
     private onClickCount = (): void => {
         this.variableList.count.state++;
+
+        const a = this.variableList.userList.state[1];
+
+        this.variableList.userList.state.splice(1, 1);
+        this.variableList.userList.state.unshift(a);
+
+        //this.variableList.userList.state.shift();
     };
 
     private onClickOpen = (): void => {
@@ -534,6 +541,10 @@ export default class ControllerIndex implements Icontroller {
         if (this.controllerDialog) {
             this.controllerDialog.open("title", "message");
         }
+
+        this.variableList.userList.state.push("a " + new Date().toLocaleTimeString());
+
+        //this.variableList.userList.state.reverse();
     };
 
     constructor(cwsClientValue: CwsClient) {
@@ -555,6 +566,8 @@ export default class ControllerIndex implements Icontroller {
                 //this.videoReceiveData();
 
                 //this.uploadReceiveData();
+
+                this.variableList.userList.state = ["cimo", "dago"];
 
                 this.variableList.isLoading.state = false;
             }
