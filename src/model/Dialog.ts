@@ -1,9 +1,9 @@
-import { IbindVariable } from "../JsMvcFwInterface";
+import { IvariableBind } from "../JsMvcFwInterface";
 
 export interface IvariableList {
-    title: IbindVariable<string>;
-    content: IbindVariable<string>;
-    isSingleButton: IbindVariable<boolean>;
+    title: IvariableBind<string>;
+    content: IvariableBind<string>;
+    isSingleButton: IvariableBind<boolean>;
 }
 
 export interface ImethodList {

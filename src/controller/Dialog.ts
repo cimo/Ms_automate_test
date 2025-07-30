@@ -1,5 +1,5 @@
 import { Icontroller, IvirtualNode } from "../JsMvcFwInterface";
-import { bindVariable } from "../JsMvcBase";
+import { variableBind } from "../JsMvcFw";
 import { MDCDialog } from "@material/dialog";
 
 // Source
@@ -92,9 +92,9 @@ export default class ControllerDialog implements Icontroller {
         console.log("Dialog.ts => variable()");
 
         this.variableList = {
-            title: bindVariable("", this.name()),
-            content: bindVariable("", this.name()),
-            isSingleButton: bindVariable(false, this.name())
+            title: variableBind("", this.name()),
+            content: variableBind("", this.name()),
+            isSingleButton: variableBind(false, this.name())
         };
 
         this.methodList = {

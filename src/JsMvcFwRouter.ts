@@ -1,15 +1,10 @@
 import { Irouter, Icontroller } from "./JsMvcFwInterface";
-import { getElementRoot, getUrlRoot, renderTemplate } from "./JsMvcBase";
+import { getElementRoot, getUrlRoot, getSubControllerList, renderTemplate } from "./JsMvcFw";
 
 let routerList: Irouter[] = [];
 let controller: Icontroller;
 
-const historyPush = (
-    nextUrl: string,
-    soft: boolean,
-    title = "",
-    parameterListValue?: Record<string, unknown>
-): void => {
+const historyPush = (nextUrl: string, soft: boolean, title = "", parameterListValue?: Record<string, unknown>): void => {
     let url = nextUrl;
 
     if (nextUrl.charAt(0) === "/") {
@@ -78,13 +73,7 @@ const historyPush = (
     }
 };
 
-const populatePage = (
-    isHistoryPushEnabled: boolean,
-    nextUrl: string,
-    soft: boolean,
-    parameterList?: Record<string, unknown>,
-    parameterSearch?: string
-): void => {
+const populatePage = (isHistoryPushEnabled: boolean, nextUrl: string, soft: boolean, parameterList?: Record<string, unknown>, parameterSearch?: string): void => {
     let isNotFound = true;
 
     const urlRoot = getUrlRoot();
@@ -109,11 +98,9 @@ const populatePage = (
 
                 controller = route.controller();
 
-                controller.variable();
-
-                renderTemplate(controller);
-
-                controller.event();
+                renderTemplate(controller, undefined, () => {
+                    controller.event();
+                });
             }
 
             isNotFound = false;
@@ -151,6 +138,10 @@ export const routerInit = (routerListValue: Irouter[]): void => {
 
     window.onbeforeunload = () => {
         if (controller) {
+            for (const subController of getSubControllerList()) {
+                subController.destroy();
+            }
+
             controller.destroy();
         }
     };

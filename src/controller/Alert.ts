@@ -1,5 +1,5 @@
 import { Icontroller, IvirtualNode } from "../JsMvcFwInterface";
-import { bindVariable } from "../JsMvcBase";
+import { variableBind } from "../JsMvcFw";
 import { MDCSnackbar } from "@material/snackbar";
 
 // Source
@@ -68,8 +68,8 @@ export default class ControllerAlert implements Icontroller {
         console.log("Alert.ts => variable()");
 
         this.variableList = {
-            className: bindVariable("", this.name()),
-            label: bindVariable("", this.name())
+            className: variableBind("", this.name()),
+            label: variableBind("", this.name())
         };
 
         this.methodList = {

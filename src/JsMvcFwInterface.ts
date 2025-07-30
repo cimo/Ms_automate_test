@@ -4,7 +4,7 @@ export interface IvirtualNode {
     children: Array<IvirtualNode | string>;
 }
 
-export interface IbindVariable<T> {
+export interface IvariableBind<T> {
     state: T;
     listener(callback: (value: T) => void): void;
 }
@@ -27,3 +27,5 @@ export interface Irouter {
 export type TvirtualNodeProperty = string | number | boolean | (string | IvirtualNode)[] | ((event: Event) => void) | null | undefined;
 
 export type TvirtualNodeChildren = IvirtualNode | string | number;
+
+export type TvariableState<T> = [T, (value: T) => void];

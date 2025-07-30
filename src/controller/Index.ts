@@ -475,8 +475,11 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
 */
 
 import { Icontroller, IvirtualNode } from "../JsMvcFwInterface";
-import { bindVariable } from "../JsMvcBase";
+import { variableBind } from "../JsMvcFw";
 import CwsClient from "@cimo/websocket/dist/client/Manager";
+import { MDCRipple } from "@material/ripple";
+import { MDCTextField } from "@material/textfield";
+import { MDCSelect } from "@material/select";
 
 // Source
 import * as HelperSrc from "../HelperSrc";
@@ -494,8 +497,37 @@ export default class ControllerIndex implements Icontroller {
     private controllerDialog: ControllerDialog | null;
 
     private cwsClient: CwsClient;
+    private mdcButtonList: MDCRipple[];
+    private mdcTextFieldList: MDCTextField[];
+    private mdcSelectList: MDCSelect[];
 
     // Method
+    private mdcEvent = (): void => {
+        const elementMdcButtonList = document.querySelectorAll<HTMLElement>(".mdc-button");
+
+        if (this.mdcButtonList.length === 0) {
+            for (const elementMdcButton of elementMdcButtonList) {
+                this.mdcButtonList.push(new MDCRipple(elementMdcButton));
+            }
+        }
+
+        /*const elementMdcTextFieldList = document.querySelectorAll<HTMLElement>(".mdc-text-field");
+
+        for (const [key, value] of Object.entries(elementMdcTextFieldList)) {
+            if (value && this.mdcTextFieldList.length === 0) {
+                this.mdcTextFieldList.push(new MDCTextField(value));
+            }
+        }
+
+        const elementMdcSelectList = document.querySelectorAll<HTMLElement>(".mdc-select");
+
+        for (const [key, value] of Object.entries(elementMdcSelectList)) {
+            if (value && this.mdcSelectList.length === 0) {
+                this.mdcSelectList.push(new MDCSelect(value));
+            }
+        }*/
+    };
+
     private broadcast = (): void => {
         this.cwsClient.receiveData("broadcast", (data) => {
             if (typeof data === "string" && HelperSrc.isJson(data)) {
@@ -506,7 +538,7 @@ export default class ControllerIndex implements Icontroller {
                     this.cwsClient.sendData(1, "", "user", 100);
                     this.cwsClient.sendData(1, "", "output", 200);
                 } else if (serverData.tag === "user") {
-                    //this.variableList.userList.state = serverData.result as string[];
+                    this.variableList.userList.state = serverData.result as string[];
                 } else if (serverData.tag === "output") {
                     this.variableList.outputList.state = serverData.result as ModelTester.IserverDataOutput[];
                 }
@@ -518,33 +550,14 @@ export default class ControllerIndex implements Icontroller {
         this.cwsClient.sendData(1, "", "output", 200);
     };
 
-    private onInputUpdateName = (newName: string) => {
-        this.variableList.name.state = newName;
-    };
+    private specFileListReceiveData = (): void => {
+        this.cwsClient.receiveData("specFileList", (data) => {
+            if (typeof data === "string") {
+                const serverData = JSON.parse(data) as ModelTester.IserverData;
 
-    private onClickCount = (): void => {
-        this.variableList.count.state++;
-
-        const a = this.variableList.userList.state[1];
-
-        this.variableList.userList.state.splice(1, 1);
-        this.variableList.userList.state.unshift(a);
-
-        //this.variableList.userList.state.shift();
-    };
-
-    private onClickOpen = (): void => {
-        if (this.controllerAlert) {
-            this.controllerAlert.open("success", "text");
-        }
-
-        if (this.controllerDialog) {
-            this.controllerDialog.open("title", "message");
-        }
-
-        this.variableList.userList.state.push("a " + new Date().toLocaleTimeString());
-
-        //this.variableList.userList.state.reverse();
+                this.variableList.specFileList.state = serverData.result as string[];
+            }
+        });
     };
 
     constructor(cwsClientValue: CwsClient) {
@@ -554,20 +567,21 @@ export default class ControllerIndex implements Icontroller {
         this.controllerDialog = new ControllerDialog();
 
         this.cwsClient = cwsClientValue;
+        this.mdcButtonList = [];
+        this.mdcTextFieldList = [];
+        this.mdcSelectList = [];
 
         this.cwsClient.checkConnection((mode) => {
             this.broadcast();
 
             if (mode === "connection") {
-                //this.specFileListReceiveData();
+                this.specFileListReceiveData();
 
                 //this.runReceiveData();
 
                 //this.videoReceiveData();
 
                 //this.uploadReceiveData();
-
-                this.variableList.userList.state = ["cimo", "dago"];
 
                 this.variableList.isLoading.state = false;
             }
@@ -583,24 +597,13 @@ export default class ControllerIndex implements Icontroller {
         console.log("Index.ts => variable()");
 
         this.variableList = {
-            specFileList: bindVariable([], this.name()),
-            userList: bindVariable([], this.name()),
-            outputList: bindVariable([], this.name()),
-            isLoading: bindVariable(true, this.name()),
-            name: bindVariable("cimo", this.name()),
-            count: bindVariable(0, this.name())
+            specFileList: variableBind([], this.name()),
+            userList: variableBind([], this.name()),
+            outputList: variableBind([], this.name()),
+            isLoading: variableBind(true, this.name())
         };
 
-        this.methodList = {
-            onClickCount: this.onClickCount,
-            onInputUpdateName: this.onInputUpdateName,
-            onClickOpen: this.onClickOpen
-        };
-
-        if (this.controllerAlert && this.controllerDialog) {
-            this.controllerAlert.variable();
-            this.controllerDialog.variable();
-        }
+        this.methodList = {};
     }
 
     view(): IvirtualNode {
@@ -614,25 +617,12 @@ export default class ControllerIndex implements Icontroller {
         // eslint-disable-next-line no-console
         console.log("Index.ts => event()", this.variableList);
 
-        this.variableList.count.listener((value) => {
-            // eslint-disable-next-line no-console
-            console.log("count", value);
-        });
-
-        if (this.controllerAlert && this.controllerDialog) {
-            this.controllerAlert.event();
-            this.controllerDialog.event();
-        }
+        this.mdcEvent();
     }
 
     destroy(): void {
         // eslint-disable-next-line no-console
         console.log("Index.ts => destroy()");
-
-        if (this.controllerAlert && this.controllerDialog) {
-            this.controllerAlert.destroy();
-            this.controllerDialog.destroy();
-        }
     }
 
     subControllerList(): Icontroller[] {

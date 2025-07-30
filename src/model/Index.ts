@@ -1,19 +1,13 @@
-import { IbindVariable, IvirtualNode } from "../JsMvcFwInterface";
+import { IvariableBind } from "../JsMvcFwInterface";
 
 // Source
 import * as ModelTester from "../model/Tester";
 
 export interface IvariableList {
-    specFileList: IbindVariable<string[]>;
-    userList: IbindVariable<string[]>;
-    outputList: IbindVariable<ModelTester.IserverDataOutput[]>;
-    isLoading: IbindVariable<boolean>;
-    name: IbindVariable<string>;
-    count: IbindVariable<number>;
+    specFileList: IvariableBind<string[]>;
+    userList: IvariableBind<string[]>;
+    outputList: IvariableBind<ModelTester.IserverDataOutput[]>;
+    isLoading: IvariableBind<boolean>;
 }
 
-export interface ImethodList {
-    onInputUpdateName: (value: string) => void;
-    onClickCount: () => void;
-    onClickOpen: () => void;
-}
+export interface ImethodList {}
