@@ -22,10 +22,12 @@ const viewDialog = (variableList: ModelDialog.IvariableList, methodList: ModelDi
                             const result: IvirtualNode[] = [];
 
                             if (!variableList.isSingleButton.state) {
-                                result.push(<button type="button" class="mdc-button mdc-dialog__button button_flat" onClick={methodList.onClickClose}>
-                                    <div class="mdc-button__ripple"></div>
-                                    <span class="mdc-button__label">Cancel</span>
-                                </button>);
+                                result.push(
+                                    <button type="button" class="mdc-button mdc-dialog__button button_flat" onClick={methodList.onClickClose}>
+                                        <div class="mdc-button__ripple"></div>
+                                        <span class="mdc-button__label">Cancel</span>
+                                    </button>
+                                );
                             }
 
                             return result;

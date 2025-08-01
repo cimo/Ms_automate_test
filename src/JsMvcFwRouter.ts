@@ -1,5 +1,5 @@
 import { Irouter, Icontroller } from "./JsMvcFwInterface";
-import { getElementRoot, getUrlRoot, getSubControllerList, renderTemplate } from "./JsMvcFw";
+import { getElementRoot, getUrlRoot, getControllerList, renderTemplate } from "./JsMvcFw";
 
 let routerList: Irouter[] = [];
 let controller: Icontroller;
@@ -22,24 +22,12 @@ const historyPush = (nextUrl: string, soft: boolean, title = "", parameterListVa
             const [key, value] = param.split("=");
 
             const keyCleaned = encodeURIComponent(
-                decodeURIComponent(
-                    key
-                        .replace(/</g, "&lt;")
-                        .replace(/>/g, "&gt;")
-                        .replace(/"/g, "&quot;")
-                        .replace(/'/g, "&#39;")
-                )
+                decodeURIComponent(key.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"))
             );
 
             if (value) {
                 const valueCleaned = encodeURIComponent(
-                    decodeURIComponent(
-                        value
-                            .replace(/</g, "&lt;")
-                            .replace(/>/g, "&gt;")
-                            .replace(/"/g, "&quot;")
-                            .replace(/'/g, "&#39;")
-                    )
+                    decodeURIComponent(value.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"))
                 );
                 queryStringCleanedList.push(`${keyCleaned}=${valueCleaned}`);
             } else {
@@ -48,16 +36,8 @@ const historyPush = (nextUrl: string, soft: boolean, title = "", parameterListVa
         }
     }
 
-    const pathCleaned = path
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#39;");
-    const urlCleaned =
-        pathCleaned +
-        (queryStringCleanedList.length > 0
-            ? "?" + queryStringCleanedList.join("&")
-            : "");
+    const pathCleaned = path.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    const urlCleaned = pathCleaned + (queryStringCleanedList.length > 0 ? "?" + queryStringCleanedList.join("&") : "");
 
     window.history.pushState(
         {
@@ -73,7 +53,13 @@ const historyPush = (nextUrl: string, soft: boolean, title = "", parameterListVa
     }
 };
 
-const populatePage = (isHistoryPushEnabled: boolean, nextUrl: string, soft: boolean, parameterList?: Record<string, unknown>, parameterSearch?: string): void => {
+const populatePage = (
+    isHistoryPushEnabled: boolean,
+    nextUrl: string,
+    soft: boolean,
+    parameterList?: Record<string, unknown>,
+    parameterSearch?: string
+): void => {
     let isNotFound = true;
 
     const urlRoot = getUrlRoot();
@@ -138,8 +124,12 @@ export const routerInit = (routerListValue: Irouter[]): void => {
 
     window.onbeforeunload = () => {
         if (controller) {
-            for (const subController of getSubControllerList()) {
-                subController.destroy();
+            const controllerList = getControllerList();
+
+            for (let a = controllerList.length - 1; a >= 0; a--) {
+                for (const children of controllerList[a].childrenList) {
+                    children.destroy();
+                }
             }
 
             controller.destroy();

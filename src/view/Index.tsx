@@ -6,6 +6,7 @@ import * as ModelIndex from "../model/Index";
 import viewLoader from "../view/Loader";
 import viewSpecFile from "../view/SpecFile";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const viewIndex = (variableList: ModelIndex.IvariableList, methodList: ModelIndex.ImethodList): IvirtualNode => {
     /*return `${viewLoader(variableList)}
     ${viewAlert()}
@@ -25,13 +26,11 @@ const viewIndex = (variableList: ModelIndex.IvariableList, methodList: ModelInde
     return (
         <div data-jsmvcfw-controllerName="index">
             {viewLoader(variableList)}
-            <aside data-jsmvcfw-controllerName="alert"/>
-            <aside data-jsmvcfw-controllerName="dialog"/>
+            <aside data-jsmvcfw-controllerName="alert" />
+            <aside data-jsmvcfw-controllerName="dialog" />
             <div class="page_container view_index">
                 <div class="header"></div>
-                <div class="left">
-                    {viewSpecFile(variableList)}
-                </div>
+                <div class="left">{viewSpecFile(variableList)}</div>
                 <div class="right">
                     {/*viewClientTemplate(variableList)*/}
                     {/*viewVideoTemplate(variableList)*/}

@@ -497,35 +497,32 @@ export default class ControllerIndex implements Icontroller {
     private controllerDialog: ControllerDialog | null;
 
     private cwsClient: CwsClient;
-    private mdcButtonList: MDCRipple[];
-    private mdcTextFieldList: MDCTextField[];
-    private mdcSelectList: MDCSelect[];
 
     // Method
     private mdcEvent = (): void => {
         const elementMdcButtonList = document.querySelectorAll<HTMLElement>(".mdc-button");
 
-        if (this.mdcButtonList.length === 0) {
+        if (elementMdcButtonList) {
             for (const elementMdcButton of elementMdcButtonList) {
-                this.mdcButtonList.push(new MDCRipple(elementMdcButton));
+                new MDCRipple(elementMdcButton);
             }
         }
 
-        /*const elementMdcTextFieldList = document.querySelectorAll<HTMLElement>(".mdc-text-field");
+        const elementMdcTextFieldList = document.querySelectorAll<HTMLElement>(".mdc-text-field");
 
-        for (const [key, value] of Object.entries(elementMdcTextFieldList)) {
-            if (value && this.mdcTextFieldList.length === 0) {
-                this.mdcTextFieldList.push(new MDCTextField(value));
+        if (elementMdcTextFieldList) {
+            for (const elementMdcTextField of elementMdcTextFieldList) {
+                new MDCTextField(elementMdcTextField);
             }
         }
 
         const elementMdcSelectList = document.querySelectorAll<HTMLElement>(".mdc-select");
 
-        for (const [key, value] of Object.entries(elementMdcSelectList)) {
-            if (value && this.mdcSelectList.length === 0) {
-                this.mdcSelectList.push(new MDCSelect(value));
+        if (elementMdcSelectList) {
+            for (const elementMdcSelect of elementMdcSelectList) {
+                new MDCSelect(elementMdcSelect);
             }
-        }*/
+        }
     };
 
     private broadcast = (): void => {
@@ -567,9 +564,6 @@ export default class ControllerIndex implements Icontroller {
         this.controllerDialog = new ControllerDialog();
 
         this.cwsClient = cwsClientValue;
-        this.mdcButtonList = [];
-        this.mdcTextFieldList = [];
-        this.mdcSelectList = [];
 
         this.cwsClient.checkConnection((mode) => {
             this.broadcast();
@@ -606,6 +600,13 @@ export default class ControllerIndex implements Icontroller {
         this.methodList = {};
     }
 
+    variableEvent(): void {
+        // eslint-disable-next-line no-console
+        console.log("Index.ts => variableEnvet()");
+
+        this.mdcEvent();
+    }
+
     view(): IvirtualNode {
         // eslint-disable-next-line no-console
         console.log("Index.ts => view()", this.variableList);
@@ -616,8 +617,6 @@ export default class ControllerIndex implements Icontroller {
     event(): void {
         // eslint-disable-next-line no-console
         console.log("Index.ts => event()", this.variableList);
-
-        this.mdcEvent();
     }
 
     destroy(): void {

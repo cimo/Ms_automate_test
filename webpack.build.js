@@ -44,7 +44,7 @@ module.exports = {
         filename: "[name].js",
         sourceMapFilename: "[name].js.map",
         path: Path.resolve(__dirname, "public/js"),
-        publicPath: URL_ROOT
+        publicPath: "/js/"
     },
     resolve: {
         extensions: [".ts", ".tsx", ".js", "jsx"],
@@ -56,7 +56,7 @@ module.exports = {
         rules: [
             {
                 test: /\.tsx?$/,
-                use: "ts-loader",
+                use: [{ loader: "ts-loader" }],
                 exclude: /(node_modules)/
             }
         ]
@@ -86,6 +86,7 @@ module.exports = {
             template: `${Path.resolve(__dirname)}/template_index.html`,
             filename: `${Path.resolve(__dirname, "public")}/index.html`,
             inject: false,
+            minify: false,
             templateParameters: {
                 name: NAME,
                 urlRoot: URL_ROOT

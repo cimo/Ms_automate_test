@@ -19,11 +19,8 @@ export default class ControllerDialog implements Icontroller {
     private mdcEvent = (): void => {
         const elementMdcDialog = document.querySelector<HTMLElement>(".mdc-dialog");
 
-        if (elementMdcDialog && !this.mdcDialog) {
+        if (elementMdcDialog) {
             this.mdcDialog = new MDCDialog(elementMdcDialog);
-        }
-
-        if (this.mdcDialog) {
             this.mdcDialog.listen("MDCDialog:closed", () => {
                 this.variableList.title.state = "";
                 this.variableList.content.state = "";
@@ -103,6 +100,13 @@ export default class ControllerDialog implements Icontroller {
         };
     }
 
+    variableEvent(): void {
+        // eslint-disable-next-line no-console
+        console.log("Dialog.ts => variableEvent()");
+
+        this.mdcEvent();
+    }
+
     view(): IvirtualNode {
         // eslint-disable-next-line no-console
         console.log("Dialog.ts => view()", this.variableList);
@@ -113,12 +117,19 @@ export default class ControllerDialog implements Icontroller {
     event(): void {
         // eslint-disable-next-line no-console
         console.log("Dialog.ts => event()", this.variableList);
-
-        this.mdcEvent();
     }
 
     destroy(): void {
         // eslint-disable-next-line no-console
         console.log("Dialog.ts => destroy()");
+    }
+
+    subControllerList(): Icontroller[] {
+        // eslint-disable-next-line no-console
+        console.log("Dialog.ts => subController()");
+
+        const list: Icontroller[] = [];
+
+        return list;
     }
 }

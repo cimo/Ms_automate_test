@@ -1,34 +1,23 @@
-const globals = require("globals");
-const tsParser = require("@typescript-eslint/parser");
-const tsPlugin = require("@typescript-eslint/eslint-plugin");
+const global = require("globals");
 const prettierPlugin = require("eslint-plugin-prettier");
-
-const configCommon = {
-    ignores: ["./**/*", "!./file/**/*", "!./src/**/*", "!./webpack.build.js"]
-};
+const typescriptParser = require("@typescript-eslint/parser");
+const typescriptPlugin = require("@typescript-eslint/eslint-plugin");
+const customRule = require("./dist/eslint.customRule");
 
 const configBase = {
     languageOptions: {
-        globals: Object.assign({}, globals.browser, globals.node),
-        parser: tsParser,
+        globals: Object.assign({}, global.browser, global.node),
         sourceType: "module",
         parserOptions: {
             ecmaVersion: 2022
         }
     },
     plugins: {
-        "@typescript-eslint": tsPlugin,
         prettier: prettierPlugin
     },
     rules: {
         "no-console": "error",
         "no-debugger": "error",
-        "@typescript-eslint/no-unused-vars": [
-            "error",
-            {
-                varsIgnorePattern: "^jsxFactory$"
-            }
-        ],
         "prettier/prettier": [
             "error",
             {
@@ -45,26 +34,52 @@ const configBase = {
                 endOfLine: "lf"
             }
         ]
-    }
+    },
+    ignores: ["dist", "node_modules", "public"]
 };
 
-const configFile = {
-    ...configBase,
-    files: ["**/*.{ts,tsx,js,jsx}"],
-    ignores: [".*/**/*", "public/**/*", "dist/**/*", "eslint.config.js", "webpack.build.js"],
+const configTypescript = {
+    files: ["src/**/*.{ts,tsx}", "file/input/**/*.{ts,tsx}", "eslint.customRule.ts"],
     languageOptions: {
         ...configBase.languageOptions,
+        parser: typescriptParser,
         parserOptions: {
             ...configBase.languageOptions.parserOptions,
-            project: "./tsconfig.json",
-            tsconfigRootDir: "./"
+            tsconfigRootDir: "./",
+            project: "./tsconfig.json"
         }
-    }
+    },
+    plugins: {
+        ...configBase.plugins,
+        "@typescript-eslint": typescriptPlugin,
+        "custom-rule": customRule
+    },
+    rules: {
+        ...configBase.rules,
+        "@typescript-eslint/no-explicit-any": "error",
+        "@typescript-eslint/no-unused-vars": [
+            "error",
+            {
+                varsIgnorePattern: "^jsxFactory$"
+            }
+        ],
+        "custom-rule/disallow-array-for-object-type": "error"
+    },
+    ignores: [...configBase.ignores]
 };
 
-const configFileIgnored = {
-    ...configBase,
-    files: ["eslint.config.js", "webpack.build.js"]
+const configJavascript = {
+    files: ["src/**/*.{js,jsx}", "file/input/**/*.{js,jsx}", "eslint.config.js", "webpack.build.js"],
+    languageOptions: {
+        ...configBase.languageOptions
+    },
+    plugins: {
+        ...configBase.plugins
+    },
+    rules: {
+        ...configBase.rules
+    },
+    ignores: [...configBase.ignores]
 };
 
-module.exports = [configCommon, configFile, configFileIgnored];
+module.exports = [configTypescript, configJavascript];

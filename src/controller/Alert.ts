@@ -17,12 +17,9 @@ export default class ControllerAlert implements Icontroller {
     private mdcEvent = (): void => {
         const elementMdcSnackbar = document.querySelector<HTMLElement>(".mdc-snackbar");
 
-        if (elementMdcSnackbar && !this.mdcSnackbar) {
+        if (elementMdcSnackbar) {
             this.mdcSnackbar = new MDCSnackbar(elementMdcSnackbar);
             this.mdcSnackbar.timeoutMs = -1;
-        }
-
-        if (this.mdcSnackbar) {
             this.mdcSnackbar.listen("MDCSnackbar:closed", () => {
                 this.variableList.className.state = "";
                 this.variableList.label.state = "";
@@ -77,6 +74,13 @@ export default class ControllerAlert implements Icontroller {
         };
     }
 
+    variableEvent(): void {
+        // eslint-disable-next-line no-console
+        console.log("Alert.ts => variableEnvet()");
+
+        this.mdcEvent();
+    }
+
     view(): IvirtualNode {
         // eslint-disable-next-line no-console
         console.log("Alert.ts => view()", this.variableList);
@@ -87,12 +91,19 @@ export default class ControllerAlert implements Icontroller {
     event(): void {
         // eslint-disable-next-line no-console
         console.log("Alert.ts => event()", this.variableList);
-
-        this.mdcEvent();
     }
 
     destroy(): void {
         // eslint-disable-next-line no-console
         console.log("Alert.ts => destroy()");
+    }
+
+    subControllerList(): Icontroller[] {
+        // eslint-disable-next-line no-console
+        console.log("Alert.ts => subController()");
+
+        const list: Icontroller[] = [];
+
+        return list;
     }
 }

@@ -11,15 +11,17 @@ const viewLoader = (variableList: ModelIndex.IvariableList): IvirtualNode => {
                 const result: IvirtualNode[] = [];
 
                 if (variableList.isLoading.state) {
-                    result.push(<aside class="view_loader">
-                        <div class="container">
-                            <div class="square"></div>
-                            <div class="square"></div>
-                            <div class="square"></div>
-                            <div class="square"></div>
-                            <p class="text">Loading...</p>
-                        </div>
-                    </aside>);
+                    result.push(
+                        <aside class="view_loader">
+                            <div class="container">
+                                <div class="square"></div>
+                                <div class="square"></div>
+                                <div class="square"></div>
+                                <div class="square"></div>
+                                <p class="text">Loading...</p>
+                            </div>
+                        </aside>
+                    );
                 }
 
                 return result;
