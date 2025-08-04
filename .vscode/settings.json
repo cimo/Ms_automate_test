@@ -1,12 +1,12 @@
 {
-    "eslint.format.enable": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
         "source.fixAll": "explicit"
     },
+    "editor.formatOnSave": false,
+    "eslint.format.enable": true,
     "typescript.tsdk": "node_modules/typescript/lib",
-    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "typescript.enablePromptUseWorkspaceTsdk": false,
     "containers.commands.attach": "${containerCommand} exec -it ${containerId} bash",
     "[dockercompose]": {
         "editor.defaultFormatter": "ms-azuretools.vscode-containers"

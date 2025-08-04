@@ -39,7 +39,7 @@ const configBase = {
 };
 
 const configTypescript = {
-    files: ["src/**/*.{ts,tsx}", "file/input/**/*.{ts,tsx}", "eslint.customRule.ts"],
+    files: ["eslint.customRule.ts", "global.d.ts", "src/**/*.{ts,tsx}", "file/input/**/*.{ts,tsx}"],
     languageOptions: {
         ...configBase.languageOptions,
         parser: typescriptParser,
@@ -69,7 +69,7 @@ const configTypescript = {
 };
 
 const configJavascript = {
-    files: ["src/**/*.{js,jsx}", "file/input/**/*.{js,jsx}", "eslint.config.js", "webpack.build.js"],
+    files: ["eslint.config.js", "webpack.build.js", "src/**/*.{js,jsx}", "file/input/**/*.{js,jsx}"],
     languageOptions: {
         ...configBase.languageOptions
     },

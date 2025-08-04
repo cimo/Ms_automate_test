@@ -1,5 +1,0 @@
-{
-    "extends": "./tsconfig.json",
-    "include": ["src/**/*.ts", "src/**/*.tsx", "eslint.customRule.ts", "global.d.ts"],
-    "exclude": ["dist", "node_modules", "public", "src/playwright.config.ts"]
-}

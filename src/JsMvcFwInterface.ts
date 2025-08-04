@@ -1,6 +1,6 @@
 export interface IvirtualNode {
     tag: string;
-    property: { [key: string]: TvirtualNodeProperty };
+    propertyObject: { [key: string]: TvirtualNodeProperty };
     children: Array<IvirtualNode | string>;
 }
 
@@ -20,12 +20,12 @@ export interface IvariableBind<T> {
 export interface IvariableBindOption {
     controllerName: string;
     state: unknown;
-    isTriggered: boolean;
+    isLoaded: boolean;
 }
 
 export interface IvariableBindCountObject {
     [key: string]: {
-        countTriggered: number;
+        countLoaded: number;
         countTotal: number;
     };
 }
@@ -42,7 +42,7 @@ export interface IvariableStateObject {
 export interface Icontroller {
     name(): string;
     variable(): void;
-    variableEvent(): void;
+    variableLoaded(): void;
     view(): IvirtualNode;
     event(): void;
     destroy(): void;

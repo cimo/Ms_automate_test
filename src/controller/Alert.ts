@@ -74,9 +74,9 @@ export default class ControllerAlert implements Icontroller {
         };
     }
 
-    variableEvent(): void {
+    variableLoaded(): void {
         // eslint-disable-next-line no-console
-        console.log("Alert.ts => variableEnvet()");
+        console.log("Alert.ts => variableLoaded()");
 
         this.mdcEvent();
     }

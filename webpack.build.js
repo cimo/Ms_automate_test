@@ -55,9 +55,10 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
+                test: /\.(ts|tsx)$/,
                 use: [{ loader: "ts-loader" }],
-                exclude: /(node_modules)/
+                include: /(src)/,
+                exclude: /(dist|node_modules|public)/
             }
         ]
     },
@@ -68,7 +69,7 @@ module.exports = {
         minimize: ENV_NAME === "local" ? false : true,
         minimizer: [
             new TerserPlugin({
-                exclude: /(node_modules)/,
+                exclude: /(dist|node_modules|public)/,
                 parallel: true,
                 terserOptions: {
                     ecma: undefined,

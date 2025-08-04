@@ -58,33 +58,33 @@ const variableProxy = <T>(stateValue: T, controllerName: string): T => {
     }) as T;
 };
 
-const variableBindEvent = (controllerName: string): void => {
+const variableBindLoad = (controllerName: string): void => {
     let isFound = false;
-    let isAllTriggered = true;
+    let isAllLoaded = true;
 
     for (const variableBind of variableBindList) {
         if (controllerName === variableBind.controllerName) {
             isFound = true;
 
-            if (!variableBind.isTriggered) {
-                isAllTriggered = false;
+            if (!variableBind.isLoaded) {
+                isAllLoaded = false;
 
                 break;
             }
         }
     }
 
-    if (isFound && isAllTriggered) {
+    if (isFound && isAllLoaded) {
         for (const controller of controllerList) {
-            if (controllerName === controller.parent.name() && controller.parent.variableEvent) {
-                controller.parent.variableEvent();
+            if (controllerName === controller.parent.name() && controller.parent.variableLoaded) {
+                controller.parent.variableLoaded();
 
                 break;
             }
 
             for (const children of controller.childrenList) {
-                if (controllerName === children.name() && children.variableEvent) {
-                    children.variableEvent();
+                if (controllerName === children.name() && children.variableLoaded) {
+                    children.variableLoaded();
 
                     break;
                 }
@@ -186,7 +186,7 @@ export const variableBind = <T>(stateValue: T, controllerName: string): Ivariabl
     let _listener: ((value: T) => void) | null = null;
 
     if (!variableBindCountObject[controllerName]) {
-        variableBindCountObject[controllerName] = { countTriggered: 0, countTotal: 0 };
+        variableBindCountObject[controllerName] = { countLoaded: 0, countTotal: 0 };
     }
 
     variableBindCountObject[controllerName].countTotal++;
@@ -198,9 +198,9 @@ export const variableBind = <T>(stateValue: T, controllerName: string): Ivariabl
         set state(value: T) {
             _state = variableProxy(value, controllerName);
 
-            variableBindList.push({ controllerName, state: _state, isTriggered: true });
+            variableBindList.push({ controllerName, state: _state, isLoaded: true });
 
-            variableBindCountObject[controllerName].countTriggered++;
+            variableBindCountObject[controllerName].countLoaded++;
 
             if (_listener) {
                 _listener(_state);
@@ -208,8 +208,8 @@ export const variableBind = <T>(stateValue: T, controllerName: string): Ivariabl
 
             variableTriggerUpdate(controllerName);
 
-            if (variableBindCountObject[controllerName].countTriggered === variableBindCountObject[controllerName].countTotal) {
-                variableBindEvent(controllerName);
+            if (variableBindCountObject[controllerName].countLoaded === variableBindCountObject[controllerName].countTotal) {
+                variableBindLoad(controllerName);
             }
         },
         listener(callback: (value: T) => void): void {

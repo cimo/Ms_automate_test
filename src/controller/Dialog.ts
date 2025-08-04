@@ -100,9 +100,9 @@ export default class ControllerDialog implements Icontroller {
         };
     }
 
-    variableEvent(): void {
+    variableLoaded(): void {
         // eslint-disable-next-line no-console
-        console.log("Dialog.ts => variableEvent()");
+        console.log("Dialog.ts => variableLoaded()");
 
         this.mdcEvent();
     }

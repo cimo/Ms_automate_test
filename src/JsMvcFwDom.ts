@@ -72,7 +72,7 @@ const updateChildren = (element: Element, nodeOldListValue: IvirtualNode["childr
 export const createVirtualNode = (node: IvirtualNode): HTMLElement => {
     const element = document.createElement(node.tag);
 
-    for (const [key, value] of Object.entries(node.property || {})) {
+    for (const [key, value] of Object.entries(node.propertyObject || {})) {
         applyProperty(element, key, value);
     }
 
@@ -98,7 +98,7 @@ export const updateVirtualNode = (element: Element, nodeOld: IvirtualNode, nodeN
         return;
     }
 
-    updateProperty(element, nodeOld.property || {}, nodeNew.property || {});
+    updateProperty(element, nodeOld.propertyObject || {}, nodeNew.propertyObject || {});
 
     updateChildren(element, nodeOld.children, nodeNew.children);
 };

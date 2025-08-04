@@ -600,9 +600,9 @@ export default class ControllerIndex implements Icontroller {
         this.methodList = {};
     }
 
-    variableEvent(): void {
+    variableLoaded(): void {
         // eslint-disable-next-line no-console
-        console.log("Index.ts => variableEnvet()");
+        console.log("Index.ts => variableLoaded()");
 
         this.mdcEvent();
     }

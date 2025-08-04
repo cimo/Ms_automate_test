@@ -1,6 +1,6 @@
 import { IvirtualNode, TvirtualNodeChildren } from "./JsMvcFwInterface";
 
-const jsxFactory = (tag: string, property: IvirtualNode["property"] = {}, ...childrenList: TvirtualNodeChildren[]): IvirtualNode => {
+const jsxFactory = (tag: string, propertyObject: IvirtualNode["propertyObject"] = {}, ...childrenList: TvirtualNodeChildren[]): IvirtualNode => {
     const childrenNormalized: Array<IvirtualNode | string> = [];
 
     for (const children of childrenList) {
@@ -25,7 +25,7 @@ const jsxFactory = (tag: string, property: IvirtualNode["property"] = {}, ...chi
 
     return {
         tag,
-        property,
+        propertyObject,
         children: childrenNormalized
     };
 };
