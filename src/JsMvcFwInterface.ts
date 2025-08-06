@@ -17,19 +17,6 @@ export interface IvariableBind<T> {
     listener(callback: (value: T) => void): void;
 }
 
-export interface IvariableBindOption {
-    controllerName: string;
-    state: unknown;
-    isLoaded: boolean;
-}
-
-export interface IvariableBindCountObject {
-    [key: string]: {
-        countLoaded: number;
-        countTotal: number;
-    };
-}
-
 export interface IvariableState<T> {
     value: T;
     setValue: (value: T) => void;
@@ -40,7 +27,7 @@ export interface IvariableStateObject {
 }
 
 export interface Icontroller {
-    name(): string;
+    getName(): string;
     variable(): void;
     variableLoaded(): void;
     view(): IvirtualNode;

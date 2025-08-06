@@ -1,3 +1,4 @@
+//import { variableState } from "../JsMvcFw";
 import { IvirtualNode } from "../JsMvcFwInterface";
 import jsxFactory from "../JsMvcFwJsx";
 
@@ -7,7 +8,7 @@ import viewLoader from "../view/Loader";
 import viewSpecFile from "../view/SpecFile";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const viewIndex = (variableList: ModelIndex.IvariableList, methodList: ModelIndex.ImethodList): IvirtualNode => {
+const viewIndex = (variableList: ModelIndex.Ivariable, methodList: ModelIndex.Imethod): IvirtualNode => {
     /*return `${viewLoader(variableList)}
     ${viewAlert()}
     ${viewDialog()}
@@ -23,6 +24,21 @@ const viewIndex = (variableList: ModelIndex.IvariableList, methodList: ModelInde
        </div>
     </div>`;*/
 
+    /*const listState = variableState(
+        [
+            { id: "a", label: "Elemento A", value: "" },
+            { id: "b", label: "Elemento B", value: "" },
+            { id: "c", label: "Elemento C", value: "" }
+        ],
+        "index"
+    );*/
+
+    /*function handleInput(item: { id?: string; label?: string; value: unknown }) {
+        return (e: Event) => {
+            item.value = (e.target as HTMLInputElement).value;
+        };
+    }*/
+
     return (
         <div data-jsmvcfw-controllerName="index">
             {viewLoader(variableList)}
@@ -35,6 +51,31 @@ const viewIndex = (variableList: ModelIndex.IvariableList, methodList: ModelInde
                     {/*viewClientTemplate(variableList)*/}
                     {/*viewVideoTemplate(variableList)*/}
                     {/*viewUploadTemplate(variableList)*/}
+
+                    <button
+                        onclick={() => {
+                            variableList.listState.state.reverse();
+                        }}
+                    >
+                        Inverti ordine
+                    </button>
+
+                    <div class="test-list">
+                        {variableList.listState.state.map((item) => (
+                            <div key={item.id} class="test-item">
+                                <label>{item.label}</label>
+                                <input
+                                    type="text"
+                                    value={item.value}
+                                    oninput={() => {
+                                        return (e: Event) => {
+                                            item.value = (e.target as HTMLInputElement).value;
+                                        };
+                                    }}
+                                />
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>

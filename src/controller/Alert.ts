@@ -8,8 +8,8 @@ import viewAlert from "../view/Alert";
 
 export default class ControllerAlert implements Icontroller {
     // Variable
-    private variableList: ModelAlert.IvariableList;
-    private methodList: ModelAlert.ImethodList;
+    private variableList: ModelAlert.Ivariable;
+    private methodList: ModelAlert.Imethod;
 
     private mdcSnackbar: MDCSnackbar | null;
 
@@ -32,8 +32,8 @@ export default class ControllerAlert implements Icontroller {
     };
 
     constructor() {
-        this.variableList = {} as ModelAlert.IvariableList;
-        this.methodList = {} as ModelAlert.ImethodList;
+        this.variableList = {} as ModelAlert.Ivariable;
+        this.methodList = {} as ModelAlert.Imethod;
 
         this.mdcSnackbar = null;
     }
@@ -56,7 +56,7 @@ export default class ControllerAlert implements Icontroller {
         }
     };
 
-    name(): string {
+    getName(): string {
         return "alert";
     }
 
@@ -65,8 +65,8 @@ export default class ControllerAlert implements Icontroller {
         console.log("Alert.ts => variable()");
 
         this.variableList = {
-            className: variableBind("", this.name()),
-            label: variableBind("", this.name())
+            className: variableBind("", this.getName()),
+            label: variableBind("", this.getName())
         };
 
         this.methodList = {

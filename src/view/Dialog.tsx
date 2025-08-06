@@ -4,7 +4,7 @@ import jsxFactory from "../JsMvcFwJsx";
 // Source
 import * as ModelDialog from "../model/Dialog";
 
-const viewDialog = (variableList: ModelDialog.IvariableList, methodList: ModelDialog.ImethodList): IvirtualNode => {
+const viewDialog = (variableList: ModelDialog.Ivariable, methodList: ModelDialog.Imethod): IvirtualNode => {
     return (
         <div class="mdc-dialog view_dialog">
             <div class="mdc-dialog__container">

@@ -1,12 +1,12 @@
 import { IvariableBind } from "../JsMvcFwInterface";
 
-export interface IvariableList {
+export interface Ivariable {
     title: IvariableBind<string>;
     content: IvariableBind<string>;
     isSingleButton: IvariableBind<boolean>;
 }
 
-export interface ImethodList {
+export interface Imethod {
     onClickAccept: () => void;
     onClickClose: () => void;
 }

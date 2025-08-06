@@ -4,7 +4,7 @@ import jsxFactory from "../JsMvcFwJsx";
 // Source
 import * as ModelIndex from "../model/Index";
 
-const viewSpecFile = (variableList: ModelIndex.IvariableList): IvirtualNode => {
+const viewSpecFile = (variableList: ModelIndex.Ivariable): IvirtualNode => {
     /*const specFileListState = variableList.specFileList.state;
     const serverDataOutputState = variableList.outputList.state;
 

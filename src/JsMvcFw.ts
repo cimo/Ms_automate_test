@@ -1,8 +1,6 @@
 import {
     IvirtualNodeObject,
     ItriggerRenderObject,
-    IvariableBindOption,
-    IvariableBindCountObject,
     IvariableStateObject,
     IcontrollerOption,
     IvariableBind,
@@ -17,8 +15,6 @@ let urlRoot = "";
 
 const virtualNodeObject: IvirtualNodeObject = {};
 const triggerRenderObject: ItriggerRenderObject = {};
-const variableBindList: IvariableBindOption[] = [];
-const variableBindCountObject: IvariableBindCountObject = {};
 const variableStateObject: IvariableStateObject = {};
 const controllerList: IcontrollerOption[] = [];
 
@@ -58,41 +54,6 @@ const variableProxy = <T>(stateValue: T, controllerName: string): T => {
     }) as T;
 };
 
-const variableBindLoad = (controllerName: string): void => {
-    let isFound = false;
-    let isAllLoaded = true;
-
-    for (const variableBind of variableBindList) {
-        if (controllerName === variableBind.controllerName) {
-            isFound = true;
-
-            if (!variableBind.isLoaded) {
-                isAllLoaded = false;
-
-                break;
-            }
-        }
-    }
-
-    if (isFound && isAllLoaded) {
-        for (const controller of controllerList) {
-            if (controllerName === controller.parent.name() && controller.parent.variableLoaded) {
-                controller.parent.variableLoaded();
-
-                break;
-            }
-
-            for (const children of controller.childrenList) {
-                if (controllerName === children.name() && children.variableLoaded) {
-                    children.variableLoaded();
-
-                    break;
-                }
-            }
-        }
-    }
-};
-
 export const getIsDebug = () => isDebug;
 export const getElementRoot = () => elementRoot;
 export const getUrlRoot = () => urlRoot;
@@ -105,7 +66,19 @@ export const frameworkInit = (isDebugValue: boolean, elementRootId: string, urlR
 };
 
 export const renderTemplate = (controllerValue: Icontroller, controllerParent?: Icontroller, callback?: () => void): void => {
-    const controllerName = controllerValue.name();
+    const controllerName = controllerValue.getName();
+
+    if (!controllerParent) {
+        controllerList.push({ parent: controllerValue, childrenList: [] });
+    } else {
+        for (const controller of controllerList) {
+            if (controllerParent.getName() === controller.parent.getName()) {
+                controller.childrenList.push(controllerValue);
+
+                break;
+            }
+        }
+    }
 
     controllerValue.variable();
 
@@ -120,48 +93,42 @@ export const renderTemplate = (controllerValue: Icontroller, controllerParent?: 
             }
 
             elementContainer = elementRoot;
-
-            controllerList.push({ parent: controllerValue, childrenList: [] });
         } else {
-            const parentContainer = document.querySelector(`[data-jsmvcfw-controllerName="${controllerParent.name()}"]`);
+            const parentContainer = document.querySelector(`[data-jsmvcfw-controllerName="${controllerParent.getName()}"]`);
 
             if (!parentContainer) {
-                throw new Error(`JsMvcBase.ts => Tag data-jsmvcfw-controllerName="${controllerParent.name()}" not found!`);
+                throw new Error(`JsMvcBase.ts => Tag data-jsmvcfw-controllerName="${controllerParent.getName()}" not found!`);
             }
 
             elementContainer = parentContainer.querySelector(`[data-jsmvcfw-controllerName="${controllerName}"]`);
 
             if (!elementContainer) {
                 throw new Error(
-                    `JsMvcBase.ts => Tag data-jsmvcfw-controllerName="${controllerName}" not found inside data-jsmvcfw-controllerName="${controllerParent.name()}"!`
+                    `JsMvcBase.ts => Tag data-jsmvcfw-controllerName="${controllerName}" not found inside data-jsmvcfw-controllerName="${controllerParent.getName()}"!`
                 );
-            }
-
-            for (const controller of controllerList) {
-                if (controllerParent.name() === controller.parent.name()) {
-                    controller.childrenList.push(controllerValue);
-
-                    break;
-                }
             }
         }
 
         const virtualNodeOld = virtualNodeObject[controllerName];
 
         if (!virtualNodeOld) {
-            const elementVirtualNode = createVirtualNode(virtualNodeNew);
+            if (elementContainer) {
+                const elementVirtualNode = createVirtualNode(virtualNodeNew);
 
-            elementContainer.innerHTML = "";
-            elementContainer.appendChild(elementVirtualNode);
+                elementContainer.innerHTML = "";
+                elementContainer.appendChild(elementVirtualNode);
 
-            if (callback) {
-                callback();
+                if (callback) {
+                    callback();
+                }
             }
         } else {
-            const elementFirstChild = elementContainer.firstElementChild;
+            if (elementContainer) {
+                const elementFirstChild = elementContainer.firstElementChild;
 
-            if (elementFirstChild) {
-                updateVirtualNode(elementFirstChild, virtualNodeOld, virtualNodeNew);
+                if (elementFirstChild) {
+                    updateVirtualNode(elementFirstChild, virtualNodeOld, virtualNodeNew);
+                }
             }
         }
 
@@ -181,15 +148,10 @@ export const renderTemplate = (controllerValue: Icontroller, controllerParent?: 
     }
 };
 
-export const variableBind = <T>(stateValue: T, controllerName: string): IvariableBind<T> => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export const variableBind = <T>(stateValue: T, controllerName: string, stateName?: string): IvariableBind<T> => {
     let _state = variableProxy(stateValue, controllerName);
     let _listener: ((value: T) => void) | null = null;
-
-    if (!variableBindCountObject[controllerName]) {
-        variableBindCountObject[controllerName] = { countLoaded: 0, countTotal: 0 };
-    }
-
-    variableBindCountObject[controllerName].countTotal++;
 
     return {
         get state(): T {
@@ -198,19 +160,11 @@ export const variableBind = <T>(stateValue: T, controllerName: string): Ivariabl
         set state(value: T) {
             _state = variableProxy(value, controllerName);
 
-            variableBindList.push({ controllerName, state: _state, isLoaded: true });
-
-            variableBindCountObject[controllerName].countLoaded++;
-
             if (_listener) {
                 _listener(_state);
             }
 
             variableTriggerUpdate(controllerName);
-
-            if (variableBindCountObject[controllerName].countLoaded === variableBindCountObject[controllerName].countTotal) {
-                variableBindLoad(controllerName);
-            }
         },
         listener(callback: (value: T) => void): void {
             _listener = callback;
@@ -233,4 +187,16 @@ export const variableState = <T>(stateValue: T, controllerName: string): Ivariab
         value: variableStateObject[controllerName] as T,
         setValue
     };
+};
+
+export const bindAll = <T extends Record<string, unknown>>(initialValues: T, controllerName: string): { [K in keyof T]: IvariableBind<T[K]> } => {
+    const result = {} as { [K in keyof T]: IvariableBind<T[K]> };
+
+    for (const key in initialValues) {
+        if (Object.prototype.hasOwnProperty.call(initialValues, key)) {
+            result[key] = variableBind(initialValues[key] as T[typeof key], controllerName, key);
+        }
+    }
+
+    return result;
 };

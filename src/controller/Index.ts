@@ -475,7 +475,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
 */
 
 import { Icontroller, IvirtualNode } from "../JsMvcFwInterface";
-import { variableBind } from "../JsMvcFw";
+import { bindAll } from "../JsMvcFw";
 import CwsClient from "@cimo/websocket/dist/client/Manager";
 import { MDCRipple } from "@material/ripple";
 import { MDCTextField } from "@material/textfield";
@@ -491,8 +491,8 @@ import ControllerDialog from "./Dialog";
 
 export default class ControllerIndex implements Icontroller {
     // Variable
-    private variableList: ModelIndex.IvariableList;
-    private methodList: ModelIndex.ImethodList;
+    private variableList: ModelIndex.Ivariable;
+    private methodList: ModelIndex.Imethod;
     private controllerAlert: ControllerAlert | null;
     private controllerDialog: ControllerDialog | null;
 
@@ -558,8 +558,8 @@ export default class ControllerIndex implements Icontroller {
     };
 
     constructor(cwsClientValue: CwsClient) {
-        this.variableList = {} as ModelIndex.IvariableList;
-        this.methodList = {} as ModelIndex.ImethodList;
+        this.variableList = {} as ModelIndex.Ivariable;
+        this.methodList = {} as ModelIndex.Imethod;
         this.controllerAlert = new ControllerAlert();
         this.controllerDialog = new ControllerDialog();
 
@@ -582,7 +582,7 @@ export default class ControllerIndex implements Icontroller {
         });
     }
 
-    name(): string {
+    getName(): string {
         return "index";
     }
 
@@ -590,12 +590,35 @@ export default class ControllerIndex implements Icontroller {
         // eslint-disable-next-line no-console
         console.log("Index.ts => variable()");
 
-        this.variableList = {
-            specFileList: variableBind([], this.name()),
-            userList: variableBind([], this.name()),
-            outputList: variableBind([], this.name()),
-            isLoading: variableBind(true, this.name())
-        };
+        /*this.variableList = {
+            specFileList: variableBind([], this.getName()),
+            userList: variableBind([], this.getName()),
+            outputList: variableBind([], this.getName()),
+            isLoading: variableBind(true, this.getName()),
+            listState: variableBind(
+                [
+                    { id: "a", label: "Elemento A", value: "" },
+                    { id: "b", label: "Elemento B", value: "" },
+                    { id: "c", label: "Elemento C", value: "" }
+                ],
+                this.getName()
+            )
+        };*/
+
+        this.variableList = bindAll(
+            {
+                userList: [],
+                outputList: [],
+                specFileList: [],
+                isLoading: true,
+                listState: [
+                    { id: "a", label: "Elemento A", value: "" },
+                    { id: "b", label: "Elemento B", value: "" },
+                    { id: "c", label: "Elemento C", value: "" }
+                ]
+            },
+            this.getName()
+        );
 
         this.methodList = {};
     }

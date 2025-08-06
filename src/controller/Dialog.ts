@@ -8,8 +8,8 @@ import viewDialog from "../view/Dialog";
 
 export default class ControllerDialog implements Icontroller {
     // Variable
-    private variableList: ModelDialog.IvariableList;
-    private methodList: ModelDialog.ImethodList;
+    private variableList: ModelDialog.Ivariable;
+    private methodList: ModelDialog.Imethod;
 
     private mdcDialog: MDCDialog | null;
     private callbackAccept: (() => void) | null;
@@ -45,8 +45,8 @@ export default class ControllerDialog implements Icontroller {
     };
 
     constructor() {
-        this.variableList = {} as ModelDialog.IvariableList;
-        this.methodList = {} as ModelDialog.ImethodList;
+        this.variableList = {} as ModelDialog.Ivariable;
+        this.methodList = {} as ModelDialog.Imethod;
 
         this.mdcDialog = null;
         this.callbackAccept = null;
@@ -80,7 +80,7 @@ export default class ControllerDialog implements Icontroller {
         }
     };
 
-    name(): string {
+    getName(): string {
         return "dialog";
     }
 
@@ -89,9 +89,9 @@ export default class ControllerDialog implements Icontroller {
         console.log("Dialog.ts => variable()");
 
         this.variableList = {
-            title: variableBind("", this.name()),
-            content: variableBind("", this.name()),
-            isSingleButton: variableBind(false, this.name())
+            title: variableBind("", this.getName()),
+            content: variableBind("", this.getName()),
+            isSingleButton: variableBind(false, this.getName())
         };
 
         this.methodList = {
