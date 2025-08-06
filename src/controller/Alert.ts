@@ -64,10 +64,13 @@ export default class ControllerAlert implements Icontroller {
         // eslint-disable-next-line no-console
         console.log("Alert.ts => variable()");
 
-        this.variableList = {
-            className: variableBind("", this.getName()),
-            label: variableBind("", this.getName())
-        };
+        this.variableList = variableBind(
+            {
+                className: "",
+                label: ""
+            },
+            this.getName()
+        );
 
         this.methodList = {
             onClickClose: this.onClickClose

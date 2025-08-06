@@ -24,20 +24,15 @@ const viewIndex = (variableList: ModelIndex.Ivariable, methodList: ModelIndex.Im
        </div>
     </div>`;*/
 
-    /*const listState = variableState(
-        [
-            { id: "a", label: "Elemento A", value: "" },
-            { id: "b", label: "Elemento B", value: "" },
-            { id: "c", label: "Elemento C", value: "" }
-        ],
-        "index"
-    );*/
+    const onClick = () => {
+        variableList.listState.state.reverse();
+    };
 
-    /*function handleInput(item: { id?: string; label?: string; value: unknown }) {
+    const onInput = (item: { id: string; label: string; value: string }) => {
         return (e: Event) => {
             item.value = (e.target as HTMLInputElement).value;
         };
-    }*/
+    };
 
     return (
         <div data-jsmvcfw-controllerName="index">
@@ -52,27 +47,13 @@ const viewIndex = (variableList: ModelIndex.Ivariable, methodList: ModelIndex.Im
                     {/*viewVideoTemplate(variableList)*/}
                     {/*viewUploadTemplate(variableList)*/}
 
-                    <button
-                        onclick={() => {
-                            variableList.listState.state.reverse();
-                        }}
-                    >
-                        Inverti ordine
-                    </button>
+                    <button onclick={onClick}>Inverti ordine</button>
 
                     <div class="test-list">
                         {variableList.listState.state.map((item) => (
                             <div key={item.id} class="test-item">
                                 <label>{item.label}</label>
-                                <input
-                                    type="text"
-                                    value={item.value}
-                                    oninput={() => {
-                                        return (e: Event) => {
-                                            item.value = (e.target as HTMLInputElement).value;
-                                        };
-                                    }}
-                                />
+                                <input type="text" value={item.value} oninput={onInput(item)} />
                             </div>
                         ))}
                     </div>

@@ -1,28 +1,33 @@
-import {
-    IvirtualNodeObject,
-    ItriggerRenderObject,
-    IvariableStateObject,
-    IcontrollerOption,
-    IvariableBind,
-    IvariableState,
-    Icontroller
-} from "./JsMvcFwInterface";
+import { IcontrollerOption, IvirtualNode, IvariableBind, IvariableState, Icontroller } from "./JsMvcFwInterface";
 import { createVirtualNode, updateVirtualNode } from "./JsMvcFwDom";
 
 let isDebug = false;
 let elementRoot: HTMLElement | null = null;
 let urlRoot = "";
 
-const virtualNodeObject: IvirtualNodeObject = {};
-const triggerRenderObject: ItriggerRenderObject = {};
-const variableStateObject: IvariableStateObject = {};
+const virtualNodeObject: Record<string, IvirtualNode> = {};
+const renderTriggerObject: Record<string, () => void> = {};
+const variableTriggerObject: Record<string, boolean> = {};
+const variableStateObject: Record<string, unknown> = {};
 const controllerList: IcontrollerOption[] = [];
+const proxyCacheWeakMap = new WeakMap<object, unknown>();
+
+const variableLoadedList: string[] = [];
+const variableEditedList: string[] = [];
 
 const variableTriggerUpdate = (controllerName: string): void => {
-    const triggerRender = triggerRenderObject[controllerName];
+    if (!variableTriggerObject[controllerName]) {
+        variableTriggerObject[controllerName] = true;
 
-    if (triggerRender) {
-        triggerRender();
+        Promise.resolve().then(() => {
+            const renderTrigger = renderTriggerObject[controllerName];
+
+            if (renderTrigger) {
+                renderTrigger();
+            }
+
+            variableTriggerObject[controllerName] = false;
+        });
     }
 };
 
@@ -31,27 +36,68 @@ const variableProxy = <T>(stateValue: T, controllerName: string): T => {
         return stateValue;
     }
 
-    return new Proxy(stateValue as object, {
+    const proxyCached = proxyCacheWeakMap.get(stateValue as object);
+
+    if (proxyCached) {
+        return proxyCached as T;
+    }
+
+    const proxy = new Proxy(stateValue as object, {
         get(target, property, receiver) {
             const result = Reflect.get(target, property, receiver);
 
             return typeof result === "object" && result !== null ? variableProxy(result, controllerName) : result;
         },
         set(target, property, newValue, receiver) {
-            const result = Reflect.set(target, property, newValue, receiver);
+            const success = Reflect.set(target, property, newValue, receiver);
 
-            variableTriggerUpdate(controllerName);
+            if (success) {
+                variableTriggerUpdate(controllerName);
+            }
 
-            return result;
+            return success;
         },
         deleteProperty(target, property) {
-            const result = Reflect.deleteProperty(target, property);
+            const success = Reflect.deleteProperty(target, property);
+
+            if (success) {
+                variableTriggerUpdate(controllerName);
+            }
+
+            return success;
+        }
+    });
+
+    proxyCacheWeakMap.set(stateValue as object, proxy);
+
+    return proxy as T;
+};
+
+const variableBindItem = <T>(stateValue: T, controllerName: string, keyName?: string): IvariableBind<T> => {
+    let _state = variableProxy(stateValue, controllerName);
+    let _listener: ((value: T) => void) | null = null;
+
+    return {
+        get state(): T {
+            return _state;
+        },
+        set state(value: T) {
+            if (keyName) {
+                variableEditedList.push(keyName);
+            }
+
+            _state = variableProxy(value, controllerName);
+
+            if (_listener) {
+                _listener(_state);
+            }
 
             variableTriggerUpdate(controllerName);
-
-            return result;
+        },
+        listener(callback: (value: T) => void): void {
+            _listener = callback;
         }
-    }) as T;
+    };
 };
 
 export const getIsDebug = () => isDebug;
@@ -82,7 +128,7 @@ export const renderTemplate = (controllerValue: Icontroller, controllerParent?: 
 
     controllerValue.variable();
 
-    const triggerRender = () => {
+    const renderTrigger = () => {
         const virtualNodeNew = controllerValue.view();
 
         let elementContainer: Element | null = null;
@@ -116,6 +162,7 @@ export const renderTemplate = (controllerValue: Icontroller, controllerParent?: 
                 const elementVirtualNode = createVirtualNode(virtualNodeNew);
 
                 elementContainer.innerHTML = "";
+
                 elementContainer.appendChild(elementVirtualNode);
 
                 if (callback) {
@@ -135,9 +182,9 @@ export const renderTemplate = (controllerValue: Icontroller, controllerParent?: 
         virtualNodeObject[controllerName] = virtualNodeNew;
     };
 
-    triggerRenderObject[controllerName] = triggerRender;
+    renderTriggerObject[controllerName] = renderTrigger;
 
-    triggerRender();
+    renderTrigger();
 
     if (controllerValue.subControllerList) {
         for (const subController of controllerValue.subControllerList()) {
@@ -148,53 +195,32 @@ export const renderTemplate = (controllerValue: Icontroller, controllerParent?: 
     }
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const variableBind = <T>(stateValue: T, controllerName: string, stateName?: string): IvariableBind<T> => {
-    let _state = variableProxy(stateValue, controllerName);
-    let _listener: ((value: T) => void) | null = null;
-
-    return {
-        get state(): T {
-            return _state;
-        },
-        set state(value: T) {
-            _state = variableProxy(value, controllerName);
-
-            if (_listener) {
-                _listener(_state);
-            }
-
-            variableTriggerUpdate(controllerName);
-        },
-        listener(callback: (value: T) => void): void {
-            _listener = callback;
-        }
-    };
-};
-
 export const variableState = <T>(stateValue: T, controllerName: string): IvariableState<T> => {
     if (!(controllerName in variableStateObject)) {
         variableStateObject[controllerName] = variableProxy(stateValue, controllerName);
     }
 
-    const setValue = (value: T) => {
-        variableStateObject[controllerName] = variableProxy(value, controllerName);
-
-        variableTriggerUpdate(controllerName);
-    };
-
     return {
         value: variableStateObject[controllerName] as T,
-        setValue
+        setValue: (value: T) => {
+            variableStateObject[controllerName] = variableProxy(value, controllerName);
+
+            variableTriggerUpdate(controllerName);
+        }
     };
 };
 
-export const bindAll = <T extends Record<string, unknown>>(initialValues: T, controllerName: string): { [K in keyof T]: IvariableBind<T[K]> } => {
-    const result = {} as { [K in keyof T]: IvariableBind<T[K]> };
+export const variableBind = <T extends Record<string, unknown>>(
+    variableObject: T,
+    controllerName: string
+): { [A in keyof T]: IvariableBind<T[A]> } => {
+    const result = {} as { [A in keyof T]: IvariableBind<T[A]> };
 
-    for (const key in initialValues) {
-        if (Object.prototype.hasOwnProperty.call(initialValues, key)) {
-            result[key] = variableBind(initialValues[key] as T[typeof key], controllerName, key);
+    for (const key in variableObject) {
+        if (Object.prototype.hasOwnProperty.call(variableObject, key)) {
+            variableLoadedList.push(key);
+
+            result[key] = variableBindItem(variableObject[key] as T[typeof key], controllerName, key);
         }
     }
 

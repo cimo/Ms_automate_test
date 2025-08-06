@@ -88,11 +88,14 @@ export default class ControllerDialog implements Icontroller {
         // eslint-disable-next-line no-console
         console.log("Dialog.ts => variable()");
 
-        this.variableList = {
-            title: variableBind("", this.getName()),
-            content: variableBind("", this.getName()),
-            isSingleButton: variableBind(false, this.getName())
-        };
+        this.variableList = variableBind(
+            {
+                title: "",
+                content: "",
+                isSingleButton: false
+            },
+            this.getName()
+        );
 
         this.methodList = {
             onClickAccept: this.onClickAccept,

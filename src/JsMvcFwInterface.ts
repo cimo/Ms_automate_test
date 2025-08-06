@@ -1,15 +1,8 @@
 export interface IvirtualNode {
     tag: string;
     propertyObject: { [key: string]: TvirtualNodeProperty };
-    children: Array<IvirtualNode | string>;
-}
-
-export interface IvirtualNodeObject {
-    [key: string]: IvirtualNode;
-}
-
-export interface ItriggerRenderObject {
-    [key: string]: () => void;
+    childrenList: Array<IvirtualNode | string>;
+    key?: string;
 }
 
 export interface IvariableBind<T> {
@@ -20,10 +13,6 @@ export interface IvariableBind<T> {
 export interface IvariableState<T> {
     value: T;
     setValue: (value: T) => void;
-}
-
-export interface IvariableStateObject {
-    [key: string]: unknown;
 }
 
 export interface Icontroller {

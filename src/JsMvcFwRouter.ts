@@ -4,7 +4,7 @@ import { getElementRoot, getUrlRoot, getControllerList, renderTemplate } from ".
 let routerList: Irouter[] = [];
 let controller: Icontroller;
 
-const historyPush = (nextUrl: string, soft: boolean, title = "", parameterListValue?: Record<string, unknown>): void => {
+const historyPush = (nextUrl: string, soft: boolean, title = "", parameterObjectValue?: Record<string, unknown>): void => {
     let url = nextUrl;
 
     if (nextUrl.charAt(0) === "/") {
@@ -41,8 +41,8 @@ const historyPush = (nextUrl: string, soft: boolean, title = "", parameterListVa
 
     window.history.pushState(
         {
-            prevUrl: window.location.pathname,
-            parameterList: parameterListValue
+            previousUrl: window.location.pathname,
+            parameterObject: parameterObjectValue
         },
         title,
         urlCleaned
@@ -56,8 +56,8 @@ const historyPush = (nextUrl: string, soft: boolean, title = "", parameterListVa
 const populatePage = (
     isHistoryPushEnabled: boolean,
     nextUrl: string,
-    soft: boolean,
-    parameterList?: Record<string, unknown>,
+    isSoft: boolean,
+    parameterObject?: Record<string, unknown>,
     parameterSearch?: string
 ): void => {
     let isNotFound = true;
@@ -72,14 +72,14 @@ const populatePage = (
     for (const route of routerList) {
         if (route.path === nextUrl) {
             if (urlRoot && isHistoryPushEnabled) {
-                historyPush(`${urlRoot.replace(/\/+$/, "")}${nextUrl}`, soft, route.title, parameterList);
+                historyPush(`${urlRoot.replace(/\/+$/, "")}${nextUrl}`, isSoft, route.title, parameterObject);
 
                 if (parameterSearch) {
                     window.location.search = parameterSearch;
                 }
             }
 
-            if (!isHistoryPushEnabled || soft) {
+            if (!isHistoryPushEnabled || isSoft) {
                 document.title = route.title;
 
                 controller = route.controller();
@@ -97,10 +97,10 @@ const populatePage = (
 
     if (isNotFound) {
         if (isHistoryPushEnabled) {
-            historyPush("/404", soft, "404", parameterList);
+            historyPush("/404", isSoft, "404", parameterObject);
         }
 
-        if (!isHistoryPushEnabled || soft) {
+        if (!isHistoryPushEnabled || isSoft) {
             document.title = "404";
             elementRoot.innerHTML = "Route not found!";
         }
@@ -137,6 +137,6 @@ export const routerInit = (routerListValue: Irouter[]): void => {
     };
 };
 
-export const navigateTo = (nextUrl: string, soft = false, parameterList?: Record<string, unknown>, parameterSearch?: string): void => {
-    populatePage(true, nextUrl, soft, parameterList, parameterSearch);
+export const navigateTo = (nextUrl: string, isSoft = false, parameterObject?: Record<string, unknown>, parameterSearch?: string): void => {
+    populatePage(true, nextUrl, isSoft, parameterObject, parameterSearch);
 };

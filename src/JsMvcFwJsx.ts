@@ -1,32 +1,41 @@
 import { IvirtualNode, TvirtualNodeChildren } from "./JsMvcFwInterface";
 
-const jsxFactory = (tag: string, propertyObject: IvirtualNode["propertyObject"] = {}, ...childrenList: TvirtualNodeChildren[]): IvirtualNode => {
-    const childrenNormalized: Array<IvirtualNode | string> = [];
+const jsxFactory = (
+    tag: string,
+    propertyObjectValue: IvirtualNode["propertyObject"] = {},
+    ...childrenListValue: TvirtualNodeChildren[]
+): IvirtualNode => {
+    const childrenList: Array<IvirtualNode | string> = [];
 
-    for (const children of childrenList) {
-        if (children == null) {
+    for (let a = 0; a < childrenListValue.length; a++) {
+        const child = childrenListValue[a];
+
+        if (child == null) {
             continue;
         }
 
-        if (typeof children === "number") {
-            childrenNormalized.push(String(children));
-        } else if (Array.isArray(children)) {
-            for (const child of children) {
-                if (child == null) {
+        if (Array.isArray(child)) {
+            for (let b = 0; b < child.length; b++) {
+                const childNested = child[b];
+
+                if (childNested == null) {
                     continue;
                 }
 
-                childrenNormalized.push(typeof child === "number" ? String(child) : child);
+                childrenList.push(typeof childNested === "number" ? String(childNested) : childNested);
             }
         } else {
-            childrenNormalized.push(children);
+            childrenList.push(typeof child === "number" ? String(child) : child);
         }
     }
+
+    const { key, ...propertyObject } = propertyObjectValue ?? {};
 
     return {
         tag,
         propertyObject,
-        children: childrenNormalized
+        childrenList,
+        key: key !== undefined ? String(key) : undefined
     };
 };
 

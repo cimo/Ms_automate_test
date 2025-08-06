@@ -53,7 +53,7 @@ export default class ControllerServer {
             const headerForwarded = request.headers["x-forwarded-for"] ? request.headers["x-forwarded-for"][0] : "";
             const removeAddress = request.socket.remoteAddress ? request.socket.remoteAddress : "";
 
-            request.clientIp = headerForwarded || removeAddress;
+            request.clientIp = headerForwarded ?? removeAddress;
 
             next();
         });
@@ -94,7 +94,7 @@ export default class ControllerServer {
             HelperSrc.writeLog("Server.ts => createServer() => listen()", `Port: ${HelperSrc.SERVER_PORT} - Time: ${serverTime}`);
 
             this.app.get("/info", (request: ModelServer.Irequest, response: Response) => {
-                HelperSrc.responseBody(`Client ip: ${request.clientIp || ""}`, "", response, 200);
+                HelperSrc.responseBody(`Client ip: ${request.clientIp ?? ""}`, "", response, 200);
             });
 
             this.app.get("/login", (_request: Request, response: Response) => {
