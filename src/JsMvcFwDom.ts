@@ -13,63 +13,37 @@ const applyProperty = (element: Element, key: string, valueNew: TvirtualNodeProp
         valueNew ? element.setAttribute(key, "") : element.removeAttribute(key);
     } else if (typeof valueNew === "string" || typeof valueNew === "number") {
         element.setAttribute(key, valueNew.toString());
+    } else if (Array.isArray(valueNew)) {
+        let stringValue = "";
+
+        for (const value of valueNew) {
+            if (typeof value === "string") {
+                stringValue += value + " ";
+            }
+        }
+
+        element.setAttribute(key, stringValue.trim());
+    } else if (valueNew == null) {
+        element.removeAttribute(key);
     }
 };
 
-const updateProperty = (element: Element, oldObject: Record<string, TvirtualNodeProperty>, newObject: Record<string, TvirtualNodeProperty>): void => {
-    for (const key in oldObject) {
-        if (!(key in newObject)) {
-            if (key.startsWith("on") && typeof oldObject[key] === "function") {
-                element.removeEventListener(key.slice(2).toLowerCase(), oldObject[key]);
+const updateProperty = (element: Element, oldList: Record<string, TvirtualNodeProperty>, newList: Record<string, TvirtualNodeProperty>): void => {
+    for (const key in oldList) {
+        if (!(key in newList)) {
+            if (key.startsWith("on") && typeof oldList[key] === "function") {
+                element.removeEventListener(key.slice(2).toLowerCase(), oldList[key]);
             } else {
                 element.removeAttribute(key);
             }
         }
     }
 
-    for (const [key, value] of Object.entries(newObject)) {
-        const valueOld = oldObject[key];
+    for (const [key, value] of Object.entries(newList)) {
+        const valueOld = oldList[key];
 
         if (value !== valueOld) {
             applyProperty(element, key, value, valueOld);
-        }
-    }
-};
-
-const patchNode = (element: Element, nodeNew: IvirtualNode | string, nodeOld: IvirtualNode | string, nodeDom: ChildNode | undefined) => {
-    if (typeof nodeNew === "string") {
-        if (!nodeDom || nodeDom.nodeType !== Node.TEXT_NODE) {
-            const nodeText = document.createTextNode(nodeNew);
-
-            if (nodeDom) {
-                element.replaceChild(nodeText, nodeDom);
-            } else {
-                element.appendChild(nodeText);
-            }
-
-            return nodeText;
-        } else {
-            if (nodeDom.textContent !== nodeNew) {
-                nodeDom.textContent = nodeNew;
-            }
-
-            return nodeDom;
-        }
-    } else {
-        if (!nodeDom || nodeDom.nodeType === Node.TEXT_NODE) {
-            const node = createVirtualNode(nodeNew);
-
-            if (nodeDom) {
-                element.replaceChild(node, nodeDom);
-            } else {
-                element.appendChild(node);
-            }
-
-            return node;
-        } else {
-            updateVirtualNode(nodeDom as Element, nodeOld as IvirtualNode, nodeNew);
-
-            return nodeDom;
         }
     }
 };
@@ -78,62 +52,86 @@ const updateChildren = (element: Element, nodeOldListValue: IvirtualNode["childr
     const nodeOldList = Array.isArray(nodeOldListValue) ? nodeOldListValue : [];
     const nodeNewList = Array.isArray(nodeNewListValue) ? nodeNewListValue : [];
 
-    const oldKeyObject: Record<string, { node: IvirtualNode | string; nodeDom: ChildNode }> = {};
+    const oldKeyMap = new Map<string, { node: IvirtualNode; dom: Element }>();
 
-    for (let a = 0; a < nodeOldList.length; a++) {
-        const node = nodeOldList[a];
-
-        if (typeof node === "object" && node.key !== undefined) {
-            oldKeyObject[node.key] = { node, nodeDom: element.childNodes[a] };
+    nodeOldList.forEach((node, index) => {
+        if (typeof node === "object" && node.key) {
+            oldKeyMap.set(node.key, { node, dom: element.childNodes[index] as Element });
         }
-    }
+    });
 
-    let nodeChild: ChildNode | null = null;
+    const nodeMaxLength = Math.max(nodeOldList.length, nodeNewList.length);
 
-    for (let a = 0; a < nodeNewList.length; a++) {
+    for (let a = 0; a < nodeMaxLength; a++) {
+        const nodeOld = nodeOldList[a];
         const nodeNew = nodeNewList[a];
-        const key = typeof nodeNew === "object" && nodeNew.key !== undefined ? nodeNew.key : undefined;
+        const nodeDom = element.childNodes[a];
 
-        if (key !== undefined && oldKeyObject[key]) {
-            const { node, nodeDom } = oldKeyObject[key];
+        if (!nodeNew && nodeDom) {
+            const isControllerName = nodeDom.nodeType === Node.ELEMENT_NODE && (nodeDom as Element).hasAttribute("data-jsmvcfw-controllername");
 
-            const nodeItem = patchNode(element, nodeNew, node, nodeDom);
-
-            if (nodeChild == null) {
-                if (element.firstChild !== nodeItem) {
-                    element.insertBefore(nodeItem, element.firstChild);
-                }
-            } else if (nodeChild.nextSibling !== nodeItem) {
-                element.insertBefore(nodeItem, nodeChild.nextSibling);
+            if (!isControllerName) {
+                element.removeChild(nodeDom);
             }
 
-            nodeChild = nodeItem;
-
-            delete oldKeyObject[key];
-        } else {
-            const nodeDom = element.childNodes[a];
-
-            const nodeItem = patchNode(element, nodeNew, nodeOldList[a], nodeDom);
-
-            nodeChild = nodeItem;
+            continue;
         }
-    }
 
-    for (const key in oldKeyObject) {
-        if (Object.prototype.hasOwnProperty.call(oldKeyObject, key)) {
-            element.removeChild(oldKeyObject[key].nodeDom);
+        if (typeof nodeNew === "string") {
+            if (!nodeDom) {
+                element.appendChild(document.createTextNode(nodeNew));
+            } else if (nodeDom.nodeType === Node.TEXT_NODE) {
+                if (nodeDom.textContent !== nodeNew) {
+                    nodeDom.textContent = nodeNew;
+                }
+            } else {
+                element.replaceChild(document.createTextNode(nodeNew), nodeDom);
+            }
+        } else if (typeof nodeNew === "object") {
+            const isControllerName = nodeDom?.nodeType === Node.ELEMENT_NODE && (nodeDom as Element).hasAttribute("data-jsmvcfw-controllername");
+
+            if (isControllerName && !nodeNew.key) {
+                continue;
+            }
+
+            if (nodeNew.key && oldKeyMap.has(nodeNew.key)) {
+                const { node, dom } = oldKeyMap.get(nodeNew.key)!;
+
+                updateVirtualNode(dom, node, nodeNew);
+
+                if (nodeDom !== dom) {
+                    element.insertBefore(dom, nodeDom);
+                }
+            } else if (typeof nodeOld === "object" && nodeOld.tag === nodeNew.tag && nodeDom) {
+                updateVirtualNode(nodeDom as Element, nodeOld, nodeNew);
+            } else {
+                const domNew = createVirtualNode(nodeNew);
+
+                if (nodeDom) {
+                    element.replaceChild(domNew, nodeDom);
+                } else {
+                    element.appendChild(domNew);
+                }
+            }
         }
     }
 
     while (element.childNodes.length > nodeNewList.length) {
-        element.removeChild(element.lastChild!);
+        const extraNode = element.childNodes[nodeNewList.length];
+        const isControllerName = extraNode.nodeType === Node.ELEMENT_NODE && (extraNode as Element).hasAttribute("data-jsmvcfw-controllername");
+
+        if (!isControllerName) {
+            element.removeChild(extraNode);
+        } else {
+            break;
+        }
     }
 };
 
 export const createVirtualNode = (node: IvirtualNode): HTMLElement => {
     const element = document.createElement(node.tag);
 
-    for (const [key, value] of Object.entries(node.propertyObject ?? {})) {
+    for (const [key, value] of Object.entries(node.propertyObject || {})) {
         applyProperty(element, key, value);
     }
 
@@ -159,7 +157,7 @@ export const updateVirtualNode = (element: Element, nodeOld: IvirtualNode, nodeN
         return;
     }
 
-    updateProperty(element, nodeOld.propertyObject ?? {}, nodeNew.propertyObject ?? {});
+    updateProperty(element, nodeOld.propertyObject || {}, nodeNew.propertyObject || {});
 
     updateChildren(element, nodeOld.childrenList, nodeNew.childrenList);
 };

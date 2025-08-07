@@ -15,6 +15,12 @@ export interface Ivariable {
             value: string;
         }[]
     >;
+    name: IvariableBind<string>;
+    count: IvariableBind<number>;
 }
 
-export interface Imethod {}
+export interface Imethod {
+    onClickCount: () => void;
+    onInputUpdateName: (event: Event) => void;
+    onClickOpen: () => void;
+}

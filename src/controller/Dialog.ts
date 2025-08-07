@@ -101,13 +101,15 @@ export default class ControllerDialog implements Icontroller {
             onClickAccept: this.onClickAccept,
             onClickClose: this.onClickClose
         };
+
+        setTimeout(() => {
+            this.mdcEvent();
+        }, 5000);
     }
 
     variableLoaded(): void {
         // eslint-disable-next-line no-console
         console.log("Dialog.ts => variableLoaded()");
-
-        this.mdcEvent();
     }
 
     view(): IvirtualNode {

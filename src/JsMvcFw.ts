@@ -131,6 +131,10 @@ export const renderTemplate = (controllerValue: Icontroller, controllerParent?: 
     const renderTrigger = () => {
         const virtualNodeNew = controllerValue.view();
 
+        if (!virtualNodeNew || typeof virtualNodeNew !== "object" || !virtualNodeNew.tag) {
+            throw new Error(`JsMvcBase.ts => Invalid virtual node returned by controller "${controllerName}"`);
+        }
+
         let elementContainer: Element | null = null;
 
         if (!controllerParent) {

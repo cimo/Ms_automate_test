@@ -557,6 +557,35 @@ export default class ControllerIndex implements Icontroller {
         });
     };
 
+    private onInputUpdateName = (event: Event) => {
+        this.variableList.name.state = (event.target as HTMLInputElement).value;
+    };
+
+    private onClickCount = (): void => {
+        this.variableList.count.state++;
+
+        const a = this.variableList.userList.state[1];
+
+        this.variableList.userList.state.splice(1, 1);
+        this.variableList.userList.state.unshift(a);
+
+        //this.variableList.userList.state.shift();
+    };
+
+    private onClickOpen = (): void => {
+        if (this.controllerAlert) {
+            this.controllerAlert.open("success", "text");
+        }
+
+        if (this.controllerDialog) {
+            this.controllerDialog.open("title", "message");
+        }
+
+        this.variableList.userList.state.push("a " + new Date().toLocaleTimeString());
+
+        //this.variableList.userList.state.reverse();
+    };
+
     constructor(cwsClientValue: CwsClient) {
         this.variableList = {} as ModelIndex.Ivariable;
         this.methodList = {} as ModelIndex.Imethod;
@@ -600,19 +629,27 @@ export default class ControllerIndex implements Icontroller {
                     { id: "a", label: "Elemento A", value: "" },
                     { id: "b", label: "Elemento B", value: "" },
                     { id: "c", label: "Elemento C", value: "" }
-                ]
+                ],
+                name: "",
+                count: 0
             },
             this.getName()
         );
 
-        this.methodList = {};
+        this.methodList = {
+            onClickCount: this.onClickCount,
+            onInputUpdateName: this.onInputUpdateName,
+            onClickOpen: this.onClickOpen
+        };
+
+        setTimeout(() => {
+            this.mdcEvent();
+        }, 5000);
     }
 
     variableLoaded(): void {
         // eslint-disable-next-line no-console
         console.log("Index.ts => variableLoaded()");
-
-        this.mdcEvent();
     }
 
     view(): IvirtualNode {

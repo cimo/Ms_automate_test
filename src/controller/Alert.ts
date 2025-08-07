@@ -75,13 +75,15 @@ export default class ControllerAlert implements Icontroller {
         this.methodList = {
             onClickClose: this.onClickClose
         };
+
+        setTimeout(() => {
+            this.mdcEvent();
+        }, 5000);
     }
 
     variableLoaded(): void {
         // eslint-disable-next-line no-console
         console.log("Alert.ts => variableLoaded()");
-
-        this.mdcEvent();
     }
 
     view(): IvirtualNode {
