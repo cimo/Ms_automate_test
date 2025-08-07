@@ -3,13 +3,13 @@ import { variableBind } from "../JsMvcFw";
 import { MDCSnackbar } from "@material/snackbar";
 
 // Source
-import * as ModelAlert from "../model/Alert";
+import * as modelAlert from "../model/Alert";
 import viewAlert from "../view/Alert";
 
-export default class ControllerAlert implements Icontroller {
+export default class Alert implements Icontroller {
     // Variable
-    private variableList: ModelAlert.Ivariable;
-    private methodList: ModelAlert.Imethod;
+    private variableList: modelAlert.Ivariable;
+    private methodList: modelAlert.Imethod;
 
     private mdcSnackbar: MDCSnackbar | null;
 
@@ -32,8 +32,8 @@ export default class ControllerAlert implements Icontroller {
     };
 
     constructor() {
-        this.variableList = {} as ModelAlert.Ivariable;
-        this.methodList = {} as ModelAlert.Imethod;
+        this.variableList = {} as modelAlert.Ivariable;
+        this.methodList = {} as modelAlert.Imethod;
 
         this.mdcSnackbar = null;
     }
@@ -56,10 +56,6 @@ export default class ControllerAlert implements Icontroller {
         }
     };
 
-    getName(): string {
-        return "alert";
-    }
-
     variable(): void {
         // eslint-disable-next-line no-console
         console.log("Alert.ts => variable()");
@@ -69,7 +65,7 @@ export default class ControllerAlert implements Icontroller {
                 className: "",
                 label: ""
             },
-            this.getName()
+            this.constructor.name
         );
 
         this.methodList = {

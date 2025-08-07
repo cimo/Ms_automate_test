@@ -3,11 +3,11 @@ import { IvirtualNode } from "../JsMvcFwInterface";
 import jsxFactory from "../JsMvcFwJsx";
 
 // Source
-import * as ModelIndex from "../model/Index";
+import * as modelIndex from "../model/Index";
 import viewLoader from "../view/Loader";
 import viewSpecFile from "../view/SpecFile";
 
-const viewIndex = (variableList: ModelIndex.Ivariable, methodList: ModelIndex.Imethod): IvirtualNode => {
+const viewIndex = (variableList: modelIndex.Ivariable, methodList: modelIndex.Imethod): IvirtualNode => {
     /*return `${viewLoader(variableList)}
     ${viewAlert()}
     ${viewDialog()}
@@ -33,7 +33,7 @@ const viewIndex = (variableList: ModelIndex.Ivariable, methodList: ModelIndex.Im
         }
     };
 
-    const name = variableState("Simone", "index");
+    const name = variableState("stateName", "Simone", "index");
 
     return (
         <div data-jsmvcfw-controllerName="index">

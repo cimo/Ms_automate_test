@@ -2,9 +2,9 @@ import { IvirtualNode } from "../JsMvcFwInterface";
 import jsxFactory from "../JsMvcFwJsx";
 
 // Source
-import * as ModelAlert from "../model/Alert";
+import * as modelAlert from "../model/Alert";
 
-const viewAlert = (variableList: ModelAlert.Ivariable, methodList: ModelAlert.Imethod): IvirtualNode => {
+const viewAlert = (variableList: modelAlert.Ivariable, methodList: modelAlert.Imethod): IvirtualNode => {
     return (
         <div class={`mdc-snackbar mdc-snackbar--stacked view_alert ${variableList.className.state}`}>
             <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">

@@ -3,7 +3,7 @@ import { Response } from "express";
 import { Ce } from "@cimo/environment";
 
 // Source
-import * as ModelHelperSrc from "./model/HelperSrc";
+import * as modelHelperSrc from "./model/HelperSrc";
 
 export const ENV_NAME = Ce.checkVariable("ENV_NAME") || (process.env.ENV_NAME as string);
 
@@ -134,7 +134,7 @@ export const fileCheckSize = (value: string): boolean => {
 };
 
 export const responseBody = (stdoutValue: string, stderrValue: string | Error, response: Response, mode: number): void => {
-    const responseBody: ModelHelperSrc.IresponseBody = { response: { stdout: stdoutValue, stderr: stderrValue } };
+    const responseBody: modelHelperSrc.IresponseBody = { response: { stdout: stdoutValue, stderr: stderrValue } };
 
     response.status(mode).send(responseBody);
 };

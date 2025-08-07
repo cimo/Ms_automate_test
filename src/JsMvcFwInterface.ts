@@ -16,7 +16,6 @@ export interface IvariableState<T> {
 }
 
 export interface Icontroller {
-    getName(): string;
     variable(): void;
     variableLoaded(): void;
     view(): IvirtualNode;

@@ -51,14 +51,15 @@ const updateProperty = (element: Element, oldList: Record<string, TvirtualNodePr
 const updateChildren = (element: Element, nodeOldListValue: IvirtualNode["childrenList"], nodeNewListValue: IvirtualNode["childrenList"]): void => {
     const nodeOldList = Array.isArray(nodeOldListValue) ? nodeOldListValue : [];
     const nodeNewList = Array.isArray(nodeNewListValue) ? nodeNewListValue : [];
+    const keyOldObject: Record<string, { node: IvirtualNode; dom: Element }> = {};
 
-    const oldKeyMap = new Map<string, { node: IvirtualNode; dom: Element }>();
+    for (let a = 0; a < nodeOldList.length; a++) {
+        const node = nodeOldList[a];
 
-    nodeOldList.forEach((node, index) => {
         if (typeof node === "object" && node.key) {
-            oldKeyMap.set(node.key, { node, dom: element.childNodes[index] as Element });
+            keyOldObject[node.key] = { node, dom: element.childNodes[a] as Element };
         }
-    });
+    }
 
     const nodeMaxLength = Math.max(nodeOldList.length, nodeNewList.length);
 
@@ -94,8 +95,8 @@ const updateChildren = (element: Element, nodeOldListValue: IvirtualNode["childr
                 continue;
             }
 
-            if (nodeNew.key && oldKeyMap.has(nodeNew.key)) {
-                const { node, dom } = oldKeyMap.get(nodeNew.key)!;
+            if (nodeNew.key && keyOldObject[nodeNew.key]) {
+                const { node, dom } = keyOldObject[nodeNew.key];
 
                 updateVirtualNode(dom, node, nodeNew);
 
@@ -117,11 +118,11 @@ const updateChildren = (element: Element, nodeOldListValue: IvirtualNode["childr
     }
 
     while (element.childNodes.length > nodeNewList.length) {
-        const extraNode = element.childNodes[nodeNewList.length];
-        const isControllerName = extraNode.nodeType === Node.ELEMENT_NODE && (extraNode as Element).hasAttribute("data-jsmvcfw-controllername");
+        const nodeExtra = element.childNodes[nodeNewList.length];
+        const isControllerName = nodeExtra.nodeType === Node.ELEMENT_NODE && (nodeExtra as Element).hasAttribute("data-jsmvcfw-controllername");
 
         if (!isControllerName) {
-            element.removeChild(extraNode);
+            element.removeChild(nodeExtra);
         } else {
             break;
         }

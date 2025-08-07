@@ -1,11 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
 
 // Source
-import * as HelperSrc from "./HelperSrc";
+import * as helperSrc from "./HelperSrc";
 
 export default defineConfig({
-    testDir: `${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_INPUT}`,
-    outputDir: `${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_OUTPUT}artifact`,
+    testDir: `${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_INPUT}`,
+    outputDir: `${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_OUTPUT}artifact`,
     fullyParallel: false,
     reporter: "line",
     reportSlowTests: null,

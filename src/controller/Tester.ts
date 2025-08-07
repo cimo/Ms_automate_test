@@ -4,16 +4,16 @@ import { Cp } from "@cimo/pid";
 import { CwsServer } from "@cimo/websocket";
 
 // Source
-import * as HelperSrc from "../HelperSrc";
-import * as ModelTester from "../model/Tester";
+import * as helperSrc from "../HelperSrc";
+import * as modelTester from "../model/Tester";
 
-export default class ControllerTester {
+export default class Tester {
     // Variable
     private cp: Cp;
     private cwsServer: CwsServer;
 
     private pidKey: number;
-    private resultOutput: ModelTester.IserverDataOutput[];
+    private resultOutput: modelTester.IserverDataOutput[];
     private processRunPid: number | null;
 
     // Method
@@ -46,7 +46,7 @@ export default class ControllerTester {
 
     private specFileList = (): void => {
         this.cwsServer.receiveData("specFileList", (clientId) => {
-            const fileList = Fs.readdirSync(`${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_INPUT}`);
+            const fileList = Fs.readdirSync(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_INPUT}`);
 
             const fileFiltered: string[] = [];
 
@@ -62,7 +62,7 @@ export default class ControllerTester {
                 resultList.push(fileFiltered[a].replace(/\.spec\.ts$/, ""));
             }
 
-            const serverData: ModelTester.IserverData = { status: "", result: resultList };
+            const serverData: modelTester.IserverData = { status: "", result: resultList };
             this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "specFileList");
         });
     };
@@ -71,14 +71,14 @@ export default class ControllerTester {
         this.cwsServer.receiveData("user", () => {
             const keyList: string[] = Array.from(this.cwsServer.getClientList().keys());
 
-            const serverData: ModelTester.IserverDataBroadcast = { status: "", result: keyList, tag: "user" };
+            const serverData: modelTester.IserverDataBroadcast = { status: "", result: keyList, tag: "user" };
             this.cwsServer.sendDataBroadcast(JSON.stringify(serverData));
         });
     };
 
     private output = (): void => {
         this.cwsServer.receiveData("output", () => {
-            const serverData: ModelTester.IserverDataBroadcast = { status: "", result: this.resultOutput, tag: "output" };
+            const serverData: modelTester.IserverDataBroadcast = { status: "", result: this.resultOutput, tag: "output" };
             this.cwsServer.sendDataBroadcast(JSON.stringify(serverData));
         });
     };
@@ -86,7 +86,7 @@ export default class ControllerTester {
     private run = (): void => {
         this.cwsServer.receiveData("run", (clientId, data) => {
             if (typeof data === "string") {
-                const clientData = JSON.parse(data) as ModelTester.IclientDataRun;
+                const clientData = JSON.parse(data) as modelTester.IclientDataRun;
 
                 const browserCheck = clientData.browser.match(
                     "^(desktop_chrome|desktop_edge|desktop_firefox|desktop_safari|mobile_android|mobile_ios)$"
@@ -94,8 +94,8 @@ export default class ControllerTester {
                     ? clientData.browser
                     : "";
 
-                const serverDataBroadcast = {} as ModelTester.IserverDataBroadcast;
-                const serverData = {} as ModelTester.IserverDataRun;
+                const serverDataBroadcast = {} as modelTester.IserverDataBroadcast;
+                const serverData = {} as modelTester.IserverDataRun;
 
                 if (clientData.index >= 0 && clientData.name !== "" && browserCheck !== "") {
                     serverDataBroadcast.tag = "output";
@@ -107,7 +107,7 @@ export default class ControllerTester {
                             this.resultOutput[clientData.index] = {
                                 status: "running",
                                 browser: clientData.browser,
-                                time: HelperSrc.serverTime(),
+                                time: helperSrc.serverTime(),
                                 log: ""
                             };
 
@@ -116,7 +116,7 @@ export default class ControllerTester {
 
                             this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcast));
 
-                            const execCommand1 = `. ${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_SCRIPT}command1.sh`;
+                            const execCommand1 = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command1.sh`;
                             const execArgumentList1 = [`"${clientData.name}"`, `"${browserCheck}"`];
 
                             const processRun = execFile(
@@ -125,15 +125,15 @@ export default class ControllerTester {
                                 { shell: "/bin/bash", encoding: "utf8" },
                                 (_, stdout1, stderr1) => {
                                     if (stderr1 !== "") {
-                                        HelperSrc.writeLog("Tester.ts => run() => execFile()", `stderr1: ${stderr1}`);
+                                        helperSrc.writeLog("Tester.ts => run() => execFile()", `stderr1: ${stderr1}`);
 
                                         const status = "error";
 
                                         this.resultOutput[clientData.index] = {
                                             status: status,
                                             browser: clientData.browser,
-                                            time: HelperSrc.serverTime(),
-                                            log: HelperSrc.removeAnsiEscape(stderr1)
+                                            time: helperSrc.serverTime(),
+                                            log: helperSrc.removeAnsiEscape(stderr1)
                                         };
 
                                         serverDataBroadcast.result = this.resultOutput;
@@ -149,10 +149,10 @@ export default class ControllerTester {
 
                                         this.pidKey = 0;
                                     } else {
-                                        const execCommand2 = `. ${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_SCRIPT}command2.sh`;
+                                        const execCommand2 = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command2.sh`;
                                         const execArgumentList2 = [
-                                            `"${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_OUTPUT}artifact"`,
-                                            `"${HelperSrc.PATH_ROOT}${HelperSrc.PATH_PUBLIC}"`
+                                            `"${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_OUTPUT}artifact"`,
+                                            `"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`
                                         ];
 
                                         execFile(execCommand2, execArgumentList2, { shell: "/bin/bash", encoding: "utf8" }, () => {
@@ -161,8 +161,8 @@ export default class ControllerTester {
                                             this.resultOutput[clientData.index] = {
                                                 status: status,
                                                 browser: clientData.browser,
-                                                time: HelperSrc.serverTime(),
-                                                log: HelperSrc.removeAnsiEscape(stdout1)
+                                                time: helperSrc.serverTime(),
+                                                log: helperSrc.removeAnsiEscape(stdout1)
                                             };
 
                                             serverDataBroadcast.result = this.resultOutput;
@@ -209,9 +209,9 @@ export default class ControllerTester {
     private runLog = (): void => {
         this.cwsServer.receiveData("runLog", (clientId, data) => {
             if (typeof data === "string") {
-                const clientData = JSON.parse(data) as ModelTester.IclientDataRunLog;
+                const clientData = JSON.parse(data) as modelTester.IclientDataRunLog;
 
-                const serverData = {} as ModelTester.IserverData;
+                const serverData = {} as modelTester.IserverData;
 
                 if (clientData.index >= 0 && this.resultOutput[clientData.index]) {
                     serverData.status = "success";
@@ -241,13 +241,13 @@ export default class ControllerTester {
     private video = (): void => {
         this.cwsServer.receiveData("video_list", (clientId, data) => {
             if (typeof data === "string") {
-                const clientData = JSON.parse(data) as ModelTester.IclientDataVideo;
+                const clientData = JSON.parse(data) as modelTester.IclientDataVideo;
 
-                const serverData = {} as ModelTester.IserverData;
+                const serverData = {} as modelTester.IserverData;
 
                 if (clientData.name !== "") {
-                    const execCommand = `. ${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_SCRIPT}command3.sh`;
-                    const execArgumentList = [`"${HelperSrc.PATH_ROOT}${HelperSrc.PATH_PUBLIC}"`, `"${clientData.name}"`];
+                    const execCommand = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command3.sh`;
+                    const execArgumentList = [`"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`, `"${clientData.name}"`];
 
                     execFile(execCommand, execArgumentList, { shell: "/bin/bash", encoding: "utf8" }, (_, stdout) => {
                         if (!stdout) {
@@ -274,13 +274,13 @@ export default class ControllerTester {
 
         this.cwsServer.receiveData("video_delete", (clientId, data) => {
             if (typeof data === "string") {
-                const clientData = JSON.parse(data) as ModelTester.IclientDataVideo;
+                const clientData = JSON.parse(data) as modelTester.IclientDataVideo;
 
-                const serverData = {} as ModelTester.IserverData;
+                const serverData = {} as modelTester.IserverData;
 
                 if (clientData.name !== "") {
-                    const execCommand = `. ${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_SCRIPT}command4.sh`;
-                    const execArgumentList = [`"${HelperSrc.PATH_ROOT}${HelperSrc.PATH_PUBLIC}"`, `"${clientData.name}"`];
+                    const execCommand = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command4.sh`;
+                    const execArgumentList = [`"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`, `"${clientData.name}"`];
 
                     execFile(execCommand, execArgumentList, { shell: "/bin/bash", encoding: "utf8" }, () => {
                         serverData.status = "success";
@@ -298,9 +298,9 @@ export default class ControllerTester {
 
     private upload = (): void => {
         this.cwsServer.receiveDataUpload((clientId, data, filename) => {
-            Fs.writeFileSync(`${HelperSrc.PATH_ROOT}${HelperSrc.PATH_FILE_INPUT}${filename}`, Buffer.concat(data));
+            Fs.writeFileSync(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_INPUT}${filename}`, Buffer.concat(data));
 
-            const requestWsData: ModelTester.IserverData = { status: "success", result: "Upload completed." };
+            const requestWsData: modelTester.IserverData = { status: "success", result: "Upload completed." };
             this.cwsServer.sendData(clientId, 1, JSON.stringify(requestWsData), "upload");
         });
     };

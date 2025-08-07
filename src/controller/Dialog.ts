@@ -3,13 +3,13 @@ import { variableBind } from "../JsMvcFw";
 import { MDCDialog } from "@material/dialog";
 
 // Source
-import * as ModelDialog from "../model/Dialog";
+import * as modelDialog from "../model/Dialog";
 import viewDialog from "../view/Dialog";
 
-export default class ControllerDialog implements Icontroller {
+export default class Dialog implements Icontroller {
     // Variable
-    private variableList: ModelDialog.Ivariable;
-    private methodList: ModelDialog.Imethod;
+    private variableList: modelDialog.Ivariable;
+    private methodList: modelDialog.Imethod;
 
     private mdcDialog: MDCDialog | null;
     private callbackAccept: (() => void) | null;
@@ -45,8 +45,8 @@ export default class ControllerDialog implements Icontroller {
     };
 
     constructor() {
-        this.variableList = {} as ModelDialog.Ivariable;
-        this.methodList = {} as ModelDialog.Imethod;
+        this.variableList = {} as modelDialog.Ivariable;
+        this.methodList = {} as modelDialog.Imethod;
 
         this.mdcDialog = null;
         this.callbackAccept = null;
@@ -80,10 +80,6 @@ export default class ControllerDialog implements Icontroller {
         }
     };
 
-    getName(): string {
-        return "dialog";
-    }
-
     variable(): void {
         // eslint-disable-next-line no-console
         console.log("Dialog.ts => variable()");
@@ -94,7 +90,7 @@ export default class ControllerDialog implements Icontroller {
                 content: "",
                 isSingleButton: false
             },
-            this.getName()
+            this.constructor.name
         );
 
         this.methodList = {

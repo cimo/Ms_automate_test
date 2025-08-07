@@ -73,7 +73,7 @@ const variableProxy = <T>(stateValue: T, controllerName: string): T => {
     return proxy as T;
 };
 
-const variableBindItem = <T>(stateValue: T, controllerName: string, keyName?: string): IvariableBind<T> => {
+const variableBindItem = <T>(label: string, stateValue: T, controllerName: string): IvariableBind<T> => {
     let _state = variableProxy(stateValue, controllerName);
     let _listener: ((value: T) => void) | null = null;
 
@@ -82,9 +82,7 @@ const variableBindItem = <T>(stateValue: T, controllerName: string, keyName?: st
             return _state;
         },
         set state(value: T) {
-            if (keyName) {
-                variableEditedList.push(keyName);
-            }
+            variableEditedList.push(label);
 
             _state = variableProxy(value, controllerName);
 
@@ -100,6 +98,10 @@ const variableBindItem = <T>(stateValue: T, controllerName: string, keyName?: st
     };
 };
 
+const controllerNameParse = (value: string): string => {
+    return value.toLowerCase();
+};
+
 export const getIsDebug = () => isDebug;
 export const getElementRoot = () => elementRoot;
 export const getUrlRoot = () => urlRoot;
@@ -112,13 +114,13 @@ export const frameworkInit = (isDebugValue: boolean, elementRootId: string, urlR
 };
 
 export const renderTemplate = (controllerValue: Icontroller, controllerParent?: Icontroller, callback?: () => void): void => {
-    const controllerName = controllerValue.getName();
+    const controllerName = controllerNameParse(controllerValue.constructor.name);
 
     if (!controllerParent) {
         controllerList.push({ parent: controllerValue, childrenList: [] });
     } else {
         for (const controller of controllerList) {
-            if (controllerParent.getName() === controller.parent.getName()) {
+            if (controllerNameParse(controllerParent.constructor.name) === controllerNameParse(controller.parent.constructor.name)) {
                 controller.childrenList.push(controllerValue);
 
                 break;
@@ -132,29 +134,33 @@ export const renderTemplate = (controllerValue: Icontroller, controllerParent?: 
         const virtualNodeNew = controllerValue.view();
 
         if (!virtualNodeNew || typeof virtualNodeNew !== "object" || !virtualNodeNew.tag) {
-            throw new Error(`JsMvcBase.ts => Invalid virtual node returned by controller "${controllerName}"`);
+            throw new Error(`JsMvcFw.ts => Invalid virtual node returned by controller "${controllerName}".`);
         }
 
         let elementContainer: Element | null = null;
 
         if (!controllerParent) {
             if (!elementRoot) {
-                throw new Error("JsMvcBase.ts => Root element #jsmvcfw_app not found!");
+                throw new Error("JsMvcFw.ts => Root element #jsmvcfw_app not found.");
             }
 
             elementContainer = elementRoot;
         } else {
-            const parentContainer = document.querySelector(`[data-jsmvcfw-controllerName="${controllerParent.getName()}"]`);
+            const parentContainer = document.querySelector(
+                `[data-jsmvcfw-controllerName="${controllerNameParse(controllerParent.constructor.name)}"]`
+            );
 
             if (!parentContainer) {
-                throw new Error(`JsMvcBase.ts => Tag data-jsmvcfw-controllerName="${controllerParent.getName()}" not found!`);
+                throw new Error(
+                    `JsMvcFw.ts => Tag data-jsmvcfw-controllerName="${controllerNameParse(controllerParent.constructor.name)}" not found.`
+                );
             }
 
             elementContainer = parentContainer.querySelector(`[data-jsmvcfw-controllerName="${controllerName}"]`);
 
             if (!elementContainer) {
                 throw new Error(
-                    `JsMvcBase.ts => Tag data-jsmvcfw-controllerName="${controllerName}" not found inside data-jsmvcfw-controllerName="${controllerParent.getName()}"!`
+                    `JsMvcFw.ts => Tag data-jsmvcfw-controllerName="${controllerName}" not found inside data-jsmvcfw-controllerName="${controllerNameParse(controllerParent.constructor.name)}".`
                 );
             }
         }
@@ -199,14 +205,22 @@ export const renderTemplate = (controllerValue: Icontroller, controllerParent?: 
     }
 };
 
-export const variableState = <T>(stateValue: T, controllerName: string): IvariableState<T> => {
+export const variableState = <T>(label: string, stateValue: T, controllerName: string): IvariableState<T> => {
     if (!(controllerName in variableStateObject)) {
+        if (variableLoadedList.includes(label)) {
+            throw new Error(`JsMvcFw.ts => The method variableState use existing label: "${label}".`);
+        }
+
+        variableLoadedList.push(label);
+
         variableStateObject[controllerName] = variableProxy(stateValue, controllerName);
     }
 
     return {
         value: variableStateObject[controllerName] as T,
         setValue: (value: T) => {
+            variableEditedList.push(label);
+
             variableStateObject[controllerName] = variableProxy(value, controllerName);
 
             variableTriggerUpdate(controllerName);
@@ -222,9 +236,13 @@ export const variableBind = <T extends Record<string, unknown>>(
 
     for (const key in variableObject) {
         if (Object.prototype.hasOwnProperty.call(variableObject, key)) {
+            if (variableLoadedList.includes(key)) {
+                throw new Error(`JsMvcFw.ts => The method variableBind use existing label: "${key}".`);
+            }
+
             variableLoadedList.push(key);
 
-            result[key] = variableBindItem(variableObject[key] as T[typeof key], controllerName, key);
+            result[key] = variableBindItem(key, variableObject[key] as T[typeof key], controllerNameParse(controllerName));
         }
     }
 

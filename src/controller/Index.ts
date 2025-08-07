@@ -482,17 +482,17 @@ import { MDCTextField } from "@material/textfield";
 import { MDCSelect } from "@material/select";
 
 // Source
-import * as HelperSrc from "../HelperSrc";
-import * as ModelIndex from "../model/Index";
-import * as ModelTester from "../model/Tester";
+import * as helperSrc from "../HelperSrc";
+import * as modelIndex from "../model/Index";
+import * as modelTester from "../model/Tester";
 import viewIndex from "../view/Index";
 import ControllerAlert from "./Alert";
 import ControllerDialog from "./Dialog";
 
-export default class ControllerIndex implements Icontroller {
+export default class Index implements Icontroller {
     // Variable
-    private variableList: ModelIndex.Ivariable;
-    private methodList: ModelIndex.Imethod;
+    private variableList: modelIndex.Ivariable;
+    private methodList: modelIndex.Imethod;
     private controllerAlert: ControllerAlert | null;
     private controllerDialog: ControllerDialog | null;
 
@@ -527,8 +527,8 @@ export default class ControllerIndex implements Icontroller {
 
     private broadcast = (): void => {
         this.cwsClient.receiveData("broadcast", (data) => {
-            if (typeof data === "string" && HelperSrc.isJson(data)) {
-                const serverData = JSON.parse(data) as ModelTester.IserverDataBroadcast;
+            if (typeof data === "string" && helperSrc.isJson(data)) {
+                const serverData = JSON.parse(data) as modelTester.IserverDataBroadcast;
 
                 if (serverData.tag === "disconnection") {
                     this.cwsClient.sendData(1, "", "specFileList");
@@ -537,7 +537,7 @@ export default class ControllerIndex implements Icontroller {
                 } else if (serverData.tag === "user") {
                     this.variableList.userList.state = serverData.result as string[];
                 } else if (serverData.tag === "output") {
-                    this.variableList.outputList.state = serverData.result as ModelTester.IserverDataOutput[];
+                    this.variableList.outputList.state = serverData.result as modelTester.IserverDataOutput[];
                 }
             }
         });
@@ -550,7 +550,7 @@ export default class ControllerIndex implements Icontroller {
     private specFileListReceiveData = (): void => {
         this.cwsClient.receiveData("specFileList", (data) => {
             if (typeof data === "string") {
-                const serverData = JSON.parse(data) as ModelTester.IserverData;
+                const serverData = JSON.parse(data) as modelTester.IserverData;
 
                 this.variableList.specFileList.state = serverData.result as string[];
             }
@@ -587,8 +587,8 @@ export default class ControllerIndex implements Icontroller {
     };
 
     constructor(cwsClientValue: CwsClient) {
-        this.variableList = {} as ModelIndex.Ivariable;
-        this.methodList = {} as ModelIndex.Imethod;
+        this.variableList = {} as modelIndex.Ivariable;
+        this.methodList = {} as modelIndex.Imethod;
         this.controllerAlert = new ControllerAlert();
         this.controllerDialog = new ControllerDialog();
 
@@ -611,10 +611,6 @@ export default class ControllerIndex implements Icontroller {
         });
     }
 
-    getName(): string {
-        return "index";
-    }
-
     variable(): void {
         // eslint-disable-next-line no-console
         console.log("Index.ts => variable()");
@@ -633,7 +629,7 @@ export default class ControllerIndex implements Icontroller {
                 name: "",
                 count: 0
             },
-            this.getName()
+            this.constructor.name
         );
 
         this.methodList = {

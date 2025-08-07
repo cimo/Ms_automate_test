@@ -2,9 +2,9 @@ import { IvirtualNode } from "../JsMvcFwInterface";
 import jsxFactory from "../JsMvcFwJsx";
 
 // Source
-import * as ModelIndex from "../model/Index";
+import * as modelIndex from "../model/Index";
 
-const viewSpecFile = (variableList: ModelIndex.Ivariable): IvirtualNode => {
+const viewSpecFile = (variableList: modelIndex.Ivariable): IvirtualNode => {
     /*const specFileListState = variableList.specFileList.state;
     const serverDataOutputState = variableList.outputList.state;
 

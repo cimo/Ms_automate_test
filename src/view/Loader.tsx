@@ -2,9 +2,9 @@ import { IvirtualNode } from "../JsMvcFwInterface";
 import jsxFactory from "../JsMvcFwJsx";
 
 // Source
-import * as ModelIndex from "../model/Index";
+import * as modelIndex from "../model/Index";
 
-const viewLoader = (variableList: ModelIndex.Ivariable): IvirtualNode => {
+const viewLoader = (variableList: modelIndex.Ivariable): IvirtualNode => {
     return (
         <div>
             {(() => {

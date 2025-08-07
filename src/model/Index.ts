@@ -1,12 +1,12 @@
 import { IvariableBind } from "../JsMvcFwInterface";
 
 // Source
-import * as ModelTester from "../model/Tester";
+import * as modelTester from "../model/Tester";
 
 export interface Ivariable {
     specFileList: IvariableBind<string[]>;
     userList: IvariableBind<string[]>;
-    outputList: IvariableBind<ModelTester.IserverDataOutput[]>;
+    outputList: IvariableBind<modelTester.IserverDataOutput[]>;
     isLoading: IvariableBind<boolean>;
     listState: IvariableBind<
         {
