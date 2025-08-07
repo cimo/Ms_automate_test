@@ -49,12 +49,22 @@ const viewIndex = (variableList: modelIndex.Ivariable, methodList: modelIndex.Im
                     {/*viewUploadTemplate(variableList)*/}
                     <button onclick={onClick}>Inverti ordine</button>
                     <div class="test-list">
-                        {variableList.listState.state.map((item) => (
-                            <div key={item.id} class="test-item">
-                                <label>{item.label}</label>
-                                <input type="text" value={item.value} oninput={(event: Event) => onInput(event, item)} />
-                            </div>
-                        ))}
+                        {(() => {
+                            const result: IvirtualNode[] = [];
+
+                            for (let a = 0; a < variableList.listState.state.length; a++) {
+                                const item = variableList.listState.state[a];
+
+                                result.push(
+                                    <div key={item.id} className="test-item">
+                                        <label>{item.label}</label>
+                                        <input type="text" value={item.value} onInput={(event: Event) => onInput(event, item)} />
+                                    </div>
+                                );
+                            }
+
+                            return result;
+                        })()}
                     </div>
                     <div>
                         <p>Test1 {name.value}</p>

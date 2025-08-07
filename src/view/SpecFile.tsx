@@ -244,7 +244,7 @@ const viewSpecFile = (variableList: modelIndex.Ivariable): IvirtualNode => {
                         const serverDataOutputStateStatus = variableList.outputList.state[index] ? variableList.outputList.state[index].status : "";
 
                         result.push(
-                            <tr class="row" data-index={index}>
+                            <tr key={index} data-index={index} class="row">
                                 <td class="cell column_id">
                                     <p>{index + 1}</p>
                                 </td>
@@ -285,59 +285,59 @@ const viewSpecFile = (variableList: modelIndex.Ivariable): IvirtualNode => {
                                             <div class="mdc-select__menu mdc-menu mdc-menu-surface mdc-menu-surface--fullwidth">
                                                 <ul class="mdc-deprecated-list" role="listbox">
                                                     <li
+                                                        data-value=""
                                                         class="mdc-deprecated-list-item mdc-deprecated-list-item--selected"
                                                         aria-selected="true"
-                                                        data-value=""
                                                         role="option"
                                                     >
                                                         <span class="mdc-deprecated-list-item__ripple"></span>
                                                     </li>
                                                     <li
+                                                        data-value="desktop_chrome"
                                                         class="mdc-deprecated-list-item"
                                                         aria-selected="false"
-                                                        data-value="desktop_chrome"
                                                         role="option"
                                                     >
                                                         <span class="mdc-deprecated-list-item__ripple"></span>
                                                         <span class="mdc-deprecated-list-item__text">Desktop - Chrome</span>
                                                     </li>
                                                     <li
+                                                        data-value="desktop_edge"
                                                         class="mdc-deprecated-list-item"
                                                         aria-selected="false"
-                                                        data-value="desktop_edge"
                                                         role="option"
                                                     >
                                                         <span class="mdc-deprecated-list-item__ripple"></span>
                                                         <span class="mdc-deprecated-list-item__text">Desktop - Edge</span>
                                                     </li>
                                                     <li
+                                                        data-value="desktop_firefox"
                                                         class="mdc-deprecated-list-item"
                                                         aria-selected="false"
-                                                        data-value="desktop_firefox"
                                                         role="option"
                                                     >
                                                         <span class="mdc-deprecated-list-item__ripple"></span>
                                                         <span class="mdc-deprecated-list-item__text">Desktop - Firefox</span>
                                                     </li>
                                                     <li
+                                                        data-value="desktop_safari"
                                                         class="mdc-deprecated-list-item"
                                                         aria-selected="false"
-                                                        data-value="desktop_safari"
                                                         role="option"
                                                     >
                                                         <span class="mdc-deprecated-list-item__ripple"></span>
                                                         <span class="mdc-deprecated-list-item__text">Desktop - Safari</span>
                                                     </li>
                                                     <li
+                                                        data-value="mobile_android"
                                                         class="mdc-deprecated-list-item"
                                                         aria-selected="false"
-                                                        data-value="mobile_android"
                                                         role="option"
                                                     >
                                                         <span class="mdc-deprecated-list-item__ripple"></span>
                                                         <span class="mdc-deprecated-list-item__text">Mobile - Android</span>
                                                     </li>
-                                                    <li class="mdc-deprecated-list-item" aria-selected="false" data-value="mobile_ios" role="option">
+                                                    <li data-value="mobile_ios" class="mdc-deprecated-list-item" aria-selected="false" role="option">
                                                         <span class="mdc-deprecated-list-item__ripple"></span>
                                                         <span class="mdc-deprecated-list-item__text">Mobile - Ios</span>
                                                     </li>
