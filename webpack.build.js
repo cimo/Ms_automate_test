@@ -2,7 +2,6 @@ const Path = require("path");
 const webpack = require("webpack");
 const TerserPlugin = require("terser-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const EsLintPlugin = require("eslint-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const { Ce } = require("@cimo/environment");
 
@@ -80,7 +79,7 @@ module.exports = {
         hints: false
     },
     optimization: {
-        minimize: ENV_NAME === "local" ? false : true,
+        minimize: NODE_ENV === "development" ? false : true,
         minimizer: [
             new TerserPlugin({
                 exclude: /(dist|node_modules|public)/,
@@ -106,11 +105,6 @@ module.exports = {
                 name: NAME,
                 urlRoot: URL_ROOT
             }
-        }),
-        new EsLintPlugin({
-            extensions: [".ts", ".tsx", ".js", ".jsx"],
-            configType: "flat",
-            overrideConfigFile: Path.resolve(__dirname, "eslint.config.js")
         }),
         new CompressionPlugin({
             algorithm: "gzip",

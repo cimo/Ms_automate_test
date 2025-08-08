@@ -4,6 +4,10 @@ const typescriptParser = require("@typescript-eslint/parser");
 const typescriptPlugin = require("@typescript-eslint/eslint-plugin");
 const customRule = require("./dist/eslint.customRule");
 
+const configIgnore = {
+    ignores: ["dist", "node_modules", "public", ".cache", ".config", ".local", ".ms_cronjob-volume", ".npm", ".pki"]
+};
+
 const configBase = {
     languageOptions: {
         globals: Object.assign({}, global.browser, global.node),
@@ -34,8 +38,7 @@ const configBase = {
                 endOfLine: "lf"
             }
         ]
-    },
-    ignores: ["dist", "node_modules", "public"]
+    }
 };
 
 const configTypescript = {
@@ -64,8 +67,7 @@ const configTypescript = {
             }
         ],
         "custom-rule/disallow-array-for-object-type": "error"
-    },
-    ignores: [...configBase.ignores]
+    }
 };
 
 const configJavascript = {
@@ -78,8 +80,7 @@ const configJavascript = {
     },
     rules: {
         ...configBase.rules
-    },
-    ignores: [...configBase.ignores]
+    }
 };
 
-module.exports = [configTypescript, configJavascript];
+module.exports = [configIgnore, configTypescript, configJavascript];
