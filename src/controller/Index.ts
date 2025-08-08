@@ -474,7 +474,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
 }
 */
 
-import { Icontroller, IvirtualNode } from "../JsMvcFwInterface";
+import { Icontroller, IvariableEffect, IvirtualNode } from "../JsMvcFwInterface";
 import { variableBind } from "../JsMvcFw";
 import CwsClient from "@cimo/websocket/dist/client/Manager";
 import { MDCRipple } from "@material/ripple";
@@ -637,32 +637,32 @@ export default class Index implements Icontroller {
             onInputUpdateName: this.onInputUpdateName,
             onClickOpen: this.onClickOpen
         };
-
-        setTimeout(() => {
-            this.mdcEvent();
-        }, 5000);
     }
 
-    variableLoaded(): void {
+    variableEffect(watch: IvariableEffect): void {
         // eslint-disable-next-line no-console
-        console.log("Index.ts => variableLoaded()");
+        console.log("Index.ts => variableEffect()");
+
+        watch([
+            {
+                list: ["specFileList"],
+                action: () => {
+                    this.mdcEvent();
+                }
+            }
+        ]);
     }
 
     view(): IvirtualNode {
         // eslint-disable-next-line no-console
         console.log("Index.ts => view()", this.variableList);
 
-        return viewIndex(this.variableList, this.methodList);
+        return viewIndex(this.constructor.name, this.variableList, this.methodList);
     }
 
     event(): void {
         // eslint-disable-next-line no-console
         console.log("Index.ts => event()", this.variableList);
-    }
-
-    destroy(): void {
-        // eslint-disable-next-line no-console
-        console.log("Index.ts => destroy()");
     }
 
     subControllerList(): Icontroller[] {
@@ -677,5 +677,15 @@ export default class Index implements Icontroller {
         }
 
         return list;
+    }
+
+    rendered(): void {
+        // eslint-disable-next-line no-console
+        console.log("Index.ts => rendered()");
+    }
+
+    destroy(): void {
+        // eslint-disable-next-line no-console
+        console.log("Index.ts => destroy()");
     }
 }

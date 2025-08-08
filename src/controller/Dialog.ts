@@ -97,15 +97,11 @@ export default class Dialog implements Icontroller {
             onClickAccept: this.onClickAccept,
             onClickClose: this.onClickClose
         };
-
-        setTimeout(() => {
-            this.mdcEvent();
-        }, 5000);
     }
 
-    variableLoaded(): void {
+    variableEffect(): void {
         // eslint-disable-next-line no-console
-        console.log("Dialog.ts => variableLoaded()");
+        console.log("Dialog.ts => variableEffect()");
     }
 
     view(): IvirtualNode {
@@ -120,11 +116,6 @@ export default class Dialog implements Icontroller {
         console.log("Dialog.ts => event()", this.variableList);
     }
 
-    destroy(): void {
-        // eslint-disable-next-line no-console
-        console.log("Dialog.ts => destroy()");
-    }
-
     subControllerList(): Icontroller[] {
         // eslint-disable-next-line no-console
         console.log("Dialog.ts => subController()");
@@ -132,5 +123,17 @@ export default class Dialog implements Icontroller {
         const list: Icontroller[] = [];
 
         return list;
+    }
+
+    rendered(): void {
+        // eslint-disable-next-line no-console
+        console.log("Dialog.ts => rendered()");
+
+        this.mdcEvent();
+    }
+
+    destroy(): void {
+        // eslint-disable-next-line no-console
+        console.log("Dialog.ts => destroy()");
     }
 }

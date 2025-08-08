@@ -1,35 +1,4 @@
 {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.codeActionsOnSave": {
-        "source.fixAll": "explicit"
-    },
-    "editor.formatOnSave": false,
-    "eslint.format.enable": true,
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "typescript.enablePromptUseWorkspaceTsdk": false,
-    "containers.commands.attach": "${containerCommand} exec -it ${containerId} bash",
-    "[dockercompose]": {
-        "editor.defaultFormatter": "ms-azuretools.vscode-containers"
-    },
-    "[dockerfile]": {
-        "editor.defaultFormatter": "ms-azuretools.vscode-containers"
-    },
-    "[typescript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[javascript]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[html]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[jsonc]": {
-        "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter"
-    },
-    "diffEditor.ignoreTrimWhitespace": false,
     "l13Diff.exclude": [
         ".git",
         ".cache",

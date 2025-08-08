@@ -1,4 +1,4 @@
-import { variableState } from "../JsMvcFw";
+import { variableHook } from "../JsMvcFw";
 import { IvirtualNode } from "../JsMvcFwInterface";
 import jsxFactory from "../JsMvcFwJsx";
 
@@ -7,7 +7,7 @@ import * as modelIndex from "../model/Index";
 import viewLoader from "../view/Loader";
 import viewSpecFile from "../view/SpecFile";
 
-const viewIndex = (variableList: modelIndex.Ivariable, methodList: modelIndex.Imethod): IvirtualNode => {
+const viewIndex = (controllerName: string, variableList: modelIndex.Ivariable, methodList: modelIndex.Imethod): IvirtualNode => {
     /*return `${viewLoader(variableList)}
     ${viewAlert()}
     ${viewDialog()}
@@ -33,13 +33,13 @@ const viewIndex = (variableList: modelIndex.Ivariable, methodList: modelIndex.Im
         }
     };
 
-    const name = variableState("stateName", "Simone", "index");
+    const name = variableHook("stateName", "Simone", controllerName);
 
     return (
-        <div data-jsmvcfw-controllerName="index">
+        <div data-jsmvcfw-controllerName="Index">
             {viewLoader(variableList)}
-            <aside data-jsmvcfw-controllerName="alert" />
-            <aside data-jsmvcfw-controllerName="dialog" />
+            <aside data-jsmvcfw-controllerName="Alert" />
+            <aside data-jsmvcfw-controllerName="Dialog" />
             <div class="page_container view_index">
                 <div class="header"></div>
                 <div class="left">{viewSpecFile(variableList)}</div>
@@ -67,12 +67,12 @@ const viewIndex = (variableList: modelIndex.Ivariable, methodList: modelIndex.Im
                         })()}
                     </div>
                     <div>
-                        <p>Test1 {name.value}</p>
+                        <p>Test1 {name.state}</p>
                         <input
                             type="text"
                             name="name1"
-                            value={name.value}
-                            onInput={(event: Event) => name.setValue((event.target as HTMLInputElement).value)}
+                            value={name.state}
+                            onInput={(event: Event) => name.setState((event.target as HTMLInputElement).value)}
                         />
                     </div>
                     <div>

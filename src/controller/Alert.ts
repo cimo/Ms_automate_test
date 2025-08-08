@@ -71,15 +71,11 @@ export default class Alert implements Icontroller {
         this.methodList = {
             onClickClose: this.onClickClose
         };
-
-        setTimeout(() => {
-            this.mdcEvent();
-        }, 5000);
     }
 
-    variableLoaded(): void {
+    variableEffect(): void {
         // eslint-disable-next-line no-console
-        console.log("Alert.ts => variableLoaded()");
+        console.log("Alert.ts => variableEffect()");
     }
 
     view(): IvirtualNode {
@@ -94,11 +90,6 @@ export default class Alert implements Icontroller {
         console.log("Alert.ts => event()", this.variableList);
     }
 
-    destroy(): void {
-        // eslint-disable-next-line no-console
-        console.log("Alert.ts => destroy()");
-    }
-
     subControllerList(): Icontroller[] {
         // eslint-disable-next-line no-console
         console.log("Alert.ts => subController()");
@@ -106,5 +97,17 @@ export default class Alert implements Icontroller {
         const list: Icontroller[] = [];
 
         return list;
+    }
+
+    rendered(): void {
+        // eslint-disable-next-line no-console
+        console.log("Alert.ts => rendered()");
+
+        this.mdcEvent();
+    }
+
+    destroy(): void {
+        // eslint-disable-next-line no-console
+        console.log("Alert.ts => destroy()");
     }
 }

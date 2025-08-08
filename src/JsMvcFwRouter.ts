@@ -1,5 +1,5 @@
 import { Irouter, Icontroller } from "./JsMvcFwInterface";
-import { getElementRoot, getUrlRoot, getControllerList, renderTemplate } from "./JsMvcFw";
+import { getElementRoot, getUrlRoot, getControllerList, renderTemplate, renderAfter } from "./JsMvcFw";
 
 let routerList: Irouter[] = [];
 let controller: Icontroller;
@@ -86,6 +86,10 @@ const populatePage = (
 
                 renderTemplate(controller, undefined, () => {
                     controller.event();
+
+                    renderAfter(controller).then(() => {
+                        controller.rendered();
+                    });
                 });
             }
 

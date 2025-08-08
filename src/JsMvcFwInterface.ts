@@ -10,23 +10,23 @@ export interface IvariableBind<T> {
     listener(callback: (value: T) => void): void;
 }
 
-export interface IvariableState<T> {
-    value: T;
-    setValue: (value: T) => void;
+export interface IvariableHook<T> {
+    state: T;
+    setState: (value: T) => void;
+}
+
+export interface IvariableEffect {
+    (groupObject: { list: string[]; action: () => void }[]): void;
 }
 
 export interface Icontroller {
     variable(): void;
-    variableLoaded(): void;
+    variableEffect(watch: IvariableEffect): void;
     view(): IvirtualNode;
     event(): void;
-    destroy(): void;
     subControllerList(): Icontroller[];
-}
-
-export interface IcontrollerOption {
-    parent: Icontroller;
-    childrenList: Icontroller[];
+    rendered(): void;
+    destroy(): void;
 }
 
 export interface Irouter {
