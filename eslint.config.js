@@ -69,7 +69,7 @@ const configTypescript = {
 };
 
 const configJavascript = {
-    files: ["eslint.config.js", "webpack.build.js", "src/**/*.{js,jsx}", "file/input/**/*.{js,jsx}"],
+    files: ["esbuild.build.js", "eslint.config.js", "webpack.build.js", "src/**/*.{js,jsx}", "file/input/**/*.{js,jsx}"],
     languageOptions: {
         ...configBase.languageOptions
     },

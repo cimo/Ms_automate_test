@@ -49,6 +49,7 @@
         "eslint-webpack-plugin": "4.2.0",
         "compression-webpack-plugin": "11.1.0",
         "ts-loader": "9.5.1",
+        "esbuild-loader": "4.3.0",
         "nodemon": "3.1.9",
         "@types/node": "22.10.2",
         "@types/express": "5.0.0",

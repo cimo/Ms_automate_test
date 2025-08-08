@@ -55,9 +55,23 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.(ts|tsx)$/,
+                test: /\.(ts)$/,
                 use: [{ loader: "ts-loader" }],
                 include: /(src)/,
+                exclude: /(dist|node_modules|public|src\/view)/
+            },
+            {
+                test: /\.(tsx)$/,
+                use: [
+                    {
+                        loader: "esbuild-loader",
+                        options: {
+                            loader: "tsx",
+                            tsconfig: Path.resolve(__dirname, "tsconfig.json")
+                        }
+                    }
+                ],
+                include: /(src\/view)/,
                 exclude: /(dist|node_modules|public)/
             }
         ]
@@ -84,8 +98,8 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin(ceList),
         new HtmlWebpackPlugin({
-            template: `${Path.resolve(__dirname)}/template_index.html`,
-            filename: `${Path.resolve(__dirname, "public")}/index.html`,
+            template: Path.resolve(__dirname, "template_index.html"),
+            filename: Path.resolve(__dirname, "public/index.html"),
             inject: false,
             minify: false,
             templateParameters: {
@@ -96,7 +110,7 @@ module.exports = {
         new EsLintPlugin({
             extensions: [".ts", ".tsx", ".js", ".jsx"],
             configType: "flat",
-            overrideConfigFile: `${Path.resolve(__dirname)}/eslint.config.js`
+            overrideConfigFile: Path.resolve(__dirname, "eslint.config.js")
         }),
         new CompressionPlugin({
             algorithm: "gzip",
