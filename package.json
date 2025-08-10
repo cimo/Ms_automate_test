@@ -16,7 +16,7 @@
         "sass": "sass ./src/style/main.scss ./public/style/main.css",
         "build_tsc": "npm run remove_dist && tsc --build tsconfig.tsc.json && npm run check",
         "build_app": "npm run remove_public_js && npm run sass && tsc --noEmit --project tsconfig.json && webpack --config webpack.build.js",
-        "build": "npm run build_tsc && npm run build_app && npm audit",
+        "build": "npm audit && npm run build_tsc && npm run build_app",
         "execute": "nodemon --config nodemon.json",
         "execute_ui": "playwright test --ui --config=./src/playwright.config.ts"
     },
