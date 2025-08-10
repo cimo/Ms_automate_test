@@ -38,7 +38,7 @@ module.exports = {
     target: "web",
     devtool: "source-map",
     mode: NODE_ENV,
-    entry: `${PATH_ROOT}src/view/Main.ts`,
+    entry: `${PATH_ROOT}src/Main.ts`,
     output: {
         filename: "[name].js",
         sourceMapFilename: "[name].js.map",
@@ -55,9 +55,17 @@ module.exports = {
         rules: [
             {
                 test: /\.(ts)$/,
-                use: [{ loader: "ts-loader" }],
+                use: [
+                    {
+                        loader: "esbuild-loader",
+                        options: {
+                            loader: "ts",
+                            tsconfig: Path.resolve(__dirname, "tsconfig.json")
+                        }
+                    }
+                ],
                 include: /(src)/,
-                exclude: /(dist|node_modules|public|src\/view)/
+                exclude: /(dist|node_modules|public)/
             },
             {
                 test: /\.(tsx)$/,

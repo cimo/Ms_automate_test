@@ -16,8 +16,7 @@
         "node_modules",
         "public/file",
         "public/js",
-        "public/style",
-        "kubernetes"
+        "public/style"
     ],
     "l13Diff.ignoreEndOfLine": false,
     "l13Diff.ignoreTrimWhitespace": "default",

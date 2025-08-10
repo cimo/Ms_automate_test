@@ -1,10 +1,10 @@
-import { frameworkInit } from "../JsMvcFw";
-import { routerInit } from "../JsMvcFwRouter";
+import { frameworkInit } from "./JsMvcFw";
+import { routerInit } from "./JsMvcFwRouter";
 import CwsClient from "@cimo/websocket/dist/client/Manager";
 
 // Source
-import * as helperSrc from "../HelperSrc";
-import ControllerIndex from "../controller/Index";
+import * as helperSrc from "./HelperSrc";
+import ControllerIndex from "./controller/Index";
 
 const cwsClient = new CwsClient(helperSrc.WS_ADRESS);
 
