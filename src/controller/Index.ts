@@ -474,15 +474,13 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
 }
 */
 
-import { Icontroller, IvariableEffect, IvirtualNode } from "../JsMvcFwInterface";
-import { variableBind } from "../JsMvcFw";
-import CwsClient from "@cimo/websocket/dist/client/Manager";
+import { Icontroller, IvariableEffect, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main";
+import CwsClient from "@cimo/websocket/dist/src/client/Manager";
 import { MDCRipple } from "@material/ripple";
 import { MDCTextField } from "@material/textfield";
 import { MDCSelect } from "@material/select";
 
 // Source
-import * as helperSrc from "../HelperSrc";
 import * as modelIndex from "../model/Index";
 import * as modelTester from "../model/Tester";
 import viewIndex from "../view/Index";
@@ -526,34 +524,26 @@ export default class Index implements Icontroller {
     };
 
     private broadcast = (): void => {
-        this.cwsClient.receiveData("broadcast", (data) => {
-            if (typeof data === "string" && helperSrc.isJson(data)) {
-                const serverData = JSON.parse(data) as modelTester.IserverDataBroadcast;
-
-                if (serverData.tag === "disconnection") {
-                    this.cwsClient.sendData(1, "", "specFileList");
-                    this.cwsClient.sendData(1, "", "user", 100);
-                    this.cwsClient.sendData(1, "", "output", 200);
-                } else if (serverData.tag === "user") {
-                    this.variableList.userList.state = serverData.result as string[];
-                } else if (serverData.tag === "output") {
-                    this.variableList.outputList.state = serverData.result as modelTester.IserverDataOutput[];
-                }
+        this.cwsClient.receiveData<modelTester.IserverDataBroadcast>("broadcast", (message) => {
+            if (message.tag === "disconnection") {
+                this.cwsClient.sendData("text", "", "specFileList");
+                this.cwsClient.sendData("text", "", "user", 100);
+                this.cwsClient.sendData("text", "", "output", 200);
+            } else if (message.tag === "user") {
+                this.variableList.userList.state = message.result as string[];
+            } else if (message.tag === "output") {
+                this.variableList.outputList.state = message.result as modelTester.IserverDataOutput[];
             }
         });
 
-        this.cwsClient.sendData(1, "", "specFileList");
-        this.cwsClient.sendData(1, "", "user", 100);
-        this.cwsClient.sendData(1, "", "output", 200);
+        this.cwsClient.sendData("text", "", "specFileList");
+        this.cwsClient.sendData("text", "", "user", 100);
+        this.cwsClient.sendData("text", "", "output", 200);
     };
 
     private specFileListReceiveData = (): void => {
-        this.cwsClient.receiveData("specFileList", (data) => {
-            if (typeof data === "string") {
-                const serverData = JSON.parse(data) as modelTester.IserverData;
-
-                this.variableList.specFileList.state = serverData.result as string[];
-            }
+        this.cwsClient.receiveData<modelTester.IserverData>("specFileList", (message) => {
+            this.variableList.specFileList.state = message.result as string[];
         });
     };
 

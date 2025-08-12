@@ -16,7 +16,7 @@ export interface IclientDataVideo {
     name: string;
 }
 
-export interface IserverData {
+export interface IserverData extends Record<string, unknown> {
     status: string;
     result: string | string[] | IserverDataOutput[];
 }

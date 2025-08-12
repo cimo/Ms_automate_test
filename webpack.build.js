@@ -3,7 +3,7 @@ const webpack = require("webpack");
 const TerserPlugin = require("terser-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
-const { Ce } = require("@cimo/environment");
+const { Ce } = require("@cimo/environment/dist/src/Main");
 
 const ENV_NAME = Ce.checkVariable("ENV_NAME");
 

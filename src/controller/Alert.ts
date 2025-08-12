@@ -1,5 +1,4 @@
-import { Icontroller, IvirtualNode } from "../JsMvcFwInterface";
-import { variableBind } from "../JsMvcFw";
+import { Icontroller, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main";
 import { MDCSnackbar } from "@material/snackbar";
 
 // Source

@@ -1,5 +1,4 @@
-import { IvirtualNode } from "../JsMvcFwInterface";
-import jsxFactory from "../JsMvcFwJsx";
+import { IvirtualNode, jsxFactory } from "@cimo/jsmvcfw/dist/src/Main";
 
 // Source
 import * as modelAlert from "../model/Alert";

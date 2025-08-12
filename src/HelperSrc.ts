@@ -1,6 +1,6 @@
 import Fs from "fs";
 import { Response } from "express";
-import { Ce } from "@cimo/environment";
+import { Ce } from "@cimo/environment/dist/src/Main";
 
 // Source
 import * as modelHelperSrc from "./model/HelperSrc";
@@ -148,12 +148,13 @@ export const keepProcess = (): void => {
 };
 
 export const isJson = (value: string): boolean => {
-    return /^[\],:{}\s]*$/.test(
-        value
-            .replace(/\\["\\/bfnrtu]/g, "@")
-            .replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?/g, "]")
-            .replace(/(?:^|:|,)(?:\s*\[)+/g, "")
-    );
+    try {
+        JSON.parse(value);
+
+        return true;
+    } catch {
+        return false;
+    }
 };
 
 export const removeAnsiEscape = (text: string) => {

@@ -1,4 +1,4 @@
-import { IvariableBind } from "../JsMvcFwInterface";
+import { IvariableBind } from "@cimo/jsmvcfw/dist/src/Main";
 
 // Source
 import * as modelTester from "../model/Tester";

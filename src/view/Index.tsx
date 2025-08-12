@@ -1,6 +1,4 @@
-import { variableHook } from "../JsMvcFw";
-import { IvirtualNode } from "../JsMvcFwInterface";
-import jsxFactory from "../JsMvcFwJsx";
+import { IvirtualNode, variableHook, jsxFactory } from "@cimo/jsmvcfw/dist/src/Main";
 
 // Source
 import * as modelIndex from "../model/Index";

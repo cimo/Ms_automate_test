@@ -5,9 +5,9 @@ import Cors from "cors";
 import * as Http from "http";
 import * as Https from "https";
 import Fs from "fs";
-import { Ca } from "@cimo/authentication";
-import { Cp } from "@cimo/pid";
-import { CwsServer } from "@cimo/websocket";
+import { Ca } from "@cimo/authentication/dist/src/Main";
+import { Cp } from "@cimo/pid/dist/src/Main";
+import { CwsServer } from "@cimo/websocket/dist/src/Main";
 
 // Source
 import * as helperSrc from "../HelperSrc";
@@ -53,7 +53,7 @@ export default class Server {
             const headerForwarded = request.headers["x-forwarded-for"] ? request.headers["x-forwarded-for"][0] : "";
             const removeAddress = request.socket.remoteAddress ? request.socket.remoteAddress : "";
 
-            request.clientIp = headerForwarded ?? removeAddress;
+            request.clientIp = headerForwarded || removeAddress;
 
             next();
         });
@@ -94,7 +94,7 @@ export default class Server {
             helperSrc.writeLog("Server.ts => createServer() => listen()", `Port: ${helperSrc.SERVER_PORT} - Time: ${serverTime}`);
 
             this.app.get("/info", (request: modelServer.Irequest, response: Response) => {
-                helperSrc.responseBody(`Client ip: ${request.clientIp ?? ""}`, "", response, 200);
+                helperSrc.responseBody(`Client ip: ${request.clientIp || ""}`, "", response, 200);
             });
 
             this.app.get("/login", (_request: Request, response: Response) => {
@@ -120,4 +120,4 @@ const controllerServer = new Server();
 controllerServer.createSetting();
 controllerServer.createServer();
 
-helperSrc.keepProcess();
+//helperSrc.keepProcess();

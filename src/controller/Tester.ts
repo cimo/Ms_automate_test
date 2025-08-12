@@ -1,7 +1,7 @@
 import Fs from "fs";
 import { execFile, spawn } from "child_process";
-import { Cp } from "@cimo/pid";
-import { CwsServer } from "@cimo/websocket";
+import { Cp } from "@cimo/pid/dist/src/Main";
+import { CwsServer } from "@cimo/websocket/dist/src/Main";
 
 // Source
 import * as helperSrc from "../HelperSrc";
@@ -63,30 +63,30 @@ export default class Tester {
             }
 
             const serverData: modelTester.IserverData = { status: "", result: resultList };
-            this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "specFileList");
+            this.cwsServer.sendData(clientId, "text", serverData, "specFileList");
         });
     };
 
     private user = (): void => {
         this.cwsServer.receiveData("user", () => {
-            const keyList: string[] = Array.from(this.cwsServer.getClientList().keys());
+            const keyList: string[] = Array.from(this.cwsServer.getClientMap().keys());
 
             const serverData: modelTester.IserverDataBroadcast = { status: "", result: keyList, tag: "user" };
-            this.cwsServer.sendDataBroadcast(JSON.stringify(serverData));
+            this.cwsServer.sendDataBroadcast(serverData);
         });
     };
 
     private output = (): void => {
         this.cwsServer.receiveData("output", () => {
             const serverData: modelTester.IserverDataBroadcast = { status: "", result: this.resultOutput, tag: "output" };
-            this.cwsServer.sendDataBroadcast(JSON.stringify(serverData));
+            this.cwsServer.sendDataBroadcast(serverData);
         });
     };
 
     private run = (): void => {
-        this.cwsServer.receiveData("run", (clientId, data) => {
-            if (typeof data === "string") {
-                const clientData = JSON.parse(data) as modelTester.IclientDataRun;
+        this.cwsServer.receiveData("run", (clientId, message) => {
+            if (typeof message === "string") {
+                const clientData = JSON.parse(message) as modelTester.IclientDataRun;
 
                 const browserCheck = clientData.browser.match(
                     "^(desktop_chrome|desktop_edge|desktop_firefox|desktop_safari|mobile_android|mobile_ios)$"
@@ -100,8 +100,8 @@ export default class Tester {
                 if (clientData.index >= 0 && clientData.name !== "" && browserCheck !== "") {
                     serverDataBroadcast.tag = "output";
 
-                    this.cp.add("run", JSON.stringify(serverDataBroadcast), 0, (isExists, pidKey) => {
-                        if (!isExists) {
+                    this.cp.add("run", JSON.stringify(serverDataBroadcast), 0, (pidIsRunning, pidKey) => {
+                        if (!pidIsRunning) {
                             this.pidKey = pidKey;
 
                             this.resultOutput[clientData.index] = {
@@ -112,7 +112,7 @@ export default class Tester {
                             };
 
                             serverDataBroadcast.result = this.resultOutput;
-                            this.cwsServer.sendDataBroadcast(JSON.stringify(serverDataBroadcast));
+                            this.cwsServer.sendDataBroadcast(serverDataBroadcast);
 
                             this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcast));
 
@@ -137,13 +137,13 @@ export default class Tester {
                                         };
 
                                         serverDataBroadcast.result = this.resultOutput;
-                                        this.cwsServer.sendDataBroadcast(JSON.stringify(serverDataBroadcast));
+                                        this.cwsServer.sendDataBroadcast(serverDataBroadcast);
 
                                         this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcast));
 
                                         serverData.status = status;
                                         serverData.result = "System error, check the log for more info.";
-                                        this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "run");
+                                        this.cwsServer.sendData(clientId, "text", serverData, "run");
 
                                         this.cp.remove(this.pidKey);
 
@@ -166,13 +166,13 @@ export default class Tester {
                                             };
 
                                             serverDataBroadcast.result = this.resultOutput;
-                                            this.cwsServer.sendDataBroadcast(JSON.stringify(serverDataBroadcast));
+                                            this.cwsServer.sendDataBroadcast(serverDataBroadcast);
 
                                             this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcast));
 
                                             serverData.status = status;
                                             serverData.result = "Test completed, check the log for more info.";
-                                            this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "run");
+                                            this.cwsServer.sendData(clientId, "text", serverData, "run");
 
                                             this.cp.remove(this.pidKey);
 
@@ -193,14 +193,14 @@ export default class Tester {
                             serverData.status = "error";
                             serverData.result = "Another process still running.";
                             serverData.index = clientData.index;
-                            this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "run");
+                            this.cwsServer.sendData(clientId, "text", serverData, "run");
                         }
                     });
                 } else {
                     serverData.status = "error";
                     serverData.result = "Wrong parameter.";
                     serverData.index = clientData.index;
-                    this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "run");
+                    this.cwsServer.sendData(clientId, "text", serverData, "run");
                 }
             }
         });
@@ -221,7 +221,7 @@ export default class Tester {
                     serverData.result = "Wrong parameter.";
                 }
 
-                this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "runLog");
+                this.cwsServer.sendData(clientId, "text", serverData, "runLog");
             }
         });
     };
@@ -253,7 +253,7 @@ export default class Tester {
                         if (!stdout) {
                             serverData.status = "error";
                             serverData.result = "File not found.";
-                            this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "video_list");
+                            this.cwsServer.sendData(clientId, "text", serverData, "video_list");
                         } else {
                             serverData.status = "success";
                             serverData.result = stdout
@@ -261,13 +261,13 @@ export default class Tester {
                                 .split("\n")
                                 .map((name) => name)
                                 .sort((a, b) => a.localeCompare(b));
-                            this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "video_list");
+                            this.cwsServer.sendData(clientId, "text", serverData, "video_list");
                         }
                     });
                 } else {
                     serverData.status = "error";
                     serverData.result = "Wrong parameter.";
-                    this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "video_list");
+                    this.cwsServer.sendData(clientId, "text", serverData, "video_list");
                 }
             }
         });
@@ -285,12 +285,12 @@ export default class Tester {
                     execFile(execCommand, execArgumentList, { shell: "/bin/bash", encoding: "utf8" }, () => {
                         serverData.status = "success";
                         serverData.result = "File deleted.";
-                        this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "video_delete");
+                        this.cwsServer.sendData(clientId, "text", serverData, "video_delete");
                     });
                 } else {
                     serverData.status = "error";
                     serverData.result = "Wrong parameter.";
-                    this.cwsServer.sendData(clientId, 1, JSON.stringify(serverData), "video_delete");
+                    this.cwsServer.sendData(clientId, "text", serverData, "video_delete");
                 }
             }
         });
@@ -300,8 +300,8 @@ export default class Tester {
         this.cwsServer.receiveDataUpload((clientId, data, filename) => {
             Fs.writeFileSync(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_INPUT}${filename}`, Buffer.concat(data));
 
-            const requestWsData: modelTester.IserverData = { status: "success", result: "Upload completed." };
-            this.cwsServer.sendData(clientId, 1, JSON.stringify(requestWsData), "upload");
+            const serverData: modelTester.IserverData = { status: "success", result: "Upload completed." };
+            this.cwsServer.sendData(clientId, "text", serverData, "upload");
         });
     };
 }
