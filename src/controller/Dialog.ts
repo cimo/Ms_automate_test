@@ -7,8 +7,8 @@ import viewDialog from "../view/Dialog";
 
 export default class Dialog implements Icontroller {
     // Variable
-    private variableList: modelDialog.Ivariable;
-    private methodList: modelDialog.Imethod;
+    private variableObject: modelDialog.Ivariable;
+    private methodObject: modelDialog.Imethod;
 
     private mdcDialog: MDCDialog | null;
     private callbackAccept: (() => void) | null;
@@ -21,8 +21,8 @@ export default class Dialog implements Icontroller {
         if (elementMdcDialog) {
             this.mdcDialog = new MDCDialog(elementMdcDialog);
             this.mdcDialog.listen("MDCDialog:closed", () => {
-                this.variableList.title.state = "";
-                this.variableList.content.state = "";
+                this.variableObject.title.state = "";
+                this.variableObject.content.state = "";
             });
         }
     };
@@ -44,8 +44,8 @@ export default class Dialog implements Icontroller {
     };
 
     constructor() {
-        this.variableList = {} as modelDialog.Ivariable;
-        this.methodList = {} as modelDialog.Imethod;
+        this.variableObject = {} as modelDialog.Ivariable;
+        this.methodObject = {} as modelDialog.Imethod;
 
         this.mdcDialog = null;
         this.callbackAccept = null;
@@ -55,13 +55,13 @@ export default class Dialog implements Icontroller {
     open = (title: string, message: string, isSingleButton = false, callbackAcceptValue?: () => void, callbackCloseValue?: () => void): void => {
         this.close();
 
-        this.variableList.title.state = title;
-        this.variableList.content.state = message;
+        this.variableObject.title.state = title;
+        this.variableObject.content.state = message;
 
         if (this.mdcDialog) {
             this.mdcDialog.open();
 
-            this.variableList.isSingleButton.state = isSingleButton;
+            this.variableObject.isSingleButton.state = isSingleButton;
 
             if (callbackAcceptValue) {
                 this.callbackAccept = callbackAcceptValue;
@@ -83,7 +83,7 @@ export default class Dialog implements Icontroller {
         // eslint-disable-next-line no-console
         console.log("Dialog.ts => variable()");
 
-        this.variableList = variableBind(
+        this.variableObject = variableBind(
             {
                 title: "",
                 content: "",
@@ -92,7 +92,7 @@ export default class Dialog implements Icontroller {
             this.constructor.name
         );
 
-        this.methodList = {
+        this.methodObject = {
             onClickAccept: this.onClickAccept,
             onClickClose: this.onClickClose
         };
@@ -105,14 +105,14 @@ export default class Dialog implements Icontroller {
 
     view(): IvirtualNode {
         // eslint-disable-next-line no-console
-        console.log("Dialog.ts => view()", this.variableList);
+        console.log("Dialog.ts => view()", this.variableObject);
 
-        return viewDialog(this.variableList, this.methodList);
+        return viewDialog(this.variableObject, this.methodObject);
     }
 
     event(): void {
         // eslint-disable-next-line no-console
-        console.log("Dialog.ts => event()", this.variableList);
+        console.log("Dialog.ts => event()", this.variableObject);
     }
 
     subControllerList(): Icontroller[] {

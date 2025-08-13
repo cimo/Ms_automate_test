@@ -7,7 +7,7 @@ const { Ce } = require("@cimo/environment/dist/src/Main");
 
 const ENV_NAME = Ce.checkVariable("ENV_NAME");
 
-const ceList = Ce.loadFile(`./env/${ENV_NAME}.env`);
+const ceObject = Ce.loadFile(`./env/${ENV_NAME}.env`);
 
 Ce.checkVariable("DOMAIN");
 Ce.checkVariable("TIME_ZONE");
@@ -103,7 +103,7 @@ module.exports = {
         ]
     },
     plugins: [
-        new webpack.DefinePlugin(ceList),
+        new webpack.DefinePlugin(ceObject),
         new HtmlWebpackPlugin({
             template: Path.resolve(__dirname, "template_index.html"),
             filename: Path.resolve(__dirname, "public/index.html"),

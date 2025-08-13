@@ -489,8 +489,8 @@ import ControllerDialog from "./Dialog";
 
 export default class Index implements Icontroller {
     // Variable
-    private variableList: modelIndex.Ivariable;
-    private methodList: modelIndex.Imethod;
+    private variableObject: modelIndex.Ivariable;
+    private methodObject: modelIndex.Imethod;
     private controllerAlert: ControllerAlert | null;
     private controllerDialog: ControllerDialog | null;
 
@@ -530,9 +530,9 @@ export default class Index implements Icontroller {
                 this.cwsClient.sendData("text", "", "user", 100);
                 this.cwsClient.sendData("text", "", "output", 200);
             } else if (message.tag === "user") {
-                this.variableList.userList.state = message.result as string[];
+                this.variableObject.userList.state = message.result as string[];
             } else if (message.tag === "output") {
-                this.variableList.outputList.state = message.result as modelTester.IserverDataOutput[];
+                this.variableObject.outputList.state = message.result as modelTester.IserverDataOutput[];
             }
         });
 
@@ -543,23 +543,23 @@ export default class Index implements Icontroller {
 
     private specFileListReceiveData = (): void => {
         this.cwsClient.receiveData<modelTester.IserverData>("specFileList", (message) => {
-            this.variableList.specFileList.state = message.result as string[];
+            this.variableObject.specFileList.state = message.result as string[];
         });
     };
 
     private onInputUpdateName = (event: Event) => {
-        this.variableList.name.state = (event.target as HTMLInputElement).value;
+        this.variableObject.name.state = (event.target as HTMLInputElement).value;
     };
 
     private onClickCount = (): void => {
-        this.variableList.count.state++;
+        this.variableObject.count.state++;
 
-        const a = this.variableList.userList.state[1];
+        const a = this.variableObject.userList.state[1];
 
-        this.variableList.userList.state.splice(1, 1);
-        this.variableList.userList.state.unshift(a);
+        this.variableObject.userList.state.splice(1, 1);
+        this.variableObject.userList.state.unshift(a);
 
-        //this.variableList.userList.state.shift();
+        //this.variableObject.userList.state.shift();
     };
 
     private onClickOpen = (): void => {
@@ -571,14 +571,14 @@ export default class Index implements Icontroller {
             this.controllerDialog.open("title", "message");
         }
 
-        this.variableList.userList.state.push("a " + new Date().toLocaleTimeString());
+        this.variableObject.userList.state.push("a " + new Date().toLocaleTimeString());
 
-        //this.variableList.userList.state.reverse();
+        //this.variableObject.userList.state.reverse();
     };
 
     constructor(cwsClientValue: CwsClient) {
-        this.variableList = {} as modelIndex.Ivariable;
-        this.methodList = {} as modelIndex.Imethod;
+        this.variableObject = {} as modelIndex.Ivariable;
+        this.methodObject = {} as modelIndex.Imethod;
         this.controllerAlert = new ControllerAlert();
         this.controllerDialog = new ControllerDialog();
 
@@ -596,7 +596,7 @@ export default class Index implements Icontroller {
 
                 //this.uploadReceiveData();
 
-                this.variableList.isLoading.state = false;
+                this.variableObject.isLoading.state = false;
             }
         });
     }
@@ -605,7 +605,7 @@ export default class Index implements Icontroller {
         // eslint-disable-next-line no-console
         console.log("Index.ts => variable()");
 
-        this.variableList = variableBind(
+        this.variableObject = variableBind(
             {
                 userList: [],
                 outputList: [],
@@ -622,7 +622,7 @@ export default class Index implements Icontroller {
             this.constructor.name
         );
 
-        this.methodList = {
+        this.methodObject = {
             onClickCount: this.onClickCount,
             onInputUpdateName: this.onInputUpdateName,
             onClickOpen: this.onClickOpen
@@ -645,14 +645,14 @@ export default class Index implements Icontroller {
 
     view(): IvirtualNode {
         // eslint-disable-next-line no-console
-        console.log("Index.ts => view()", this.variableList);
+        console.log("Index.ts => view()", this.variableObject);
 
-        return viewIndex(this.constructor.name, this.variableList, this.methodList);
+        return viewIndex(this.constructor.name, this.variableObject, this.methodObject);
     }
 
     event(): void {
         // eslint-disable-next-line no-console
-        console.log("Index.ts => event()", this.variableList);
+        console.log("Index.ts => event()", this.variableObject);
     }
 
     subControllerList(): Icontroller[] {

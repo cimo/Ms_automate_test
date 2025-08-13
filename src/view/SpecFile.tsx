@@ -3,9 +3,9 @@ import { IvirtualNode, jsxFactory } from "@cimo/jsmvcfw/dist/src/Main";
 // Source
 import * as modelIndex from "../model/Index";
 
-const viewSpecFile = (variableList: modelIndex.Ivariable): IvirtualNode => {
-    /*const specFileListState = variableList.specFileList.state;
-    const serverDataOutputState = variableList.outputList.state;
+const viewSpecFile = (variableObject: modelIndex.Ivariable): IvirtualNode => {
+    /*const specFileListState = variableObject.specFileList.state;
+    const serverDataOutputState = variableObject.outputList.state;
 
     return `<table class="table_data">
         <thead class="filter">
@@ -236,11 +236,11 @@ const viewSpecFile = (variableList: modelIndex.Ivariable): IvirtualNode => {
                 {(() => {
                     const result: IvirtualNode[] = [];
 
-                    for (const [key, value] of Object.entries(variableList.specFileList.state)) {
+                    for (const [key, value] of Object.entries(variableObject.specFileList.state)) {
                         const index = parseInt(key);
 
-                        const serverDataOutputStateTime = variableList.outputList.state[index] ? variableList.outputList.state[index].time : "";
-                        const serverDataOutputStateStatus = variableList.outputList.state[index] ? variableList.outputList.state[index].status : "";
+                        const outputTime = variableObject.outputList.state[index] ? variableObject.outputList.state[index].time : "";
+                        const outputStatus = variableObject.outputList.state[index] ? variableObject.outputList.state[index].status : "";
 
                         result.push(
                             <tr key={index} data-index={index} class="row">
@@ -348,7 +348,7 @@ const viewSpecFile = (variableList: modelIndex.Ivariable): IvirtualNode => {
                                         {(() => {
                                             const result: IvirtualNode[] = [];
 
-                                            const label = serverDataOutputStateStatus !== "running" ? "start" : "stop";
+                                            const label = outputStatus !== "running" ? "start" : "stop";
 
                                             result.push(
                                                 <button
@@ -368,19 +368,19 @@ const viewSpecFile = (variableList: modelIndex.Ivariable): IvirtualNode => {
                                     </div>
                                 </td>
                                 <td class="cell column_time">
-                                    <p>{serverDataOutputStateTime}</p>
+                                    <p>{outputTime}</p>
                                 </td>
                                 <td class="cell column_status">
                                     {(() => {
                                         const result: IvirtualNode[] = [];
 
-                                        if (serverDataOutputStateStatus === "running") {
+                                        if (outputStatus === "running") {
                                             result.push(
                                                 <i class="mdc-button__icon material-icons icon_loading" aria-hidden="true">
                                                     cached
                                                 </i>
                                             );
-                                        } else if (serverDataOutputStateStatus !== "" && serverDataOutputStateStatus !== "running") {
+                                        } else if (outputStatus !== "" && outputStatus !== "running") {
                                             result.push(
                                                 <button class="mdc-button mdc-button--raised mdc-button--leading button_flat">
                                                     <span class="mdc-button__ripple"></span>
@@ -388,13 +388,13 @@ const viewSpecFile = (variableList: modelIndex.Ivariable): IvirtualNode => {
                                                         {(() => {
                                                             const result: IvirtualNode[] = [];
 
-                                                            if (serverDataOutputStateStatus === "success") {
+                                                            if (outputStatus === "success") {
                                                                 result.push(
                                                                     <i class="mdc-button__icon material-icons icon_success" aria-hidden="true">
                                                                         done
                                                                     </i>
                                                                 );
-                                                            } else if (serverDataOutputStateStatus === "error") {
+                                                            } else if (outputStatus === "error") {
                                                                 result.push(
                                                                     <i class="mdc-button__icon material-icons icon_fail" aria-hidden="true">
                                                                         priority_high

@@ -5,14 +5,14 @@ import * as modelIndex from "../model/Index";
 import viewLoader from "../view/Loader";
 import viewSpecFile from "../view/SpecFile";
 
-const viewIndex = (controllerName: string, variableList: modelIndex.Ivariable, methodList: modelIndex.Imethod): IvirtualNode => {
-    /*return `${viewLoader(variableList)}
+const viewIndex = (controllerName: string, variableObject: modelIndex.Ivariable, methodObject: modelIndex.Imethod): IvirtualNode => {
+    /*return `${viewLoader(variableObject)}
     ${viewAlert()}
     ${viewDialog()}
     <div class="page_container view_index">
         <div class="header"></div>
         <div class="left">
-            ${viewSpecFile(variableList)}
+            ${viewSpecFile(variableObject)}
         </div>
         <div class="right">
            ${viewClientTemplate}
@@ -22,7 +22,7 @@ const viewIndex = (controllerName: string, variableList: modelIndex.Ivariable, m
     </div>`;*/
 
     const onClick = () => {
-        variableList.listState.state.reverse();
+        variableObject.listState.state.reverse();
     };
 
     const onInput = (event: Event | null, item: { id: string; label: string; value: string }) => {
@@ -35,23 +35,23 @@ const viewIndex = (controllerName: string, variableList: modelIndex.Ivariable, m
 
     return (
         <div data-jsmvcfw-controllerName="Index">
-            {viewLoader(variableList)}
+            {viewLoader(variableObject)}
             <aside data-jsmvcfw-controllerName="Alert" />
             <aside data-jsmvcfw-controllerName="Dialog" />
             <div class="page_container view_index">
                 <div class="header"></div>
-                <div class="left">{viewSpecFile(variableList)}</div>
+                <div class="left">{viewSpecFile(variableObject)}</div>
                 <div class="right">
-                    {/*viewClientTemplate(variableList)*/}
-                    {/*viewVideoTemplate(variableList)*/}
-                    {/*viewUploadTemplate(variableList)*/}
+                    {/*viewClientTemplate(variableObject)*/}
+                    {/*viewVideoTemplate(variableObject)*/}
+                    {/*viewUploadTemplate(variableObject)*/}
                     <button onclick={onClick}>Inverti ordine</button>
                     <div class="test-list">
                         {(() => {
                             const result: IvirtualNode[] = [];
 
-                            for (let a = 0; a < variableList.listState.state.length; a++) {
-                                const item = variableList.listState.state[a];
+                            for (let a = 0; a < variableObject.listState.state.length; a++) {
+                                const item = variableObject.listState.state[a];
 
                                 result.push(
                                     <div key={item.id} className="test-item">
@@ -74,16 +74,16 @@ const viewIndex = (controllerName: string, variableList: modelIndex.Ivariable, m
                         />
                     </div>
                     <div>
-                        <p>Test2 {variableList.name.state}</p>
+                        <p>Test2 {variableObject.name.state}</p>
                         <input
                             type="text"
                             name="name2"
-                            value={variableList.name.state}
-                            onInput={(event: Event) => methodList.onInputUpdateName(event)}
+                            value={variableObject.name.state}
+                            onInput={(event: Event) => methodObject.onInputUpdateName(event)}
                         />
-                        <p>{variableList.count.state}</p>
-                        <button onClick={methodList.onClickCount}>Count</button>
-                        <button onClick={methodList.onClickOpen}>Open</button>
+                        <p>{variableObject.count.state}</p>
+                        <button onClick={methodObject.onClickCount}>Count</button>
+                        <button onClick={methodObject.onClickOpen}>Open</button>
                     </div>
                 </div>
             </div>

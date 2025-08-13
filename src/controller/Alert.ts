@@ -7,8 +7,8 @@ import viewAlert from "../view/Alert";
 
 export default class Alert implements Icontroller {
     // Variable
-    private variableList: modelAlert.Ivariable;
-    private methodList: modelAlert.Imethod;
+    private variableObject: modelAlert.Ivariable;
+    private methodObject: modelAlert.Imethod;
 
     private mdcSnackbar: MDCSnackbar | null;
 
@@ -20,8 +20,8 @@ export default class Alert implements Icontroller {
             this.mdcSnackbar = new MDCSnackbar(elementMdcSnackbar);
             this.mdcSnackbar.timeoutMs = -1;
             this.mdcSnackbar.listen("MDCSnackbar:closed", () => {
-                this.variableList.className.state = "";
-                this.variableList.label.state = "";
+                this.variableObject.className.state = "";
+                this.variableObject.label.state = "";
             });
         }
     };
@@ -31,8 +31,8 @@ export default class Alert implements Icontroller {
     };
 
     constructor() {
-        this.variableList = {} as modelAlert.Ivariable;
-        this.methodList = {} as modelAlert.Imethod;
+        this.variableObject = {} as modelAlert.Ivariable;
+        this.methodObject = {} as modelAlert.Imethod;
 
         this.mdcSnackbar = null;
     }
@@ -40,8 +40,8 @@ export default class Alert implements Icontroller {
     open = (className: string, text: string, timeout = -1): void => {
         this.close();
 
-        this.variableList.className.state = className;
-        this.variableList.label.state = text;
+        this.variableObject.className.state = className;
+        this.variableObject.label.state = text;
 
         if (this.mdcSnackbar) {
             this.mdcSnackbar.timeoutMs = timeout;
@@ -59,7 +59,7 @@ export default class Alert implements Icontroller {
         // eslint-disable-next-line no-console
         console.log("Alert.ts => variable()");
 
-        this.variableList = variableBind(
+        this.variableObject = variableBind(
             {
                 className: "",
                 label: ""
@@ -67,7 +67,7 @@ export default class Alert implements Icontroller {
             this.constructor.name
         );
 
-        this.methodList = {
+        this.methodObject = {
             onClickClose: this.onClickClose
         };
     }
@@ -79,14 +79,14 @@ export default class Alert implements Icontroller {
 
     view(): IvirtualNode {
         // eslint-disable-next-line no-console
-        console.log("Alert.ts => view()", this.variableList);
+        console.log("Alert.ts => view()", this.variableObject);
 
-        return viewAlert(this.variableList, this.methodList);
+        return viewAlert(this.variableObject, this.methodObject);
     }
 
     event(): void {
         // eslint-disable-next-line no-console
-        console.log("Alert.ts => event()", this.variableList);
+        console.log("Alert.ts => event()", this.variableObject);
     }
 
     subControllerList(): Icontroller[] {
