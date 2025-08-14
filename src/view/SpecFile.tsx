@@ -1,9 +1,9 @@
-import { IvirtualNode, jsxFactory } from "@cimo/jsmvcfw/dist/src/Main";
+import { jsxFactory, IvirtualNode } from "@cimo/jsmvcfw/dist/src/Main";
 
 // Source
 import * as modelIndex from "../model/Index";
 
-const viewSpecFile = (variableObject: modelIndex.Ivariable): IvirtualNode => {
+const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelIndex.Imethod): IvirtualNode => {
     /*const specFileListState = variableObject.specFileList.state;
     const serverDataOutputState = variableObject.outputList.state;
 
@@ -239,20 +239,20 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable): IvirtualNode => {
                     for (const [key, value] of Object.entries(variableObject.specFileList.state)) {
                         const index = parseInt(key);
 
+                        const outputPhase = variableObject.outputList.state[index] ? variableObject.outputList.state[index].phase : "";
                         const outputTime = variableObject.outputList.state[index] ? variableObject.outputList.state[index].time : "";
-                        const outputStatus = variableObject.outputList.state[index] ? variableObject.outputList.state[index].status : "";
 
                         result.push(
-                            <tr key={index} data-index={index} class="row">
+                            <tr key={index} class="row">
                                 <td class="cell column_id">
                                     <p>{index + 1}</p>
                                 </td>
                                 <td class="cell column_title">
-                                    <p class="name">{value}</p>
+                                    <p>{value}</p>
                                 </td>
                                 <td class="cell column_action">
                                     <div class="field_container">
-                                        <div class="mdc-select mdc-select--outlined field_value select_browser">
+                                        <div id={`selectBrowser_${index}`} class="mdc-select mdc-select--outlined field_value">
                                             <div class="mdc-select__anchor">
                                                 <span class="mdc-notched-outline">
                                                     <span class="mdc-notched-outline__leading"></span>
@@ -348,11 +348,14 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable): IvirtualNode => {
                                         {(() => {
                                             const result: IvirtualNode[] = [];
 
-                                            const label = outputStatus !== "running" ? "start" : "stop";
+                                            const label = outputPhase !== "running" ? "start" : "stop";
 
                                             result.push(
                                                 <button
-                                                    class={`mdc-button mdc-button--raised mdc-button--leading button_primary button_execute ${label}`}
+                                                    class={`mdc-button mdc-button--raised mdc-button--leading button_primary ${label}`}
+                                                    onclick={() => {
+                                                        methodObject.onClickExecute(index, value);
+                                                    }}
                                                 >
                                                     <span class="mdc-button__ripple"></span>
                                                     <span class="mdc-button__label">
@@ -374,27 +377,32 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable): IvirtualNode => {
                                     {(() => {
                                         const result: IvirtualNode[] = [];
 
-                                        if (outputStatus === "running") {
+                                        if (outputPhase === "running") {
                                             result.push(
                                                 <i class="mdc-button__icon material-icons icon_loading" aria-hidden="true">
                                                     cached
                                                 </i>
                                             );
-                                        } else if (outputStatus !== "" && outputStatus !== "running") {
+                                        } else if (outputPhase !== "" && outputPhase !== "running") {
                                             result.push(
-                                                <button class="mdc-button mdc-button--raised mdc-button--leading button_flat">
+                                                <button
+                                                    class="mdc-button mdc-button--raised mdc-button--leading button_flat"
+                                                    onclick={() => {
+                                                        methodObject.onClickLog(index);
+                                                    }}
+                                                >
                                                     <span class="mdc-button__ripple"></span>
                                                     <span class="mdc-button__label">
                                                         {(() => {
                                                             const result: IvirtualNode[] = [];
 
-                                                            if (outputStatus === "success") {
+                                                            if (outputPhase === "success") {
                                                                 result.push(
                                                                     <i class="mdc-button__icon material-icons icon_success" aria-hidden="true">
                                                                         done
                                                                     </i>
                                                                 );
-                                                            } else if (outputStatus === "error") {
+                                                            } else if (outputPhase === "error") {
                                                                 result.push(
                                                                     <i class="mdc-button__icon material-icons icon_fail" aria-hidden="true">
                                                                         priority_high

@@ -78,7 +78,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
         this.variableList = {
             specFileList: variableState<string[]>("specFileList", []),
             clientList: variableState<string[]>("clientList", []),
-            serverDataOutput: variableState<ModelTester.IserverDataOutput[]>("serverDataOutput", [])
+            serverDataOutput: variableState<ModelTester.Ioutput[]>("serverDataOutput", [])
         };
 
         return this.variableList;
@@ -222,7 +222,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
                 } else if (serverData.tag === "user") {
                     this.variableList.clientList.state = serverData.result as string[];
                 } else if (serverData.tag === "output") {
-                    this.variableList.serverDataOutput.state = serverData.result as ModelTester.IserverDataOutput[];
+                    this.variableList.serverDataOutput.state = serverData.result as ModelTester.Ioutput[];
                 }
             }
         });
@@ -262,7 +262,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
                     elementIconSuccess &&
                     elementIconFail
                 ) {
-                    const serverDataOutput = serverData.result[elementKey] as ModelTester.IserverDataOutput;
+                    const serverDataOutput = serverData.result[elementKey] as ModelTester.Ioutput;
 
                     if (serverDataOutput) {
                         const elementButtonExecuteIcon = elementButtonExecute.querySelector<HTMLElement>(".material-icons");
@@ -295,10 +295,10 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
 
                             elementButtonLog.style.setProperty("display", "inline-block", "important");
                             elementButtonLog.onclick = () => {
-                                const clientDataRunLog: ModelTester.IclientDataRunLog = {
+                                const clientDataRunLog: ModelTester.IclientDataLog = {
                                     index: parseInt(elementRow.getAttribute("data-index") as string)
                                 };
-                                this.cwsClient.sendData(1, JSON.stringify(clientDataRunLog), "runLog");
+                                this.cwsClient.sendData(1, JSON.stringify(clientDataRunLog), "logRun");
                             };
 
                             elementIconLoading.style.setProperty("display", "none");
@@ -326,7 +326,7 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
             }
         });
 
-        this.cwsClient.receiveData("runLog", (data) => {
+        this.cwsClient.receiveData("logRun", (data) => {
             if (typeof data === "string") {
                 const serverData = JSON.parse(data) as ModelTester.IserverData;
 
@@ -495,6 +495,7 @@ export default class Index implements Icontroller {
     private controllerDialog: ControllerDialog | null;
 
     private cwsClient: CwsClient;
+    private elementMdcSelectObject: Record<string, MDCSelect>;
 
     // Method
     private mdcEvent = (): void => {
@@ -518,62 +519,76 @@ export default class Index implements Icontroller {
 
         if (elementMdcSelectList) {
             for (const elementMdcSelect of elementMdcSelectList) {
-                new MDCSelect(elementMdcSelect);
+                this.elementMdcSelectObject[elementMdcSelect.id] = new MDCSelect(elementMdcSelect);
+            }
+        }
+    };
+
+    private mdcSelectBrowser = (): void => {
+        for (const [tag, element] of Object.entries(this.elementMdcSelectObject)) {
+            if (!tag.startsWith("selectBrowser_")) {
+                continue;
+            }
+
+            const index = parseInt(tag.split("_")[1]);
+
+            if (this.variableObject.outputList.state[index]) {
+                element.setValue(this.variableObject.outputList.state[index].browser);
+            } else {
+                element.setSelectedIndex(element.selectedIndex);
             }
         }
     };
 
     private broadcast = (): void => {
         this.cwsClient.receiveData<modelTester.IserverDataBroadcast>("broadcast", (message) => {
-            if (message.tag === "disconnection") {
-                this.cwsClient.sendData("text", "", "specFileList");
-                this.cwsClient.sendData("text", "", "user", 100);
-                this.cwsClient.sendData("text", "", "output", 200);
+            if (message.tag === "connection") {
+                this.cwsClient.sendData("text", "", "user");
+            } else if (message.tag === "disconnection") {
+                this.cwsClient.sendData("text", "", "user");
             } else if (message.tag === "user") {
                 this.variableObject.userList.state = message.result as string[];
+            } else if (message.tag === "specFile") {
+                this.variableObject.specFileList.state = message.result as string[];
             } else if (message.tag === "output") {
-                this.variableObject.outputList.state = message.result as modelTester.IserverDataOutput[];
+                this.variableObject.outputList.state = message.result as modelTester.Ioutput[];
             }
         });
-
-        this.cwsClient.sendData("text", "", "specFileList");
-        this.cwsClient.sendData("text", "", "user", 100);
-        this.cwsClient.sendData("text", "", "output", 200);
     };
 
-    private specFileListReceiveData = (): void => {
-        this.cwsClient.receiveData<modelTester.IserverData>("specFileList", (message) => {
-            this.variableObject.specFileList.state = message.result as string[];
+    private runReceiveData = (): void => {
+        this.cwsClient.receiveData<modelTester.IserverData>("run", (message) => {
+            if (this.controllerAlert) {
+                this.controllerAlert.open(message.status, message.result as string);
+            }
         });
     };
 
-    private onInputUpdateName = (event: Event) => {
-        this.variableObject.name.state = (event.target as HTMLInputElement).value;
+    private logReceiveData = (): void => {
+        this.cwsClient.receiveData<modelTester.IserverData>("logRun", (message) => {
+            if (this.controllerDialog) {
+                this.controllerDialog.open(message.status, message.result as string, true);
+            }
+        });
     };
 
-    private onClickCount = (): void => {
-        this.variableObject.count.state++;
-
-        const a = this.variableObject.userList.state[1];
-
-        this.variableObject.userList.state.splice(1, 1);
-        this.variableObject.userList.state.unshift(a);
-
-        //this.variableObject.userList.state.shift();
+    private onClickExecute = (index: number, specFileName: string): void => {
+        if (!this.variableObject.outputList.state[index] || this.variableObject.outputList.state[index].phase !== "running") {
+            const clientData: modelTester.IclientDataRun = {
+                index,
+                specFileName,
+                browser: this.elementMdcSelectObject[`selectBrowser_${index}`].value
+            };
+            this.cwsClient.sendData("text", clientData, "run");
+        } else {
+            const clientData: modelTester.IclientDataStop = { index };
+            this.cwsClient.sendData("text", clientData, "stop");
+        }
     };
 
-    private onClickOpen = (): void => {
-        if (this.controllerAlert) {
-            this.controllerAlert.open("success", "text");
-        }
-
-        if (this.controllerDialog) {
-            this.controllerDialog.open("title", "message");
-        }
-
-        this.variableObject.userList.state.push("a " + new Date().toLocaleTimeString());
-
-        //this.variableObject.userList.state.reverse();
+    private onClickLog = (index: number): void => {
+        const clientData: modelTester.IclientDataLog = { index };
+        this.cwsClient.sendData("text", clientData, "logRun");
     };
 
     constructor(cwsClientValue: CwsClient) {
@@ -583,82 +598,76 @@ export default class Index implements Icontroller {
         this.controllerDialog = new ControllerDialog();
 
         this.cwsClient = cwsClientValue;
+        this.elementMdcSelectObject = {};
 
-        this.cwsClient.checkConnection((mode) => {
+        this.cwsClient.checkConnection(() => {
             this.broadcast();
 
-            if (mode === "connection") {
-                this.specFileListReceiveData();
+            this.runReceiveData();
 
-                //this.runReceiveData();
+            this.logReceiveData();
 
-                //this.videoReceiveData();
+            //this.videoReceiveData();
 
-                //this.uploadReceiveData();
+            //this.uploadReceiveData();
 
-                this.variableObject.isLoading.state = false;
-            }
+            this.cwsClient.sendData("text", "", "user");
+            this.cwsClient.sendData("text", "", "specFile", 100);
+            this.cwsClient.sendData("text", "", "output", 200);
+
+            this.variableObject.isLoading.state = false;
         });
     }
 
     variable(): void {
-        // eslint-disable-next-line no-console
-        console.log("Index.ts => variable()");
-
         this.variableObject = variableBind(
             {
                 userList: [],
-                outputList: [],
                 specFileList: [],
-                isLoading: true,
-                listState: [
-                    { id: "a", label: "Elemento A", value: "" },
-                    { id: "b", label: "Elemento B", value: "" },
-                    { id: "c", label: "Elemento C", value: "" }
-                ],
-                name: "",
-                count: 0
+                outputList: [],
+                isLoading: true
             },
             this.constructor.name
         );
 
         this.methodObject = {
-            onClickCount: this.onClickCount,
-            onInputUpdateName: this.onInputUpdateName,
-            onClickOpen: this.onClickOpen
+            onClickExecute: this.onClickExecute,
+            onClickLog: this.onClickLog
         };
     }
 
     variableEffect(watch: IvariableEffect): void {
-        // eslint-disable-next-line no-console
-        console.log("Index.ts => variableEffect()");
-
         watch([
+            {
+                list: ["userList"],
+                action: () => {
+                    this.mdcSelectBrowser();
+                }
+            },
             {
                 list: ["specFileList"],
                 action: () => {
                     this.mdcEvent();
+
+                    this.mdcSelectBrowser();
+                }
+            },
+            {
+                list: ["outputList"],
+                action: () => {
+                    this.mdcSelectBrowser();
                 }
             }
         ]);
     }
 
     view(): IvirtualNode {
-        // eslint-disable-next-line no-console
-        console.log("Index.ts => view()", this.variableObject);
-
-        return viewIndex(this.constructor.name, this.variableObject, this.methodObject);
+        return viewIndex(this.variableObject, this.methodObject);
     }
 
-    event(): void {
-        // eslint-disable-next-line no-console
-        console.log("Index.ts => event()", this.variableObject);
-    }
+    event(): void {}
 
     subControllerList(): Icontroller[] {
-        // eslint-disable-next-line no-console
-        console.log("Index.ts => subController()");
-
         const list: Icontroller[] = [];
 
         if (this.controllerAlert && this.controllerDialog) {
@@ -669,13 +678,7 @@ export default class Index implements Icontroller {
         return list;
     }
 
-    rendered(): void {
-        // eslint-disable-next-line no-console
-        console.log("Index.ts => rendered()");
-    }
+    rendered(): void {}
 
-    destroy(): void {
-        // eslint-disable-next-line no-console
-        console.log("Index.ts => destroy()");
-    }
+    destroy(): void {}
 }

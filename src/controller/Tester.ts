@@ -12,216 +12,161 @@ export default class Tester {
     private cp: Cp;
     private cwsServer: CwsServer;
 
+    private outputList: modelTester.Ioutput[];
     private pidKey: number;
-    private resultOutput: modelTester.IserverDataOutput[];
     private processRunPid: number | null;
 
     // Method
-    constructor(cp: Cp, cwsServer: CwsServer) {
-        this.cp = cp;
-        this.cwsServer = cwsServer;
+    private user = (): void => {
+        this.cwsServer.receiveData("user", () => {
+            const clientList: string[] = Array.from(this.cwsServer.getClientMap().keys());
 
-        this.pidKey = 0;
-        this.resultOutput = [];
-        this.processRunPid = null;
-    }
-
-    websocket = (): void => {
-        this.specFileList();
-
-        this.user();
-
-        this.output();
-
-        this.run();
-
-        this.runLog();
-
-        this.stop();
-
-        this.video();
-
-        this.upload();
+            const serverDataObject: modelTester.IserverDataBroadcast = { tag: "user", status: "", result: clientList };
+            this.cwsServer.sendDataBroadcast(serverDataObject);
+        });
     };
 
-    private specFileList = (): void => {
-        this.cwsServer.receiveData("specFileList", (clientId) => {
+    private specFile = (): void => {
+        this.cwsServer.receiveData("specFile", () => {
             const fileList = Fs.readdirSync(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_INPUT}`);
 
-            const fileFiltered: string[] = [];
+            const fileFilteredList: string[] = [];
 
             for (let a = 0; a < fileList.length; a++) {
                 if (fileList[a].endsWith(".spec.ts")) {
-                    fileFiltered.push(fileList[a]);
+                    fileFilteredList.push(fileList[a]);
                 }
             }
 
             const resultList: string[] = [];
 
-            for (let a = 0; a < fileFiltered.length; a++) {
-                resultList.push(fileFiltered[a].replace(/\.spec\.ts$/, ""));
+            for (let a = 0; a < fileFilteredList.length; a++) {
+                resultList.push(fileFilteredList[a].replace(/\.spec\.ts$/, ""));
             }
 
-            const serverData: modelTester.IserverData = { status: "", result: resultList };
-            this.cwsServer.sendData(clientId, "text", serverData, "specFileList");
-        });
-    };
-
-    private user = (): void => {
-        this.cwsServer.receiveData("user", () => {
-            const keyList: string[] = Array.from(this.cwsServer.getClientMap().keys());
-
-            const serverData: modelTester.IserverDataBroadcast = { status: "", result: keyList, tag: "user" };
-            this.cwsServer.sendDataBroadcast(serverData);
+            const serverDataObject: modelTester.IserverDataBroadcast = { tag: "specFile", status: "", result: resultList };
+            this.cwsServer.sendDataBroadcast(serverDataObject);
         });
     };
 
     private output = (): void => {
         this.cwsServer.receiveData("output", () => {
-            const serverData: modelTester.IserverDataBroadcast = { status: "", result: this.resultOutput, tag: "output" };
-            this.cwsServer.sendDataBroadcast(serverData);
+            const serverDataObject: modelTester.IserverDataBroadcast = { tag: "output", status: "", result: this.outputList };
+            this.cwsServer.sendDataBroadcast(serverDataObject);
         });
     };
 
     private run = (): void => {
-        this.cwsServer.receiveData("run", (clientId, message) => {
-            if (typeof message === "string") {
-                const clientData = JSON.parse(message) as modelTester.IclientDataRun;
+        this.cwsServer.receiveData<modelTester.IclientDataRun>("run", (clientId, message) => {
+            const browserCheck = message.browser.match("^(desktop_chrome|desktop_edge|desktop_firefox|desktop_safari|mobile_android|mobile_ios)$")
+                ? message.browser
+                : "";
 
-                const browserCheck = clientData.browser.match(
-                    "^(desktop_chrome|desktop_edge|desktop_firefox|desktop_safari|mobile_android|mobile_ios)$"
-                )
-                    ? clientData.browser
-                    : "";
+            const serverDataBroadcastObject = {} as modelTester.IserverDataBroadcast;
+            const serverDataObject = {} as modelTester.IserverData;
 
-                const serverDataBroadcast = {} as modelTester.IserverDataBroadcast;
-                const serverData = {} as modelTester.IserverDataRun;
+            if (message.index >= 0 && message.specFileName !== "" && browserCheck !== "") {
+                serverDataBroadcastObject.tag = "output";
 
-                if (clientData.index >= 0 && clientData.name !== "" && browserCheck !== "") {
-                    serverDataBroadcast.tag = "output";
+                this.cp.add("run", JSON.stringify(serverDataBroadcastObject), 0, (pidIsRunning, pidKey) => {
+                    if (!pidIsRunning) {
+                        this.pidKey = pidKey;
 
-                    this.cp.add("run", JSON.stringify(serverDataBroadcast), 0, (pidIsRunning, pidKey) => {
-                        if (!pidIsRunning) {
-                            this.pidKey = pidKey;
+                        this.outputList[message.index] = {
+                            browser: message.browser,
+                            phase: "running",
+                            time: helperSrc.serverTime(),
+                            log: ""
+                        };
 
-                            this.resultOutput[clientData.index] = {
-                                status: "running",
-                                browser: clientData.browser,
-                                time: helperSrc.serverTime(),
-                                log: ""
-                            };
+                        serverDataBroadcastObject.result = this.outputList;
+                        this.cwsServer.sendDataBroadcast(serverDataBroadcastObject);
 
-                            serverDataBroadcast.result = this.resultOutput;
-                            this.cwsServer.sendDataBroadcast(serverDataBroadcast);
+                        this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcastObject));
 
-                            this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcast));
+                        const execCommand1 = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command1.sh`;
+                        const execArgumentList1 = [`"${message.specFileName}"`, `"${browserCheck}"`];
 
-                            const execCommand1 = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command1.sh`;
-                            const execArgumentList1 = [`"${clientData.name}"`, `"${browserCheck}"`];
+                        const processRun = execFile(
+                            execCommand1,
+                            execArgumentList1,
+                            { shell: "/bin/bash", encoding: "utf8" },
+                            (_, stdout1, stderr1) => {
+                                if (stderr1 !== "") {
+                                    helperSrc.writeLog("Tester.ts - run() - execFile()", `stderr1: ${stderr1}`);
 
-                            const processRun = execFile(
-                                execCommand1,
-                                execArgumentList1,
-                                { shell: "/bin/bash", encoding: "utf8" },
-                                (_, stdout1, stderr1) => {
-                                    if (stderr1 !== "") {
-                                        helperSrc.writeLog("Tester.ts => run() => execFile()", `stderr1: ${stderr1}`);
+                                    const status = "error";
 
-                                        const status = "error";
+                                    this.outputList[message.index] = {
+                                        browser: message.browser,
+                                        phase: status,
+                                        time: helperSrc.serverTime(),
+                                        log: helperSrc.removeAnsiEscape(stderr1)
+                                    };
 
-                                        this.resultOutput[clientData.index] = {
-                                            status: status,
-                                            browser: clientData.browser,
+                                    serverDataBroadcastObject.result = this.outputList;
+                                    this.cwsServer.sendDataBroadcast(serverDataBroadcastObject);
+
+                                    this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcastObject));
+
+                                    serverDataObject.status = status;
+                                    serverDataObject.result = "System error, check the log for more info.";
+                                    this.cwsServer.sendData(clientId, "text", serverDataObject, "run");
+
+                                    this.cp.remove(this.pidKey);
+
+                                    this.pidKey = 0;
+                                } else {
+                                    const execCommand2 = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command2.sh`;
+                                    const execArgumentList2 = [
+                                        `"${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_OUTPUT}artifact"`,
+                                        `"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`
+                                    ];
+
+                                    execFile(execCommand2, execArgumentList2, { shell: "/bin/bash", encoding: "utf8" }, () => {
+                                        const status = /Error:|interrupted|not run/.test(stdout1) ? "error" : "success";
+
+                                        this.outputList[message.index] = {
+                                            browser: message.browser,
+                                            phase: status,
                                             time: helperSrc.serverTime(),
-                                            log: helperSrc.removeAnsiEscape(stderr1)
+                                            log: helperSrc.removeAnsiEscape(stdout1)
                                         };
 
-                                        serverDataBroadcast.result = this.resultOutput;
-                                        this.cwsServer.sendDataBroadcast(serverDataBroadcast);
+                                        serverDataBroadcastObject.result = this.outputList;
+                                        this.cwsServer.sendDataBroadcast(serverDataBroadcastObject);
 
-                                        this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcast));
+                                        this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcastObject));
 
-                                        serverData.status = status;
-                                        serverData.result = "System error, check the log for more info.";
-                                        this.cwsServer.sendData(clientId, "text", serverData, "run");
+                                        serverDataObject.status = status;
+                                        serverDataObject.result = "Test completed, check the log for more info.";
+                                        this.cwsServer.sendData(clientId, "text", serverDataObject, "run");
 
                                         this.cp.remove(this.pidKey);
 
                                         this.pidKey = 0;
-                                    } else {
-                                        const execCommand2 = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command2.sh`;
-                                        const execArgumentList2 = [
-                                            `"${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_OUTPUT}artifact"`,
-                                            `"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`
-                                        ];
-
-                                        execFile(execCommand2, execArgumentList2, { shell: "/bin/bash", encoding: "utf8" }, () => {
-                                            const status = /Error:|interrupted|not run/.test(stdout1) ? "error" : "success";
-
-                                            this.resultOutput[clientData.index] = {
-                                                status: status,
-                                                browser: clientData.browser,
-                                                time: helperSrc.serverTime(),
-                                                log: helperSrc.removeAnsiEscape(stdout1)
-                                            };
-
-                                            serverDataBroadcast.result = this.resultOutput;
-                                            this.cwsServer.sendDataBroadcast(serverDataBroadcast);
-
-                                            this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcast));
-
-                                            serverData.status = status;
-                                            serverData.result = "Test completed, check the log for more info.";
-                                            this.cwsServer.sendData(clientId, "text", serverData, "run");
-
-                                            this.cp.remove(this.pidKey);
-
-                                            this.pidKey = 0;
-                                        });
-                                    }
+                                    });
                                 }
-                            );
-
-                            if (processRun && processRun.pid) {
-                                const spawnCommand = spawn("pgrep", ["-P", processRun.pid.toString()]);
-
-                                spawnCommand.stdout.on("data", (data: string) => {
-                                    this.processRunPid = parseInt(data);
-                                });
                             }
-                        } else {
-                            serverData.status = "error";
-                            serverData.result = "Another process still running.";
-                            serverData.index = clientData.index;
-                            this.cwsServer.sendData(clientId, "text", serverData, "run");
+                        );
+
+                        if (processRun && processRun.pid) {
+                            const spawnCommand = spawn("pgrep", ["-P", processRun.pid.toString()]);
+
+                            spawnCommand.stdout.on("data", (data: string) => {
+                                this.processRunPid = parseInt(data);
+                            });
                         }
-                    });
-                } else {
-                    serverData.status = "error";
-                    serverData.result = "Wrong parameter.";
-                    serverData.index = clientData.index;
-                    this.cwsServer.sendData(clientId, "text", serverData, "run");
-                }
-            }
-        });
-    };
-
-    private runLog = (): void => {
-        this.cwsServer.receiveData("runLog", (clientId, data) => {
-            if (typeof data === "string") {
-                const clientData = JSON.parse(data) as modelTester.IclientDataRunLog;
-
-                const serverData = {} as modelTester.IserverData;
-
-                if (clientData.index >= 0 && this.resultOutput[clientData.index]) {
-                    serverData.status = "success";
-                    serverData.result = this.resultOutput[clientData.index].log;
-                } else {
-                    serverData.status = "error";
-                    serverData.result = "Wrong parameter.";
-                }
-
-                this.cwsServer.sendData(clientId, "text", serverData, "runLog");
+                    } else {
+                        serverDataObject.status = "error";
+                        serverDataObject.result = "Another process still running.";
+                        this.cwsServer.sendData(clientId, "text", serverDataObject, "run");
+                    }
+                });
+            } else {
+                serverDataObject.status = "error";
+                serverDataObject.result = "Wrong parameter.";
+                this.cwsServer.sendData(clientId, "text", serverDataObject, "run");
             }
         });
     };
@@ -235,6 +180,13 @@ export default class Tester {
 
                 this.pidKey = 0;
             }
+        });
+    };
+
+    private log = (): void => {
+        this.cwsServer.receiveData<modelTester.IclientDataLog>("logRun", (clientId, message) => {
+            const serverData: modelTester.IserverData = { status: "Log run", result: this.outputList[message.index].log };
+            this.cwsServer.sendData(clientId, "text", serverData, "logRun");
         });
     };
 
@@ -303,5 +255,32 @@ export default class Tester {
             const serverData: modelTester.IserverData = { status: "success", result: "Upload completed." };
             this.cwsServer.sendData(clientId, "text", serverData, "upload");
         });
+    };
+
+    constructor(cp: Cp, cwsServer: CwsServer) {
+        this.cp = cp;
+        this.cwsServer = cwsServer;
+
+        this.outputList = [];
+        this.pidKey = 0;
+        this.processRunPid = null;
+    }
+
+    websocket = (): void => {
+        this.user();
+
+        this.specFile();
+
+        this.output();
+
+        this.run();
+
+        this.stop();
+
+        this.log();
+
+        this.video();
+
+        this.upload();
     };
 }

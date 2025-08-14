@@ -56,9 +56,6 @@ export default class Alert implements Icontroller {
     };
 
     variable(): void {
-        // eslint-disable-next-line no-console
-        console.log("Alert.ts => variable()");
-
         this.variableObject = variableBind(
             {
                 className: "",
@@ -72,41 +69,23 @@ export default class Alert implements Icontroller {
         };
     }
 
-    variableEffect(): void {
-        // eslint-disable-next-line no-console
-        console.log("Alert.ts => variableEffect()");
-    }
+    variableEffect(): void {}
 
     view(): IvirtualNode {
-        // eslint-disable-next-line no-console
-        console.log("Alert.ts => view()", this.variableObject);
-
         return viewAlert(this.variableObject, this.methodObject);
     }
 
-    event(): void {
-        // eslint-disable-next-line no-console
-        console.log("Alert.ts => event()", this.variableObject);
-    }
+    event(): void {}
 
     subControllerList(): Icontroller[] {
-        // eslint-disable-next-line no-console
-        console.log("Alert.ts => subController()");
-
         const list: Icontroller[] = [];
 
         return list;
     }
 
     rendered(): void {
-        // eslint-disable-next-line no-console
-        console.log("Alert.ts => rendered()");
-
         this.mdcEvent();
     }
 
-    destroy(): void {
-        // eslint-disable-next-line no-console
-        console.log("Alert.ts => destroy()");
-    }
+    destroy(): void {}
 }

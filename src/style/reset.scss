@@ -81,3 +81,11 @@ meter {
 :where(dialog:modal) {
     all: revert;
 }
+
+.hidden {
+  visibility: hidden !important;
+}
+
+.none {
+  display: none !important;
+}

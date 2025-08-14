@@ -1,4 +1,4 @@
-import { IvirtualNode, jsxFactory } from "@cimo/jsmvcfw/dist/src/Main";
+import { jsxFactory, IvirtualNode } from "@cimo/jsmvcfw/dist/src/Main";
 
 // Source
 import * as modelDialog from "../model/Dialog";
@@ -17,20 +17,14 @@ const viewDialog = (variableObject: modelDialog.Ivariable, methodObject: modelDi
                     <h2 class="mdc-dialog__title">{variableObject.title.state}</h2>
                     <div class="mdc-dialog__content">{variableObject.content.state}</div>
                     <div class="mdc-dialog__actions">
-                        {(() => {
-                            const result: IvirtualNode[] = [];
-
-                            if (!variableObject.isSingleButton.state) {
-                                result.push(
-                                    <button type="button" class="mdc-button mdc-dialog__button button_flat" onClick={methodObject.onClickClose}>
-                                        <div class="mdc-button__ripple"></div>
-                                        <span class="mdc-button__label">Cancel</span>
-                                    </button>
-                                );
-                            }
-
-                            return result;
-                        })()}
+                        <button
+                            type="button"
+                            class={`mdc-button mdc-dialog__button button_flat ${variableObject.isSingleButton.state ? "hidden" : ""}`}
+                            onClick={methodObject.onClickClose}
+                        >
+                            <div class="mdc-button__ripple"></div>
+                            <span class="mdc-button__label">Cancel</span>
+                        </button>
                         <button type="button" class="mdc-button mdc-dialog__button button_primary" onClick={methodObject.onClickAccept}>
                             <div class="mdc-button__ripple"></div>
                             <span class="mdc-button__label">OK</span>

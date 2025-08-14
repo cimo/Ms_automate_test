@@ -4,23 +4,13 @@ import { IvariableBind } from "@cimo/jsmvcfw/dist/src/Main";
 import * as modelTester from "../model/Tester";
 
 export interface Ivariable {
-    specFileList: IvariableBind<string[]>;
     userList: IvariableBind<string[]>;
-    outputList: IvariableBind<modelTester.IserverDataOutput[]>;
+    specFileList: IvariableBind<string[]>;
+    outputList: IvariableBind<modelTester.Ioutput[]>;
     isLoading: IvariableBind<boolean>;
-    listState: IvariableBind<
-        {
-            id: string;
-            label: string;
-            value: string;
-        }[]
-    >;
-    name: IvariableBind<string>;
-    count: IvariableBind<number>;
 }
 
 export interface Imethod {
-    onClickCount: () => void;
-    onInputUpdateName: (event: Event) => void;
-    onClickOpen: () => void;
+    onClickExecute: (index: number, specFileName: string) => void;
+    onClickLog: (index: number) => void;
 }

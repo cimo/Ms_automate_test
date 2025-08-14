@@ -80,9 +80,6 @@ export default class Dialog implements Icontroller {
     };
 
     variable(): void {
-        // eslint-disable-next-line no-console
-        console.log("Dialog.ts => variable()");
-
         this.variableObject = variableBind(
             {
                 title: "",
@@ -98,41 +95,23 @@ export default class Dialog implements Icontroller {
         };
     }
 
-    variableEffect(): void {
-        // eslint-disable-next-line no-console
-        console.log("Dialog.ts => variableEffect()");
-    }
+    variableEffect(): void {}
 
     view(): IvirtualNode {
-        // eslint-disable-next-line no-console
-        console.log("Dialog.ts => view()", this.variableObject);
-
         return viewDialog(this.variableObject, this.methodObject);
     }
 
-    event(): void {
-        // eslint-disable-next-line no-console
-        console.log("Dialog.ts => event()", this.variableObject);
-    }
+    event(): void {}
 
     subControllerList(): Icontroller[] {
-        // eslint-disable-next-line no-console
-        console.log("Dialog.ts => subController()");
-
         const list: Icontroller[] = [];
 
         return list;
     }
 
     rendered(): void {
-        // eslint-disable-next-line no-console
-        console.log("Dialog.ts => rendered()");
-
         this.mdcEvent();
     }
 
-    destroy(): void {
-        // eslint-disable-next-line no-console
-        console.log("Dialog.ts => destroy()");
-    }
+    destroy(): void {}
 }
