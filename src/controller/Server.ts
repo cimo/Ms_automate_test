@@ -91,7 +91,7 @@ export default class Server {
 
             const serverTime = helperSrc.serverTime();
 
-            helperSrc.writeLog("Server.ts => createServer() => listen()", `Port: ${helperSrc.SERVER_PORT} - Time: ${serverTime}`);
+            helperSrc.writeLog("Server.ts - createServer() - listen()", `Port: ${helperSrc.SERVER_PORT} - Time: ${serverTime}`);
 
             this.app.get("/info", (request: modelServer.Irequest, response: Response) => {
                 helperSrc.responseBody(`Client ip: ${request.clientIp || ""}`, "", response, 200);

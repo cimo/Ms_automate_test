@@ -1,19 +1,24 @@
 .page_container {
+    text-align: center;
+
     & > .header {
         height: 50px;
         position: relative;
         margin-bottom: 10px;
+        text-align: left;
     }
 
     & > .left {
         width: 30%;
         position: relative;
         display: inline-block;
+        text-align: left;
     }
 
     & > .right {
         width: 70%;
         position: relative;
         display: inline-block;
+        text-align: left;
     }
 }

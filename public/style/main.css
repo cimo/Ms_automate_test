@@ -204,20 +204,26 @@ button .mdc-button__label .material-icons {
   width: unset !important;
 }
 
+.page_container {
+  text-align: center;
+}
 .page_container > .header {
   height: 50px;
   position: relative;
   margin-bottom: 10px;
+  text-align: left;
 }
 .page_container > .left {
   width: 30%;
   position: relative;
   display: inline-block;
+  text-align: left;
 }
 .page_container > .right {
   width: 70%;
   position: relative;
   display: inline-block;
+  text-align: left;
 }
 
 table {
@@ -351,19 +357,17 @@ body *:not(.material-icons) {
 }
 
 .view_index > .left {
-  display: inline-block;
   margin: 10px;
-  text-align: left;
   width: 55%;
 }
 .view_index > .left .table_data .column_id {
   width: 5%;
 }
 .view_index > .left .table_data .column_title {
-  width: 30%;
+  width: 20%;
 }
 .view_index > .left .table_data .column_action {
-  width: 30%;
+  width: 40%;
 }
 .view_index > .left .table_data .column_time {
   width: 25%;
@@ -371,16 +375,16 @@ body *:not(.material-icons) {
 .view_index > .left .table_data .column_status {
   width: 10%;
 }
-.view_index > .left .table_data tbody tr td.column_id, .view_index > .left .table_data tbody tr td.column_status {
+.view_index > .left .table_data thead tr th {
   text-align: center;
+  vertical-align: middle;
+}
+.view_index > .left .table_data tbody tr td {
+  text-align: center;
+  vertical-align: middle;
 }
 .view_index > .left .table_data tbody tr td .field_container {
   display: inline-block !important;
-}
-.view_index > .left .table_data tbody tr td .icon_loading,
-.view_index > .left .table_data tbody tr td .icon_success,
-.view_index > .left .table_data tbody tr td .icon_fail {
-  vertical-align: middle;
 }
 .view_index > .left .table_data tbody tr td .icon_loading {
   animation: animation_icon_loading 1s infinite;
@@ -392,9 +396,7 @@ body *:not(.material-icons) {
   color: #dc003d;
 }
 .view_index > .right {
-  display: inline-block;
   margin: 10px;
-  text-align: left;
   width: 35%;
   vertical-align: top;
 }

@@ -3,9 +3,7 @@
 
 .view_index {
     & > .left {
-        display: inline-block;
         margin: 10px;
-        text-align: left;
         width: 55%;
 
         .table_data {
@@ -13,10 +11,10 @@
                 width: 5%;
             }
             .column_title {
-                width: 30%;
+                width: 20%;
             }
             .column_action {
-                width: 30%;
+                width: 40%;
             }
             .column_time {
                 width: 25%;
@@ -25,22 +23,23 @@
                 width: 10%;
             }
 
+            thead {
+                tr {
+                    th {
+                        text-align: center;
+                        vertical-align: middle;
+                    }
+                }
+            }
+
             tbody {
                 tr {
                     td {
-                        &.column_id,
-                        &.column_status {
-                            text-align: center;
-                        }
+                        text-align: center;
+                        vertical-align: middle;
 
                         .field_container {
                             display: inline-block !important;
-                        }
-
-                        .icon_loading,
-                        .icon_success,
-                        .icon_fail {
-                            vertical-align: middle;
                         }
 
                         .icon_loading {
@@ -61,9 +60,7 @@
     }
 
     & > .right {
-        display: inline-block;
         margin: 10px;
-        text-align: left;
         width: 35%;
         vertical-align: top;
 

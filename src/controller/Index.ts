@@ -474,7 +474,15 @@ export default class ControllerIndex implements Icontroller<IvariableList> {
 }
 */
 
-import { Icontroller, IvariableEffect, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main";
+import {
+    Icontroller,
+    IvariableEffect,
+    IvirtualNode,
+    variableBind,
+    elementObserver,
+    elementObserverOff,
+    elementObserverOn
+} from "@cimo/jsmvcfw/dist/src/Main";
 import CwsClient from "@cimo/websocket/dist/src/client/Manager";
 import { MDCRipple } from "@material/ripple";
 import { MDCTextField } from "@material/textfield";
@@ -495,9 +503,19 @@ export default class Index implements Icontroller {
     private controllerDialog: ControllerDialog | null;
 
     private cwsClient: CwsClient;
-    private elementMdcSelectObject: Record<string, MDCSelect>;
+    private mdcSelectObject: Record<string, MDCSelect>;
 
     // Method
+    private mdcSelectBrowser = (element: HTMLElement): void => {
+        const idSplit = element.id.split("mdcSelectBrowser_");
+
+        if (idSplit[1]) {
+            const mdc = this.mdcSelectObject[element.id];
+
+            mdc.setValue(mdc.value);
+        }
+    };
+
     private mdcEvent = (): void => {
         const elementMdcButtonList = document.querySelectorAll<HTMLElement>(".mdc-button");
 
@@ -519,23 +537,19 @@ export default class Index implements Icontroller {
 
         if (elementMdcSelectList) {
             for (const elementMdcSelect of elementMdcSelectList) {
-                this.elementMdcSelectObject[elementMdcSelect.id] = new MDCSelect(elementMdcSelect);
-            }
-        }
-    };
+                if (elementMdcSelect.id) {
+                    this.mdcSelectObject[elementMdcSelect.id] = new MDCSelect(elementMdcSelect);
 
-    private mdcSelectBrowser = (): void => {
-        for (const [tag, element] of Object.entries(this.elementMdcSelectObject)) {
-            if (!tag.startsWith("selectBrowser_")) {
-                continue;
-            }
+                    elementObserver(elementMdcSelect, (element, change) => {
+                        elementObserverOff(element);
 
-            const index = parseInt(tag.split("_")[1]);
+                        if (change.type === "childList") {
+                            this.mdcSelectBrowser(element);
+                        }
 
-            if (this.variableObject.outputList.state[index]) {
-                element.setValue(this.variableObject.outputList.state[index].browser);
-            } else {
-                element.setSelectedIndex(element.selectedIndex);
+                        elementObserverOn(element);
+                    });
+                }
             }
         }
     };
@@ -577,7 +591,7 @@ export default class Index implements Icontroller {
             const clientData: modelTester.IclientDataRun = {
                 index,
                 specFileName,
-                browser: this.elementMdcSelectObject[`selectBrowser_${index}`].value
+                browser: this.mdcSelectObject[`mdcSelectBrowser_${index}`].value
             };
             this.cwsClient.sendData("text", clientData, "run");
         } else {
@@ -598,7 +612,7 @@ export default class Index implements Icontroller {
         this.controllerDialog = new ControllerDialog();
 
         this.cwsClient = cwsClientValue;
-        this.elementMdcSelectObject = {};
+        this.mdcSelectObject = {};
 
         this.cwsClient.checkConnection(() => {
             this.broadcast();
@@ -639,23 +653,9 @@ export default class Index implements Icontroller {
     variableEffect(watch: IvariableEffect): void {
         watch([
             {
-                list: ["userList"],
-                action: () => {
-                    this.mdcSelectBrowser();
-                }
-            },
-            {
                 list: ["specFileList"],
                 action: () => {
                     this.mdcEvent();
-
-                    this.mdcSelectBrowser();
-                }
-            },
-            {
-                list: ["outputList"],
-                action: () => {
-                    this.mdcSelectBrowser();
                 }
             }
         ]);

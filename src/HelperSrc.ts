@@ -142,7 +142,7 @@ export const responseBody = (stdoutValue: string, stderrValue: string | Error, r
 export const keepProcess = (): void => {
     for (const event of ["uncaughtException", "unhandledRejection"]) {
         process.on(event, (error: Error) => {
-            writeLog("HelperSrc.ts => keepProcess()", `Event: ${event} - Error: ${error.toString()}`);
+            writeLog("HelperSrc.ts - keepProcess()", `Event: ${event} - Error: ${error.toString()}`);
         });
     }
 };
