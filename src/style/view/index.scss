@@ -107,14 +107,6 @@
         }
 
         .table_video {
-            video {
-                display: block;
-                width: 400px;
-                margin: 10px auto;
-                text-align: center !important;
-                border: 1px solid;
-            }
-
             .instruction {
                 list-style: disc;
                 margin-left: 20px;
@@ -127,6 +119,20 @@
                         cursor: pointer;
                     }
                 }
+            }
+
+            .video_name {
+                text-align: center;
+                margin-top: 10px;
+                font-weight: bold;
+            }
+
+            video {
+                display: block;
+                width: 400px;
+                margin: 10px auto;
+                text-align: center;
+                border: 1px solid;
             }
         }
 

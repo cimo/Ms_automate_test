@@ -440,13 +440,6 @@ body *:not(.material-icons) {
   display: inline-block;
   vertical-align: middle;
 }
-.view_index > .right .table_video video {
-  display: block;
-  width: 400px;
-  margin: 10px auto;
-  text-align: center !important;
-  border: 1px solid;
-}
 .view_index > .right .table_video .instruction {
   list-style: disc;
   margin-left: 20px;
@@ -454,6 +447,18 @@ body *:not(.material-icons) {
 .view_index > .right .table_video .item li i,
 .view_index > .right .table_video .item li p {
   cursor: pointer;
+}
+.view_index > .right .table_video .video_name {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
+}
+.view_index > .right .table_video video {
+  display: block;
+  width: 400px;
+  margin: 10px auto;
+  text-align: center;
+  border: 1px solid;
 }
 .view_index > .right .table_upload .input_upload {
   display: none;

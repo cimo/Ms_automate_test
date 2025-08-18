@@ -81,7 +81,12 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                             const result: IvirtualNode[] = [];
 
                             if (variableObject.videoSrc.state !== "") {
-                                result.push(<video controls class="video" src={variableObject.videoSrc.state}></video>);
+                                result.push(
+                                    <div>
+                                        <p class="video_name">{variableObject.videoSrc.state.split("/").pop()}</p>
+                                        <video controls src={variableObject.videoSrc.state}></video>
+                                    </div>
+                                );
                             }
 
                             return result;
