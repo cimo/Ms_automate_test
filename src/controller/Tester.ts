@@ -27,7 +27,7 @@ export default class Tester {
     };
 
     private specFile = (): void => {
-        this.cwsServer.receiveData("specFile", () => {
+        this.cwsServer.receiveData("spec_file", () => {
             const fileList = Fs.readdirSync(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_INPUT}`);
 
             const fileFilteredList: string[] = [];
@@ -44,7 +44,7 @@ export default class Tester {
                 resultList.push(fileFilteredList[a].replace(/\.spec\.ts$/, ""));
             }
 
-            const serverDataObject: modelTester.IserverDataBroadcast = { tag: "specFile", status: "", result: resultList };
+            const serverDataObject: modelTester.IserverDataBroadcast = { tag: "spec_file", status: "", result: resultList };
             this.cwsServer.sendDataBroadcast(serverDataObject);
         });
     };
@@ -184,66 +184,64 @@ export default class Tester {
     };
 
     private log = (): void => {
-        this.cwsServer.receiveData<modelTester.IclientDataLog>("logRun", (clientId, message) => {
+        this.cwsServer.receiveData<modelTester.IclientDataLog>("log_run", (clientId, message) => {
             const serverData: modelTester.IserverData = { status: "Log run", result: this.outputList[message.index].log };
-            this.cwsServer.sendData(clientId, "text", serverData, "logRun");
+            this.cwsServer.sendData(clientId, "text", serverData, "log_run");
         });
     };
 
     private video = (): void => {
-        this.cwsServer.receiveData("video_list", (clientId, data) => {
-            if (typeof data === "string") {
-                const clientData = JSON.parse(data) as modelTester.IclientDataVideo;
+        this.cwsServer.receiveData<modelTester.IclientDataVideo>("video", (clientId, message) => {
+            const serverData = {} as modelTester.IserverData;
 
-                const serverData = {} as modelTester.IserverData;
+            if (message.name !== "") {
+                const execCommand = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command3.sh`;
+                const execArgumentList = [`"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`, `"${message.name}"`];
 
-                if (clientData.name !== "") {
-                    const execCommand = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command3.sh`;
-                    const execArgumentList = [`"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`, `"${clientData.name}"`];
+                execFile(execCommand, execArgumentList, { shell: "/bin/bash", encoding: "utf8" }, (_, stdout) => {
+                    if (!stdout) {
+                        serverData.status = "error";
+                        serverData.result = "File not found.";
+                    } else {
+                        serverData.status = "success";
 
-                    execFile(execCommand, execArgumentList, { shell: "/bin/bash", encoding: "utf8" }, (_, stdout) => {
-                        if (!stdout) {
-                            serverData.status = "error";
-                            serverData.result = "File not found.";
-                            this.cwsServer.sendData(clientId, "text", serverData, "video_list");
-                        } else {
-                            serverData.status = "success";
-                            serverData.result = stdout
-                                .trim()
-                                .split("\n")
-                                .map((name) => name)
-                                .sort((a, b) => a.localeCompare(b));
-                            this.cwsServer.sendData(clientId, "text", serverData, "video_list");
+                        const stdoutSplit = stdout.trim().split("\n");
+                        const nameList = [];
+
+                        for (let a = 0; a < stdoutSplit.length; a++) {
+                            nameList.push(stdoutSplit[a]);
                         }
-                    });
-                } else {
-                    serverData.status = "error";
-                    serverData.result = "Wrong parameter.";
-                    this.cwsServer.sendData(clientId, "text", serverData, "video_list");
-                }
+
+                        nameList.sort((a, b) => a.localeCompare(b));
+
+                        serverData.result = nameList;
+                    }
+
+                    this.cwsServer.sendData(clientId, "text", serverData, "video");
+                });
+            } else {
+                serverData.status = "error";
+                serverData.result = "Wrong parameter.";
+                this.cwsServer.sendData(clientId, "text", serverData, "video");
             }
         });
 
-        this.cwsServer.receiveData("video_delete", (clientId, data) => {
-            if (typeof data === "string") {
-                const clientData = JSON.parse(data) as modelTester.IclientDataVideo;
+        this.cwsServer.receiveData<modelTester.IclientDataVideo>("video_delete", (clientId, message) => {
+            const serverData = {} as modelTester.IserverData;
 
-                const serverData = {} as modelTester.IserverData;
+            if (message.name !== "") {
+                const execCommand = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command4.sh`;
+                const execArgumentList = [`"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`, `"${message.name}"`];
 
-                if (clientData.name !== "") {
-                    const execCommand = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command4.sh`;
-                    const execArgumentList = [`"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`, `"${clientData.name}"`];
-
-                    execFile(execCommand, execArgumentList, { shell: "/bin/bash", encoding: "utf8" }, () => {
-                        serverData.status = "success";
-                        serverData.result = "File deleted.";
-                        this.cwsServer.sendData(clientId, "text", serverData, "video_delete");
-                    });
-                } else {
-                    serverData.status = "error";
-                    serverData.result = "Wrong parameter.";
+                execFile(execCommand, execArgumentList, { shell: "/bin/bash", encoding: "utf8" }, () => {
+                    serverData.status = "success";
+                    serverData.result = "File deleted.";
                     this.cwsServer.sendData(clientId, "text", serverData, "video_delete");
-                }
+                });
+            } else {
+                serverData.status = "error";
+                serverData.result = "Wrong parameter.";
+                this.cwsServer.sendData(clientId, "text", serverData, "video_delete");
             }
         });
     };

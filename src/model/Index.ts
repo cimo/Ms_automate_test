@@ -4,13 +4,18 @@ import { IvariableBind } from "@cimo/jsmvcfw/dist/src/Main";
 import * as modelTester from "../model/Tester";
 
 export interface Ivariable {
+    isLoading: IvariableBind<boolean>;
     userList: IvariableBind<string[]>;
     specFileList: IvariableBind<string[]>;
     outputList: IvariableBind<modelTester.Ioutput[]>;
-    isLoading: IvariableBind<boolean>;
+    videoList: IvariableBind<string[]>;
+    videoSrc: IvariableBind<string>;
 }
 
 export interface Imethod {
-    onClickExecute: (index: number, specFileName: string) => void;
-    onClickLog: (index: number) => void;
+    onClickRun: (index: number, specFileName: string) => void;
+    onClickLogRun: (index: number) => void;
+    onClickVideoLoad: () => void;
+    onClickVideoDelete: (event: Event, name: string) => void;
+    onClickVideoShow: (name: string) => void;
 }

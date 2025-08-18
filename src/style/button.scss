@@ -1,7 +1,7 @@
 @use "color.scss" as color;
 
 button {
-    display: inline-block !important;
+    display: block !important;
     margin: 0 10px !important;
     padding: 5px 10px !important;
     min-width: fit-content !important;

@@ -138,7 +138,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                                 <button
                                                     class={`mdc-button mdc-button--raised mdc-button--leading button_primary ${label}`}
                                                     onclick={() => {
-                                                        methodObject.onClickExecute(index, value);
+                                                        methodObject.onClickRun(index, value);
                                                     }}
                                                 >
                                                     <span class="mdc-button__ripple"></span>
@@ -172,7 +172,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                                 <button
                                                     class="mdc-button mdc-button--raised mdc-button--leading button_flat"
                                                     onclick={() => {
-                                                        methodObject.onClickLog(index);
+                                                        methodObject.onClickLogRun(index);
                                                     }}
                                                 >
                                                     <span class="mdc-button__ripple"></span>

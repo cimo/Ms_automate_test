@@ -38,8 +38,9 @@
                         text-align: center;
                         vertical-align: middle;
 
-                        .field_container {
+                        .field_container, button {
                             display: inline-block !important;
+                            vertical-align: sub !important;
                         }
 
                         .icon_loading {
@@ -69,42 +70,56 @@
         .table_upload {
             margin-bottom: 10px;
 
-            tbody {
+            thead {
                 tr {
-                    td {
+                    th {
                         text-align: center;
-
-                        .field_container {
-                            display: inline-block !important;
-                        }
-
-                        p {
-                            text-align: left;
-                        }
-                    }
-                }
-            }
-        }
-
-        .table_client,
-        .table_video {
-            .item {
-                text-align: left;
-                margin: 10px;
-
-                li {
-                    margin: 5px 0 5px 0;
-
-                    i,
-                    p {
-                        display: inline-block;
                         vertical-align: middle;
                     }
                 }
             }
+
+            tbody {
+                tr {
+                    td {
+                        text-align: left;
+                        vertical-align: middle;
+
+                        .field_container, button {
+                            display: inline-block !important;
+                            vertical-align: sub !important;
+                        }
+
+                        .item {
+                            li {
+                                margin: 5px 0;
+
+                                i,
+                                p {
+                                    display: inline-block;
+                                    vertical-align: middle;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         .table_video {
+            video {
+                display: block;
+                width: 400px;
+                margin: 10px auto;
+                text-align: center !important;
+                border: 1px solid;
+            }
+
+            .instruction {
+                list-style: disc;
+                margin-left: 20px;
+            }
+
             .item {
                 li {
                     i,
@@ -113,26 +128,11 @@
                     }
                 }
             }
-
-            video {
-                display: none;
-                width: 400px;
-                height: 200px;
-                margin: 10px auto;
-            }
-
-            .field_container {
-                margin-top: 10px;
-            }
         }
 
         .table_upload {
             .input_upload {
                 display: none;
-            }
-
-            button {
-                margin-top: 10px !important;
             }
         }
     }

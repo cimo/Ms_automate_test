@@ -5,22 +5,9 @@ import * as modelIndex from "../model/Index";
 import viewLoader from "../view/Loader";
 import viewSpecFile from "../view/SpecFile";
 import viewClient from "../view/Client";
+import viewVideo from "../view/Video";
 
 const viewIndex = (variableObject: modelIndex.Ivariable, methodObject: modelIndex.Imethod): IvirtualNode => {
-    /*return `${viewLoader(variableObject)}
-    ${viewAlert()}
-    ${viewDialog()}
-    <div class="page_container view_index">
-        <div class="header"></div>
-        <div class="left">
-            ${viewSpecFile(variableObject)}
-        </div>
-        <div class="right">
-           ${viewClientTemplate}
-           ${viewVideoTemplate}
-           ${viewUploadTemplate}
-       </div>
-    </div>`;*/
     return (
         <div data-jsmvcfw-controllerName="Index">
             {viewLoader(variableObject)}
@@ -31,7 +18,7 @@ const viewIndex = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                 <div class="left">{viewSpecFile(variableObject, methodObject)}</div>
                 <div class="right">
                     {viewClient(variableObject)}
-                    {/*viewVideoTemplate(variableObject)*/}
+                    {viewVideo(variableObject, methodObject)}
                     {/*viewUploadTemplate(variableObject)*/}
                 </div>
             </div>

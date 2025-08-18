@@ -19,7 +19,7 @@ export interface IclientDataLog extends Record<string, unknown> {
     index: number;
 }
 
-export interface IclientDataVideo {
+export interface IclientDataVideo extends Record<string, unknown> {
     name: string;
 }
 

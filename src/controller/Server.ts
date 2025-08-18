@@ -120,4 +120,4 @@ const controllerServer = new Server();
 controllerServer.createSetting();
 controllerServer.createServer();
 
-//helperSrc.keepProcess();
+helperSrc.keepProcess();

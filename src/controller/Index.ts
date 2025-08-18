@@ -484,11 +484,12 @@ import {
     elementObserverOn
 } from "@cimo/jsmvcfw/dist/src/Main";
 import CwsClient from "@cimo/websocket/dist/src/client/Manager";
+import { MDCSelect } from "@material/select";
 import { MDCRipple } from "@material/ripple";
 import { MDCTextField } from "@material/textfield";
-import { MDCSelect } from "@material/select";
 
 // Source
+import * as helperSrc from "../HelperSrc";
 import * as modelIndex from "../model/Index";
 import * as modelTester from "../model/Tester";
 import viewIndex from "../view/Index";
@@ -503,53 +504,87 @@ export default class Index implements Icontroller {
     private controllerDialog: ControllerDialog | null;
 
     private cwsClient: CwsClient;
-    private mdcSelectObject: Record<string, MDCSelect>;
+    private mdcSelectList: MDCSelect[];
+    private mdcRippleList: MDCRipple[];
+    private mdcTextFieldList: MDCTextField[];
+    private mdcSelectBrowserObject: Record<string, MDCSelect>;
+    private mdcTextFieldVideoObject: Record<string, MDCTextField>;
 
     // Method
-    private mdcSelectBrowser = (element: HTMLElement): void => {
+    private mdcSelectBrowser = (mdc: MDCSelect): void => {
+        const element = mdc.root;
         const idSplit = element.id.split("mdcSelectBrowser_");
 
         if (idSplit[1]) {
-            const mdc = this.mdcSelectObject[element.id];
-
-            mdc.setValue(mdc.value);
+            this.mdcSelectBrowserObject[element.id] = mdc;
         }
     };
 
+    private mdcTextFieldVideo = (mdc: MDCTextField): void => {
+        this.mdcTextFieldVideoObject["mdcTextFieldVideoName"] = mdc;
+    };
+
     private mdcEvent = (): void => {
-        const elementMdcButtonList = document.querySelectorAll<HTMLElement>(".mdc-button");
-
-        if (elementMdcButtonList) {
-            for (const elementMdcButton of elementMdcButtonList) {
-                new MDCRipple(elementMdcButton);
-            }
+        // MDCSelect
+        for (const value of this.mdcSelectList) {
+            value.destroy();
         }
 
-        const elementMdcTextFieldList = document.querySelectorAll<HTMLElement>(".mdc-text-field");
-
-        if (elementMdcTextFieldList) {
-            for (const elementMdcTextField of elementMdcTextFieldList) {
-                new MDCTextField(elementMdcTextField);
-            }
-        }
+        this.mdcSelectList = [];
 
         const elementMdcSelectList = document.querySelectorAll<HTMLElement>(".mdc-select");
 
         if (elementMdcSelectList) {
-            for (const elementMdcSelect of elementMdcSelectList) {
-                if (elementMdcSelect.id) {
-                    this.mdcSelectObject[elementMdcSelect.id] = new MDCSelect(elementMdcSelect);
+            for (const [key, elementMdcSelect] of Object.entries(elementMdcSelectList)) {
+                const index = parseInt(key);
 
-                    elementObserver(elementMdcSelect, (element, change) => {
-                        elementObserverOff(element);
+                this.mdcSelectList.push(new MDCSelect(elementMdcSelect));
 
-                        if (change.type === "childList") {
-                            this.mdcSelectBrowser(element);
-                        }
+                elementObserver(elementMdcSelect, (element, change) => {
+                    elementObserverOff(element);
 
-                        elementObserverOn(element);
-                    });
-                }
+                    if (change.type === "childList") {
+                        this.mdcSelectList[index].setValue(this.mdcSelectList[index].value);
+                    }
+
+                    elementObserverOn(element);
+                });
+
+                this.mdcSelectBrowser(this.mdcSelectList[index]);
+            }
+        }
+
+        // MDCRipple
+        for (const value of this.mdcRippleList) {
+            value.destroy();
+        }
+
+        this.mdcRippleList = [];
+
+        const elementMdcButtonList = document.querySelectorAll<HTMLElement>(".mdc-button");
+
+        if (elementMdcButtonList) {
+            for (const [, elementMdcButton] of Object.entries(elementMdcButtonList)) {
+                this.mdcRippleList.push(new MDCRipple(elementMdcButton));
+            }
+        }
+
+        // MDCTextField
+        for (const value of this.mdcTextFieldList) {
+            value.destroy();
+        }
+
+        this.mdcTextFieldList = [];
+
+        const elementMdcTextFieldList = document.querySelectorAll<HTMLElement>(".mdc-text-field");
+
+        if (elementMdcTextFieldList) {
+            for (const [key, elementMdcTextField] of Object.entries(elementMdcTextFieldList)) {
+                const index = parseInt(key);
+
+                this.mdcTextFieldList.push(new MDCTextField(elementMdcTextField));
+
+                this.mdcTextFieldVideo(this.mdcTextFieldList[index]);
             }
         }
     };
@@ -562,7 +597,7 @@ export default class Index implements Icontroller {
                 this.cwsClient.sendData("text", "", "user");
             } else if (message.tag === "user") {
                 this.variableObject.userList.state = message.result as string[];
-            } else if (message.tag === "specFile") {
+            } else if (message.tag === "spec_file") {
                 this.variableObject.specFileList.state = message.result as string[];
             } else if (message.tag === "output") {
                 this.variableObject.outputList.state = message.result as modelTester.Ioutput[];
@@ -579,19 +614,39 @@ export default class Index implements Icontroller {
     };
 
     private logReceiveData = (): void => {
-        this.cwsClient.receiveData<modelTester.IserverData>("logRun", (message) => {
+        this.cwsClient.receiveData<modelTester.IserverData>("log_run", (message) => {
             if (this.controllerDialog) {
                 this.controllerDialog.open(message.status, message.result as string, true);
             }
         });
     };
 
-    private onClickExecute = (index: number, specFileName: string): void => {
+    private videoReceiveData = (): void => {
+        this.cwsClient.receiveData<modelTester.IserverData>("video", (message) => {
+            if (message.status === "error") {
+                if (this.controllerAlert) {
+                    this.controllerAlert.open(message.status, message.result as string);
+                }
+
+                this.variableObject.videoList.state = [];
+            } else {
+                this.variableObject.videoList.state = message.result as string[];
+            }
+        });
+
+        this.cwsClient.receiveData<modelTester.IserverData>("video_delete", (message) => {
+            if (this.controllerAlert) {
+                this.controllerAlert.open(message.status, message.result as string);
+            }
+        });
+    };
+
+    private onClickRun = (index: number, specFileName: string): void => {
         if (!this.variableObject.outputList.state[index] || this.variableObject.outputList.state[index].phase !== "running") {
             const clientData: modelTester.IclientDataRun = {
                 index,
                 specFileName,
-                browser: this.mdcSelectObject[`mdcSelectBrowser_${index}`].value
+                browser: this.mdcSelectBrowserObject[`mdcSelectBrowser_${index}`].value
             };
             this.cwsClient.sendData("text", clientData, "run");
         } else {
@@ -600,9 +655,32 @@ export default class Index implements Icontroller {
         }
     };
 
-    private onClickLog = (index: number): void => {
+    private onClickLogRun = (index: number): void => {
         const clientData: modelTester.IclientDataLog = { index };
-        this.cwsClient.sendData("text", clientData, "logRun");
+        this.cwsClient.sendData("text", clientData, "log_run");
+    };
+
+    private onClickVideoLoad = (): void => {
+        const clientData: modelTester.IclientDataVideo = { name: this.mdcTextFieldVideoObject["mdcTextFieldVideoName"].value };
+        this.cwsClient.sendData("text", clientData, "video");
+    };
+
+    private onClickVideoDelete = (event: Event, name: string): void => {
+        const target = event.currentTarget as HTMLElement;
+        const elementLi = target.closest("li");
+
+        if (elementLi) {
+            elementLi.remove();
+        }
+
+        const clientData: modelTester.IclientDataVideo = { name };
+        this.cwsClient.sendData("text", clientData, "video_delete");
+    };
+
+    private onClickVideoShow = (name: string): void => {
+        if (name !== "") {
+            this.variableObject.videoSrc.state = `${helperSrc.URL_ROOT}/file/${name}`;
+        }
     };
 
     constructor(cwsClientValue: CwsClient) {
@@ -612,7 +690,11 @@ export default class Index implements Icontroller {
         this.controllerDialog = new ControllerDialog();
 
         this.cwsClient = cwsClientValue;
-        this.mdcSelectObject = {};
+        this.mdcSelectList = [];
+        this.mdcRippleList = [];
+        this.mdcTextFieldList = [];
+        this.mdcSelectBrowserObject = {};
+        this.mdcTextFieldVideoObject = {};
 
         this.cwsClient.checkConnection(() => {
             this.broadcast();
@@ -621,12 +703,12 @@ export default class Index implements Icontroller {
 
             this.logReceiveData();
 
-            //this.videoReceiveData();
+            this.videoReceiveData();
 
             //this.uploadReceiveData();
 
             this.cwsClient.sendData("text", "", "user");
-            this.cwsClient.sendData("text", "", "specFile", 100);
+            this.cwsClient.sendData("text", "", "spec_file", 100);
             this.cwsClient.sendData("text", "", "output", 200);
 
             this.variableObject.isLoading.state = false;
@@ -636,17 +718,22 @@ export default class Index implements Icontroller {
     variable(): void {
         this.variableObject = variableBind(
             {
+                isLoading: true,
                 userList: [],
                 specFileList: [],
                 outputList: [],
-                isLoading: true
+                videoList: [],
+                videoSrc: ""
             },
             this.constructor.name
         );
 
         this.methodObject = {
-            onClickExecute: this.onClickExecute,
-            onClickLog: this.onClickLog
+            onClickRun: this.onClickRun,
+            onClickLogRun: this.onClickLogRun,
+            onClickVideoLoad: this.onClickVideoLoad,
+            onClickVideoDelete: this.onClickVideoDelete,
+            onClickVideoShow: this.onClickVideoShow
         };
     }
 
@@ -654,6 +741,12 @@ export default class Index implements Icontroller {
         watch([
             {
                 list: ["specFileList"],
+                action: () => {
+                    this.mdcEvent();
+                }
+            },
+            {
+                list: ["outputList"],
                 action: () => {
                     this.mdcEvent();
                 }
@@ -668,14 +761,14 @@ export default class Index implements Icontroller {
     event(): void {}
 
     subControllerList(): Icontroller[] {
-        const list: Icontroller[] = [];
+        const resultList: Icontroller[] = [];
 
         if (this.controllerAlert && this.controllerDialog) {
-            list.push(this.controllerAlert);
-            list.push(this.controllerDialog);
+            resultList.push(this.controllerAlert);
+            resultList.push(this.controllerDialog);
         }
 
-        return list;
+        return resultList;
     }
 
     rendered(): void {}

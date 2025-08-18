@@ -6,11 +6,16 @@ import * as modelIndex from "../model/Index";
 const viewClient = (variableObject: modelIndex.Ivariable): IvirtualNode => {
     return (
         <table class="table_client">
+            <thead class="filter">
+                <tr className="row filter_action"></tr>
+                <tr class="row not_hover">
+                    <th class="cell column_title">Client connected</th>
+                </tr>
+            </thead>
             <tbody>
                 <tr class="row not_hover">
                     <td class="cell">
-                        <p>Client connected:</p>
-                        <ul class="item" data-bind="clientList">
+                        <ul class="item">
                             {(() => {
                                 const result: IvirtualNode[] = [];
 

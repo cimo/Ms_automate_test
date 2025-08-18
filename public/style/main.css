@@ -87,7 +87,7 @@ meter {
 }
 
 button {
-  display: inline-block !important;
+  display: block !important;
   margin: 0 10px !important;
   padding: 5px 10px !important;
   min-width: fit-content !important;
@@ -283,7 +283,7 @@ table .row .cell {
   height: 50px !important;
 }
 table .row .cell.center {
-  text-align: center;
+  text-align: center !important;
 }
 
 .view_alert {
@@ -383,8 +383,9 @@ body *:not(.material-icons) {
   text-align: center;
   vertical-align: middle;
 }
-.view_index > .left .table_data tbody tr td .field_container {
+.view_index > .left .table_data tbody tr td .field_container, .view_index > .left .table_data tbody tr td button {
   display: inline-block !important;
+  vertical-align: sub !important;
 }
 .view_index > .left .table_data tbody tr td .icon_loading {
   animation: animation_icon_loading 1s infinite;
@@ -405,55 +406,57 @@ body *:not(.material-icons) {
 .view_index > .right .table_upload {
   margin-bottom: 10px;
 }
+.view_index > .right .table_client thead tr th,
+.view_index > .right .table_video thead tr th,
+.view_index > .right .table_upload thead tr th {
+  text-align: center;
+  vertical-align: middle;
+}
 .view_index > .right .table_client tbody tr td,
 .view_index > .right .table_video tbody tr td,
 .view_index > .right .table_upload tbody tr td {
-  text-align: center;
+  text-align: left;
+  vertical-align: middle;
 }
-.view_index > .right .table_client tbody tr td .field_container,
+.view_index > .right .table_client tbody tr td .field_container, .view_index > .right .table_client tbody tr td button,
 .view_index > .right .table_video tbody tr td .field_container,
-.view_index > .right .table_upload tbody tr td .field_container {
+.view_index > .right .table_video tbody tr td button,
+.view_index > .right .table_upload tbody tr td .field_container,
+.view_index > .right .table_upload tbody tr td button {
   display: inline-block !important;
+  vertical-align: sub !important;
 }
-.view_index > .right .table_client tbody tr td p,
-.view_index > .right .table_video tbody tr td p,
-.view_index > .right .table_upload tbody tr td p {
-  text-align: left;
+.view_index > .right .table_client tbody tr td .item li,
+.view_index > .right .table_video tbody tr td .item li,
+.view_index > .right .table_upload tbody tr td .item li {
+  margin: 5px 0;
 }
-.view_index > .right .table_client .item,
-.view_index > .right .table_video .item {
-  text-align: left;
-  margin: 10px;
-}
-.view_index > .right .table_client .item li,
-.view_index > .right .table_video .item li {
-  margin: 5px 0 5px 0;
-}
-.view_index > .right .table_client .item li i,
-.view_index > .right .table_client .item li p,
-.view_index > .right .table_video .item li i,
-.view_index > .right .table_video .item li p {
+.view_index > .right .table_client tbody tr td .item li i,
+.view_index > .right .table_client tbody tr td .item li p,
+.view_index > .right .table_video tbody tr td .item li i,
+.view_index > .right .table_video tbody tr td .item li p,
+.view_index > .right .table_upload tbody tr td .item li i,
+.view_index > .right .table_upload tbody tr td .item li p {
   display: inline-block;
   vertical-align: middle;
+}
+.view_index > .right .table_video video {
+  display: block;
+  width: 400px;
+  margin: 10px auto;
+  text-align: center !important;
+  border: 1px solid;
+}
+.view_index > .right .table_video .instruction {
+  list-style: disc;
+  margin-left: 20px;
 }
 .view_index > .right .table_video .item li i,
 .view_index > .right .table_video .item li p {
   cursor: pointer;
 }
-.view_index > .right .table_video video {
-  display: none;
-  width: 400px;
-  height: 200px;
-  margin: 10px auto;
-}
-.view_index > .right .table_video .field_container {
-  margin-top: 10px;
-}
 .view_index > .right .table_upload .input_upload {
   display: none;
-}
-.view_index > .right .table_upload button {
-  margin-top: 10px !important;
 }
 @media screen and (max-width: 1039px) {
   .view_index .left,
