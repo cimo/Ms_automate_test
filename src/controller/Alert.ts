@@ -14,10 +14,10 @@ export default class Alert implements Icontroller {
 
     // Method
     private mdcEvent = (): void => {
-        const elementMdcSnackbar = document.querySelector<HTMLElement>(".mdc-snackbar");
+        const element = this.elementHookObject.mdcSnackbar;
 
-        if (elementMdcSnackbar) {
-            this.mdcSnackbar = new MDCSnackbar(elementMdcSnackbar);
+        if (element) {
+            this.mdcSnackbar = new MDCSnackbar(element);
             this.mdcSnackbar.timeoutMs = -1;
             this.mdcSnackbar.listen("MDCSnackbar:closed", () => {
                 this.variableObject.className.state = "";
@@ -54,6 +54,8 @@ export default class Alert implements Icontroller {
             this.mdcSnackbar.close();
         }
     };
+
+    elementHookObject = {} as modelAlert.IelementHook;
 
     variable(): void {
         this.variableObject = variableBind(

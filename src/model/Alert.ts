@@ -8,3 +8,7 @@ export interface Ivariable {
 export interface Imethod {
     onClickClose: () => void;
 }
+
+export interface IelementHook extends Record<string, Element> {
+    mdcSnackbar: HTMLElement;
+}

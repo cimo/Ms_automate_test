@@ -17,11 +17,9 @@ export default class Tester {
     private processRunPid: number | null;
 
     // Method
-    private user = (): void => {
-        this.cwsServer.receiveData("user", () => {
-            const clientList: string[] = Array.from(this.cwsServer.getClientMap().keys());
-
-            const serverDataObject: modelTester.IserverDataBroadcast = { tag: "user", status: "", result: clientList };
+    private client = (): void => {
+        this.cwsServer.receiveData("client", () => {
+            const serverDataObject: modelTester.IserverDataBroadcast = { label: "client", status: "", result: this.cwsServer.clientIdList() };
             this.cwsServer.sendDataBroadcast(serverDataObject);
         });
     };
@@ -44,36 +42,36 @@ export default class Tester {
                 resultList.push(fileFilteredList[a].replace(/\.spec\.ts$/, ""));
             }
 
-            const serverDataObject: modelTester.IserverDataBroadcast = { tag: "spec_file", status: "", result: resultList };
+            const serverDataObject: modelTester.IserverDataBroadcast = { label: "spec_file", status: "", result: resultList };
             this.cwsServer.sendDataBroadcast(serverDataObject);
         });
     };
 
     private output = (): void => {
         this.cwsServer.receiveData("output", () => {
-            const serverDataObject: modelTester.IserverDataBroadcast = { tag: "output", status: "", result: this.outputList };
+            const serverDataObject: modelTester.IserverDataBroadcast = { label: "output", status: "", result: this.outputList };
             this.cwsServer.sendDataBroadcast(serverDataObject);
         });
     };
 
     private run = (): void => {
-        this.cwsServer.receiveData<modelTester.IclientDataRun>("run", (clientId, message) => {
-            const browserCheck = message.browser.match("^(desktop_chrome|desktop_edge|desktop_firefox|desktop_safari|mobile_android|mobile_ios)$")
-                ? message.browser
+        this.cwsServer.receiveData<modelTester.IclientDataRun>("run", (data, clientId) => {
+            const browserCheck = data.browser.match("^(desktop_chrome|desktop_edge|desktop_firefox|desktop_safari|mobile_android|mobile_ios)$")
+                ? data.browser
                 : "";
 
             const serverDataBroadcastObject = {} as modelTester.IserverDataBroadcast;
             const serverDataObject = {} as modelTester.IserverData;
 
-            if (message.index >= 0 && message.specFileName !== "" && browserCheck !== "") {
-                serverDataBroadcastObject.tag = "output";
+            if (data.index >= 0 && data.specFileName !== "" && browserCheck !== "") {
+                serverDataBroadcastObject.label = "output";
 
                 this.cp.add("run", JSON.stringify(serverDataBroadcastObject), 0, (pidIsRunning, pidKey) => {
                     if (!pidIsRunning) {
                         this.pidKey = pidKey;
 
-                        this.outputList[message.index] = {
-                            browser: message.browser,
+                        this.outputList[data.index] = {
+                            browser: data.browser,
                             phase: "running",
                             time: helperSrc.serverTime(),
                             log: ""
@@ -85,7 +83,7 @@ export default class Tester {
                         this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcastObject));
 
                         const execCommand1 = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command1.sh`;
-                        const execArgumentList1 = [`"${message.specFileName}"`, `"${browserCheck}"`];
+                        const execArgumentList1 = [`"${data.specFileName}"`, `"${browserCheck}"`];
 
                         const processRun = execFile(
                             execCommand1,
@@ -97,8 +95,8 @@ export default class Tester {
 
                                     const status = "error";
 
-                                    this.outputList[message.index] = {
-                                        browser: message.browser,
+                                    this.outputList[data.index] = {
+                                        browser: data.browser,
                                         phase: status,
                                         time: helperSrc.serverTime(),
                                         log: helperSrc.removeAnsiEscape(stderr1)
@@ -111,7 +109,7 @@ export default class Tester {
 
                                     serverDataObject.status = status;
                                     serverDataObject.result = "System error, check the log for more info.";
-                                    this.cwsServer.sendData(clientId, "text", serverDataObject, "run");
+                                    this.cwsServer.sendMessage("text", serverDataObject, "run", clientId);
 
                                     this.cp.remove(this.pidKey);
 
@@ -126,8 +124,8 @@ export default class Tester {
                                     execFile(execCommand2, execArgumentList2, { shell: "/bin/bash", encoding: "utf8" }, () => {
                                         const status = /Error:|interrupted|not run/.test(stdout1) ? "error" : "success";
 
-                                        this.outputList[message.index] = {
-                                            browser: message.browser,
+                                        this.outputList[data.index] = {
+                                            browser: data.browser,
                                             phase: status,
                                             time: helperSrc.serverTime(),
                                             log: helperSrc.removeAnsiEscape(stdout1)
@@ -140,7 +138,7 @@ export default class Tester {
 
                                         serverDataObject.status = status;
                                         serverDataObject.result = "Test completed, check the log for more info.";
-                                        this.cwsServer.sendData(clientId, "text", serverDataObject, "run");
+                                        this.cwsServer.sendMessage("text", serverDataObject, "run", clientId);
 
                                         this.cp.remove(this.pidKey);
 
@@ -160,13 +158,13 @@ export default class Tester {
                     } else {
                         serverDataObject.status = "error";
                         serverDataObject.result = "Another process still running.";
-                        this.cwsServer.sendData(clientId, "text", serverDataObject, "run");
+                        this.cwsServer.sendMessage("text", serverDataObject, "run", clientId);
                     }
                 });
             } else {
                 serverDataObject.status = "error";
                 serverDataObject.result = "Wrong parameter.";
-                this.cwsServer.sendData(clientId, "text", serverDataObject, "run");
+                this.cwsServer.sendMessage("text", serverDataObject, "run", clientId);
             }
         });
     };
@@ -184,19 +182,19 @@ export default class Tester {
     };
 
     private log = (): void => {
-        this.cwsServer.receiveData<modelTester.IclientDataLog>("log_run", (clientId, message) => {
-            const serverData: modelTester.IserverData = { status: "Log run", result: this.outputList[message.index].log };
-            this.cwsServer.sendData(clientId, "text", serverData, "log_run");
+        this.cwsServer.receiveData<modelTester.IclientDataLog>("log_run", (data, clientId) => {
+            const serverData: modelTester.IserverData = { status: "Log run", result: this.outputList[data.index].log };
+            this.cwsServer.sendMessage("text", serverData, "log_run", clientId);
         });
     };
 
     private video = (): void => {
-        this.cwsServer.receiveData<modelTester.IclientDataVideo>("video", (clientId, message) => {
+        this.cwsServer.receiveData<modelTester.IclientDataVideo>("video", (data, clientId) => {
             const serverData = {} as modelTester.IserverData;
 
-            if (message.name !== "") {
+            if (data.name !== "") {
                 const execCommand = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command3.sh`;
-                const execArgumentList = [`"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`, `"${message.name}"`];
+                const execArgumentList = [`"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`, `"${data.name}"`];
 
                 execFile(execCommand, execArgumentList, { shell: "/bin/bash", encoding: "utf8" }, (_, stdout) => {
                     if (!stdout) {
@@ -217,41 +215,41 @@ export default class Tester {
                         serverData.result = nameList;
                     }
 
-                    this.cwsServer.sendData(clientId, "text", serverData, "video");
+                    this.cwsServer.sendMessage("text", serverData, "video", clientId);
                 });
             } else {
                 serverData.status = "error";
                 serverData.result = "Wrong parameter.";
-                this.cwsServer.sendData(clientId, "text", serverData, "video");
+                this.cwsServer.sendMessage("text", serverData, "video", clientId);
             }
         });
 
-        this.cwsServer.receiveData<modelTester.IclientDataVideo>("video_delete", (clientId, message) => {
+        this.cwsServer.receiveData<modelTester.IclientDataVideo>("video_delete", (data, clientId) => {
             const serverData = {} as modelTester.IserverData;
 
-            if (message.name !== "") {
+            if (data.name !== "") {
                 const execCommand = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command4.sh`;
-                const execArgumentList = [`"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`, `"${message.name}"`];
+                const execArgumentList = [`"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`, `"${data.name}"`];
 
                 execFile(execCommand, execArgumentList, { shell: "/bin/bash", encoding: "utf8" }, () => {
                     serverData.status = "success";
                     serverData.result = "File deleted.";
-                    this.cwsServer.sendData(clientId, "text", serverData, "video_delete");
+                    this.cwsServer.sendMessage("text", serverData, "video_delete", clientId);
                 });
             } else {
                 serverData.status = "error";
                 serverData.result = "Wrong parameter.";
-                this.cwsServer.sendData(clientId, "text", serverData, "video_delete");
+                this.cwsServer.sendMessage("text", serverData, "video_delete", clientId);
             }
         });
     };
 
     private upload = (): void => {
-        this.cwsServer.receiveDataUpload((clientId, data, filename) => {
+        this.cwsServer.receiveDataUpload((data, filename, clientId) => {
             Fs.writeFileSync(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_INPUT}${filename}`, Buffer.concat(data));
 
             const serverData: modelTester.IserverData = { status: "success", result: "Upload completed." };
-            this.cwsServer.sendData(clientId, "text", serverData, "upload");
+            this.cwsServer.sendMessage("text", serverData, "upload", clientId);
         });
     };
 
@@ -265,7 +263,7 @@ export default class Tester {
     }
 
     websocket = (): void => {
-        this.user();
+        this.client();
 
         this.specFile();
 

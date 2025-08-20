@@ -30,7 +30,7 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                                         </span>
                                         <span class="mdc-notched-outline__trailing"></span>
                                     </span>
-                                    <input id="mdcTextFieldVideoName" name="videoName" type="text" class="mdc-text-field__input" />
+                                    <input jsmvcfw-elementHook="inputVideoName" name="videoName" type="text" class="mdc-text-field__input" value="" />
                                 </label>
                             </div>
                             <div class="mdc-touch-target-wrapper">
@@ -41,9 +41,7 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                                     }}
                                 >
                                     <span class="mdc-button__ripple"></span>
-                                    <span class="mdc-button__label">
-                                        <p>Load</p>
-                                    </span>
+                                    <span class="mdc-button__label">Load</span>
                                 </button>
                             </div>
                         </div>
@@ -52,13 +50,15 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                                 const result: IvirtualNode[] = [];
 
                                 for (const [key, value] of Object.entries(variableObject.videoList.state)) {
+                                    const index = parseInt(key);
+
                                     result.push(
                                         <li key={key}>
                                             <i
                                                 class="mdc-button__icon material-icons"
                                                 aria-hidden="true"
-                                                onclick={(event: Event) => {
-                                                    methodObject.onClickVideoDelete(event, value);
+                                                onclick={() => {
+                                                    methodObject.onClickVideoDelete(index, value);
                                                 }}
                                             >
                                                 delete
@@ -83,7 +83,7 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                             if (variableObject.videoSrc.state !== "") {
                                 result.push(
                                     <div>
-                                        <p class="video_name">{variableObject.videoSrc.state.split("/").pop()}</p>
+                                        <p class="name">{variableObject.videoSrc.state.split("/").pop()}</p>
                                         <video controls src={variableObject.videoSrc.state}></video>
                                     </div>
                                 );

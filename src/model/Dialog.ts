@@ -10,3 +10,7 @@ export interface Imethod {
     onClickAccept: () => void;
     onClickClose: () => void;
 }
+
+export interface IelementHook extends Record<string, Element> {
+    mdcDialog: HTMLElement;
+}

@@ -5,7 +5,7 @@ import * as modelDialog from "../model/Dialog";
 
 const viewDialog = (variableObject: modelDialog.Ivariable, methodObject: modelDialog.Imethod): IvirtualNode => {
     return (
-        <div class="mdc-dialog view_dialog">
+        <div jsmvcfw-elementHook="mdcDialog" class="mdc-dialog view_dialog">
             <div class="mdc-dialog__container">
                 <div
                     class="mdc-dialog__surface"
@@ -20,12 +20,20 @@ const viewDialog = (variableObject: modelDialog.Ivariable, methodObject: modelDi
                         <button
                             type="button"
                             class={`mdc-button mdc-dialog__button button_flat ${variableObject.isSingleButton.state ? "hidden" : ""}`}
-                            onClick={methodObject.onClickClose}
+                            onclick={() => {
+                                methodObject.onClickClose();
+                            }}
                         >
                             <div class="mdc-button__ripple"></div>
                             <span class="mdc-button__label">Cancel</span>
                         </button>
-                        <button type="button" class="mdc-button mdc-dialog__button button_primary" onClick={methodObject.onClickAccept}>
+                        <button
+                            type="button"
+                            class="mdc-button mdc-dialog__button button_primary"
+                            onclick={() => {
+                                methodObject.onClickAccept();
+                            }}
+                        >
                             <div class="mdc-button__ripple"></div>
                             <span class="mdc-button__label">OK</span>
                         </button>

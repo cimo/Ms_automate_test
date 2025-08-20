@@ -99,6 +99,10 @@
                                     display: inline-block;
                                     vertical-align: middle;
                                 }
+
+                                p {
+                                    cursor: pointer;
+                                }
                             }
                         }
                     }
@@ -108,8 +112,8 @@
 
         .table_video {
             .instruction {
-                list-style: disc;
-                margin-left: 20px;
+                list-style: auto;
+                margin: 0 0 10px 20px;
             }
 
             .item {
@@ -121,7 +125,7 @@
                 }
             }
 
-            .video_name {
+            .name {
                 text-align: center;
                 margin-top: 10px;
                 font-weight: bold;
@@ -137,6 +141,21 @@
         }
 
         .table_upload {
+            .instruction {
+                list-style: disc;
+                margin: 0 0 10px 20px;
+            }
+
+            .name {
+                text-align: center;
+                margin-top: 10px;
+                font-weight: bold;
+            }
+
+            .button_container {
+                margin-top: 10px;
+            }
+
             .input_upload {
                 display: none;
             }

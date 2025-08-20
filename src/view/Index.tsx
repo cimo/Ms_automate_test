@@ -6,22 +6,25 @@ import viewLoader from "../view/Loader";
 import viewSpecFile from "../view/SpecFile";
 import viewClient from "../view/Client";
 import viewVideo from "../view/Video";
+import viewUpload from "../view/Upload";
+import viewChat from "../view/Chat";
 
 const viewIndex = (variableObject: modelIndex.Ivariable, methodObject: modelIndex.Imethod): IvirtualNode => {
     return (
-        <div data-jsmvcfw-controllerName="Index">
+        <div jsmvcfw-controllerName="Index">
             {viewLoader(variableObject)}
-            <aside data-jsmvcfw-controllerName="Alert" />
-            <aside data-jsmvcfw-controllerName="Dialog" />
+            <aside jsmvcfw-controllerName="Alert" />
+            <aside jsmvcfw-controllerName="Dialog" />
             <div class="page_container view_index">
                 <div class="header"></div>
                 <div class="left">{viewSpecFile(variableObject, methodObject)}</div>
                 <div class="right">
-                    {viewClient(variableObject)}
+                    {viewClient(variableObject, methodObject)}
                     {viewVideo(variableObject, methodObject)}
-                    {/*viewUploadTemplate(variableObject)*/}
+                    {viewUpload(variableObject, methodObject)}
                 </div>
             </div>
+            {viewChat(variableObject, methodObject)}
         </div>
     );
 };

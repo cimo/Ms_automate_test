@@ -16,10 +16,10 @@ export default class Dialog implements Icontroller {
 
     // Method
     private mdcEvent = (): void => {
-        const elementMdcDialog = document.querySelector<HTMLElement>(".mdc-dialog");
+        const element = this.elementHookObject.mdcDialog;
 
-        if (elementMdcDialog) {
-            this.mdcDialog = new MDCDialog(elementMdcDialog);
+        if (element) {
+            this.mdcDialog = new MDCDialog(element);
             this.mdcDialog.listen("MDCDialog:closed", () => {
                 this.variableObject.title.state = "";
                 this.variableObject.content.state = "";
@@ -78,6 +78,8 @@ export default class Dialog implements Icontroller {
             this.mdcDialog.close();
         }
     };
+
+    elementHookObject = {} as modelDialog.IelementHook;
 
     variable(): void {
         this.variableObject = variableBind(

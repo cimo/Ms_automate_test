@@ -1,21 +1,38 @@
 import { IvariableBind } from "@cimo/jsmvcfw/dist/src/Main";
+import { ImessageDirect } from "@cimo/websocket/dist/src/client/Model";
 
 // Source
 import * as modelTester from "../model/Tester";
 
 export interface Ivariable {
     isLoading: IvariableBind<boolean>;
-    userList: IvariableBind<string[]>;
+    clientList: IvariableBind<string[]>;
     specFileList: IvariableBind<string[]>;
     outputList: IvariableBind<modelTester.Ioutput[]>;
     videoList: IvariableBind<string[]>;
     videoSrc: IvariableBind<string>;
+    uploadFileName: IvariableBind<string>;
+    isChatVisible: IvariableBind<boolean>;
+    clientIdSelected: IvariableBind<string>;
+    chatMessageReceivedList: IvariableBind<ImessageDirect[]>;
 }
 
 export interface Imethod {
     onClickRun: (index: number, specFileName: string) => void;
     onClickLogRun: (index: number) => void;
     onClickVideoLoad: () => void;
-    onClickVideoDelete: (event: Event, name: string) => void;
+    onClickVideoDelete: (index: number, name: string) => void;
     onClickVideoShow: (name: string) => void;
+    onClickChooseFile: () => void;
+    onClickUpload: () => void;
+    onClickClient: (index: number) => void;
+    onSendChatMessage: () => void;
+    onClickChatClose: () => void;
+}
+
+export interface IelementHook extends Record<string, Element | Element[]> {
+    selectBrowserName: HTMLSelectElement[];
+    inputVideoName: HTMLInputElement;
+    inputSpecUpload: HTMLInputElement;
+    inputChatMessageSend: HTMLInputElement;
 }

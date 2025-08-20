@@ -3,7 +3,7 @@ import { jsxFactory, IvirtualNode } from "@cimo/jsmvcfw/dist/src/Main";
 // Source
 import * as modelIndex from "../model/Index";
 
-const viewClient = (variableObject: modelIndex.Ivariable): IvirtualNode => {
+const viewClient = (variableObject: modelIndex.Ivariable, methodObject: modelIndex.Imethod): IvirtualNode => {
     return (
         <table class="table_client">
             <thead class="filter">
@@ -19,13 +19,21 @@ const viewClient = (variableObject: modelIndex.Ivariable): IvirtualNode => {
                             {(() => {
                                 const result: IvirtualNode[] = [];
 
-                                for (const [key, value] of Object.entries(variableObject.userList.state)) {
+                                for (const [key, value] of Object.entries(variableObject.clientList.state)) {
+                                    const index = parseInt(key);
+
                                     result.push(
                                         <li key={key}>
                                             <i class="mdc-button__icon material-icons" aria-hidden="true">
                                                 person
                                             </i>
-                                            <p>{value}</p>
+                                            <p
+                                                onclick={() => {
+                                                    methodObject.onClickClient(index);
+                                                }}
+                                            >
+                                                {value}
+                                            </p>
                                         </li>
                                     );
                                 }

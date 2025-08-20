@@ -5,6 +5,15 @@ export interface Ioutput {
     log: string;
 }
 
+export interface IserverData extends Record<string, unknown> {
+    status: string;
+    result: string | string[] | Ioutput[];
+}
+
+export interface IserverDataBroadcast extends IserverData {
+    label: string;
+}
+
 export interface IclientDataRun extends Record<string, unknown> {
     index: number;
     specFileName: string;
@@ -21,13 +30,4 @@ export interface IclientDataLog extends Record<string, unknown> {
 
 export interface IclientDataVideo extends Record<string, unknown> {
     name: string;
-}
-
-export interface IserverData extends Record<string, unknown> {
-    status: string;
-    result: string | string[] | Ioutput[];
-}
-
-export interface IserverDataBroadcast extends IserverData {
-    tag: string;
 }

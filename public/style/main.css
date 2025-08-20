@@ -168,15 +168,18 @@ button .mdc-button__label .material-icons {
 }
 .field_container .field_value.mdc-text-field, .field_container .field_value.mdc-select,
 .field_container .field_value .mdc-select__anchor {
-  margin: 5px 0 !important;
-  height: 40px !important;
   text-align: left !important;
 }
 .field_container .field_value.mdc-text-field .mdc-notched-outline__notch, .field_container .field_value.mdc-select .mdc-notched-outline__notch,
 .field_container .field_value .mdc-select__anchor .mdc-notched-outline__notch {
   width: fit-content !important;
 }
-.field_container .field_value.mdc-text-field .mdc-floating-label--float-above, .field_container .field_value.mdc-select .mdc-floating-label--float-above,
+.field_container .field_value.mdc-text-field:not(.mdc-text-field--textarea), .field_container .field_value.mdc-select,
+.field_container .field_value .mdc-select__anchor {
+  margin: 5px 0 !important;
+  height: 40px !important;
+}
+.field_container .field_value.mdc-text-field:not(.mdc-text-field--textarea) .mdc-floating-label--float-above, .field_container .field_value.mdc-select .mdc-floating-label--float-above,
 .field_container .field_value .mdc-select__anchor .mdc-floating-label--float-above {
   top: 75% !important;
 }
@@ -291,7 +294,7 @@ table .row .cell.center {
   right: 0 !important;
   left: auto !important;
   bottom: auto !important;
-  z-index: 1001 !important;
+  z-index: 1999 !important;
 }
 .view_alert.success .mdc-snackbar__surface {
   background-color: #e4fbdf !important;
@@ -329,6 +332,60 @@ table .row .cell.center {
 }
 .view_alert .mdc-snackbar__surface .mdc-snackbar__actions .mdc-snackbar__action {
   margin: 6px !important;
+}
+
+.view_chat {
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1998;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+}
+.view_chat .container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  margin: 0 auto;
+  border: 1px solid;
+  padding: 10px;
+  background-color: #ffffff;
+}
+.view_chat .container .header {
+  text-align: right;
+  margin-bottom: 10px;
+}
+.view_chat .container .header i {
+  cursor: pointer !important;
+}
+.view_chat .container .message_received_container {
+  overflow-y: auto;
+  width: 95%;
+  height: 200px;
+  background-color: #191e29;
+  margin: 10px auto;
+  color: #ffffff;
+  text-align: left;
+  padding: 10px;
+  white-space: pre;
+}
+.view_chat .container .message_received_container .time, .view_chat .container .message_received_container .text {
+  display: block;
+}
+.view_chat .container .message_received_container .time {
+  margin-bottom: 5px;
+}
+.view_chat .container .message_received_container .text {
+  margin-bottom: 15px;
+}
+.view_chat .container .field_container {
+  margin: 10px 0;
+}
+.view_chat .container .mdc-touch-target-wrapper {
+  display: inline-block !important;
 }
 
 @font-face {
@@ -440,15 +497,20 @@ body *:not(.material-icons) {
   display: inline-block;
   vertical-align: middle;
 }
+.view_index > .right .table_client tbody tr td .item li p,
+.view_index > .right .table_video tbody tr td .item li p,
+.view_index > .right .table_upload tbody tr td .item li p {
+  cursor: pointer;
+}
 .view_index > .right .table_video .instruction {
-  list-style: disc;
-  margin-left: 20px;
+  list-style: auto;
+  margin: 0 0 10px 20px;
 }
 .view_index > .right .table_video .item li i,
 .view_index > .right .table_video .item li p {
   cursor: pointer;
 }
-.view_index > .right .table_video .video_name {
+.view_index > .right .table_video .name {
   text-align: center;
   margin-top: 10px;
   font-weight: bold;
@@ -459,6 +521,18 @@ body *:not(.material-icons) {
   margin: 10px auto;
   text-align: center;
   border: 1px solid;
+}
+.view_index > .right .table_upload .instruction {
+  list-style: disc;
+  margin: 0 0 10px 20px;
+}
+.view_index > .right .table_upload .name {
+  text-align: center;
+  margin-top: 10px;
+  font-weight: bold;
+}
+.view_index > .right .table_upload .button_container {
+  margin-top: 10px;
 }
 .view_index > .right .table_upload .input_upload {
   display: none;
@@ -490,7 +564,7 @@ body *:not(.material-icons) {
 .view_loader {
   position: fixed;
   background-color: #ffffff;
-  z-index: 1000;
+  z-index: 2000;
   top: 0;
   right: 0;
   left: 0;

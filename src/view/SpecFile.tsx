@@ -36,7 +36,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                 </td>
                                 <td class="cell column_action">
                                     <div class="field_container">
-                                        <div id={`mdcSelectBrowser_${index}`} class="mdc-select mdc-select--outlined field_value">
+                                        <div jsmvcfw-elementHook={`selectBrowserName_${index}`} class="mdc-select mdc-select--outlined field_value">
                                             <div class="mdc-select__anchor">
                                                 <span class="mdc-notched-outline">
                                                     <span class="mdc-notched-outline__leading"></span>
