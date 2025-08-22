@@ -15,19 +15,23 @@ export interface Ivariable {
     isChatVisible: IvariableBind<boolean>;
     clientIdSelected: IvariableBind<string>;
     chatMessageReceivedList: IvariableBind<ImessageDirect[]>;
+    isClientConnected: IvariableBind<boolean>;
+    clientCurrentId: IvariableBind<string | undefined>;
 }
 
 export interface Imethod {
     onClickRun: (index: number, specFileName: string) => void;
     onClickLogRun: (index: number) => void;
     onClickVideoLoad: () => void;
-    onClickVideoDelete: (index: number, name: string) => void;
     onClickVideoShow: (name: string) => void;
+    onClickVideoDelete: (index: number, name: string) => void;
     onClickChooseFile: () => void;
     onClickUpload: () => void;
-    onClickClient: (index: number) => void;
+    onClickClient: (index: number, clientId: string) => void;
     onSendChatMessage: () => void;
     onClickChatClose: () => void;
+    onClickConnect: () => void;
+    onErrorVideo: () => void;
 }
 
 export interface IelementHook extends Record<string, Element | Element[]> {

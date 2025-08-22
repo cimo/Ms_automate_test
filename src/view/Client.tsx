@@ -24,16 +24,43 @@ const viewClient = (variableObject: modelIndex.Ivariable, methodObject: modelInd
 
                                     result.push(
                                         <li key={key}>
-                                            <i class="mdc-button__icon material-icons" aria-hidden="true">
-                                                person
-                                            </i>
-                                            <p
-                                                onclick={() => {
-                                                    methodObject.onClickClient(index);
-                                                }}
-                                            >
-                                                {value}
-                                            </p>
+                                            <div class="clientId_container">
+                                                <i class="mdc-button__icon material-icons" aria-hidden="true">
+                                                    person
+                                                </i>
+                                                <p
+                                                    class={`${variableObject.clientCurrentId.state === value ? "exclude" : ""}`}
+                                                    onclick={() => {
+                                                        methodObject.onClickClient(index, value);
+                                                    }}
+                                                >
+                                                    {variableObject.clientCurrentId.state === value ? "You" : value}
+                                                </p>
+                                            </div>
+
+                                            {(() => {
+                                                const result: IvirtualNode[] = [];
+
+                                                if (variableObject.clientCurrentId.state === value && !variableObject.isClientConnected.state) {
+                                                    result.push(
+                                                        <button
+                                                            class="mdc-button mdc-button--raised mdc-button--leading button_primary"
+                                                            onclick={() => {
+                                                                methodObject.onClickConnect();
+                                                            }}
+                                                        >
+                                                            <span class="mdc-button__ripple"></span>
+                                                            <span class="mdc-button__label">
+                                                                <i class="mdc-button__icon material-icons" aria-hidden="true">
+                                                                    lan
+                                                                </i>
+                                                            </span>
+                                                        </button>
+                                                    );
+                                                }
+
+                                                return result;
+                                            })()}
                                         </li>
                                     );
                                 }

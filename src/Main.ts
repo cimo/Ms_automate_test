@@ -1,18 +1,12 @@
-import { frameworkInit, routerInit } from "@cimo/jsmvcfw/dist/src/Main";
-import CwsClient from "@cimo/websocket/dist/src/client/Manager";
+import { route } from "@cimo/jsmvcfw/dist/src/Main";
 
 // Source
-import * as helperSrc from "./HelperSrc";
 import ControllerIndex from "./controller/Index";
 
-const cwsClient = new CwsClient(helperSrc.WS_ADRESS);
-
-frameworkInit(true, "jsmvcfw_app", "/");
-
-routerInit([
+route([
     {
         title: "Index",
-        path: `${helperSrc.URL_ROOT}/ui`,
-        controller: () => new ControllerIndex(cwsClient)
+        path: "/",
+        controller: () => new ControllerIndex()
     }
 ]);

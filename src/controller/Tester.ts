@@ -245,10 +245,21 @@ export default class Tester {
     };
 
     private upload = (): void => {
-        this.cwsServer.receiveDataUpload((data, filename, clientId) => {
-            Fs.writeFileSync(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_INPUT}${filename}`, Buffer.concat(data));
+        this.cwsServer.receiveDataUpload((data, fileName, clientId) => {
+            const file = Buffer.concat(data);
 
-            const serverData: modelTester.IserverData = { status: "success", result: "Upload completed." };
+            const isSizeOk = helperSrc.fileCheckSize(file.length);
+
+            let serverData = {} as modelTester.IserverData;
+
+            if (isSizeOk) {
+                Fs.writeFileSync(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_INPUT}${fileName}`, file);
+
+                serverData = { status: "success", result: "Upload completed." };
+            } else {
+                serverData = { status: "error", result: `File limit is: ${helperSrc.FILE_SIZE_MB} MB.` };
+            }
+
             this.cwsServer.sendMessage("text", serverData, "upload", clientId);
         });
     };

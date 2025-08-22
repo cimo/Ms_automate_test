@@ -27,10 +27,11 @@ export default class Index implements Icontroller {
     private controllerAlert: ControllerAlert | null;
     private controllerDialog: ControllerDialog | null;
 
-    private cwsClient: CwsClient;
     private mdcSelectList: MDCSelect[];
     private mdcRippleList: MDCRipple[];
     private mdcTextFieldList: MDCTextField[];
+
+    private cwsClient: CwsClient;
 
     // Method
     private mdcEvent = (): void => {
@@ -92,6 +93,18 @@ export default class Index implements Icontroller {
         }
     };
 
+    private checkCwsConnection = (): boolean => {
+        if (this.variableObject.isClientConnected.state) {
+            return true;
+        }
+
+        if (this.controllerAlert) {
+            this.controllerAlert.open("error", "Need connect to the server.", 5000);
+        }
+
+        return false;
+    };
+
     private broadcast = (): void => {
         this.cwsClient.receiveData<modelTester.IserverDataBroadcast>("broadcast", (data) => {
             if (data.label === "connection") {
@@ -108,11 +121,17 @@ export default class Index implements Icontroller {
         });
     };
 
-    private direct = (): void => {
+    private receiveDataClientIdCurrent = (): void => {
+        this.cwsClient.receiveData<string>("clientId_current", (data) => {
+            this.variableObject.clientCurrentId.state = data;
+        });
+    };
+
+    private receiveDataDirect = (): void => {
         this.cwsClient.receiveDataDirect((data) => {
             this.variableObject.isChatVisible.state = true;
             this.variableObject.clientIdSelected.state = data.fromClientId;
-            this.variableObject.chatMessageReceivedList.state.push(data);
+            this.variableObject.chatMessageReceivedList.state = [data, ...this.variableObject.chatMessageReceivedList.state];
         });
     };
 
@@ -161,6 +180,12 @@ export default class Index implements Icontroller {
     };
 
     private onClickRun = (index: number, specFileName: string): void => {
+        const check = this.checkCwsConnection();
+
+        if (!check) {
+            return;
+        }
+
         if (!this.variableObject.outputList.state[index] || this.variableObject.outputList.state[index].phase !== "running") {
             const elementSelected = this.elementHookObject.selectBrowserName[index].querySelector(".mdc-deprecated-list-item--selected");
             const attributeValue = elementSelected ? (elementSelected.getAttribute("data-value") as string) : "";
@@ -178,21 +203,27 @@ export default class Index implements Icontroller {
     };
 
     private onClickLogRun = (index: number): void => {
+        const check = this.checkCwsConnection();
+
+        if (!check) {
+            return;
+        }
+
         const clientData: modelTester.IclientDataLog = { index };
         this.cwsClient.sendMessage("text", clientData, "log_run");
     };
 
     private onClickVideoLoad = (): void => {
-        const clientData: modelTester.IclientDataVideo = { name: this.elementHookObject.inputVideoName.value };
-        this.cwsClient.sendMessage("text", clientData, "video");
-    };
-
-    private onClickVideoDelete = (index: number, name: string): void => {
-        delete this.variableObject.videoList.state[index];
         this.variableObject.videoSrc.state = "";
 
-        const clientData: modelTester.IclientDataVideo = { name };
-        this.cwsClient.sendMessage("text", clientData, "video_delete");
+        const check = this.checkCwsConnection();
+
+        if (!check) {
+            return;
+        }
+
+        const clientData: modelTester.IclientDataVideo = { name: this.elementHookObject.inputVideoName.value };
+        this.cwsClient.sendMessage("text", clientData, "video");
     };
 
     private onClickVideoShow = (name: string): void => {
@@ -201,7 +232,21 @@ export default class Index implements Icontroller {
         }
     };
 
-    private onClickChooseFile = () => {
+    private onClickVideoDelete = (index: number, name: string): void => {
+        delete this.variableObject.videoList.state[index];
+        this.variableObject.videoSrc.state = "";
+
+        const check = this.checkCwsConnection();
+
+        if (!check) {
+            return;
+        }
+
+        const clientData: modelTester.IclientDataVideo = { name };
+        this.cwsClient.sendMessage("text", clientData, "video_delete");
+    };
+
+    private onClickChooseFile = (): void => {
         const element = this.elementHookObject.inputSpecUpload;
 
         if (element) {
@@ -219,6 +264,12 @@ export default class Index implements Icontroller {
     };
 
     private onClickUpload = (): void => {
+        const check = this.checkCwsConnection();
+
+        if (!check) {
+            return;
+        }
+
         const element = this.elementHookObject.inputSpecUpload;
 
         if (element && element.files) {
@@ -249,12 +300,20 @@ export default class Index implements Icontroller {
         }
     };
 
-    private onClickClient = (index: number): void => {
-        this.variableObject.isChatVisible.state = true;
-        this.variableObject.clientIdSelected.state = this.variableObject.clientList.state[index];
+    private onClickClient = (index: number, clientId: string): void => {
+        if (this.variableObject.clientCurrentId.state !== clientId) {
+            this.variableObject.isChatVisible.state = true;
+            this.variableObject.clientIdSelected.state = this.variableObject.clientList.state[index];
+        }
     };
 
     private onSendChatMessage = (): void => {
+        const check = this.checkCwsConnection();
+
+        if (!check) {
+            return;
+        }
+
         if (this.elementHookObject.inputChatMessageSend.value !== "") {
             this.cwsClient.sendDataDirect(this.elementHookObject.inputChatMessageSend.value, this.variableObject.clientIdSelected.state);
         }
@@ -267,21 +326,40 @@ export default class Index implements Icontroller {
         this.variableObject.chatMessageReceivedList.state = [];
     };
 
-    constructor(cwsClientValue: CwsClient) {
+    private onClickConnect = (): void => {
+        if (!this.variableObject.isClientConnected.state) {
+            this.cwsClient.open();
+        }
+    };
+
+    private onErrorVideo = () => {
+        if (this.controllerAlert) {
+            this.controllerAlert.open("error", "Content protected, need to be authenticated to view it.");
+        }
+    };
+
+    constructor() {
         this.variableObject = {} as modelIndex.Ivariable;
         this.methodObject = {} as modelIndex.Imethod;
         this.controllerAlert = new ControllerAlert();
         this.controllerDialog = new ControllerDialog();
 
-        this.cwsClient = cwsClientValue;
         this.mdcSelectList = [];
         this.mdcRippleList = [];
         this.mdcTextFieldList = [];
 
+        this.cwsClient = new CwsClient(helperSrc.WS_ADRESS);
+
+        this.cwsClient.open();
+
         this.cwsClient.checkStatus("connection", () => {
+            this.variableObject.isClientConnected.state = true;
+
             this.broadcast();
 
-            this.direct();
+            this.receiveDataClientIdCurrent();
+
+            this.receiveDataDirect();
 
             this.receiveDataRun();
 
@@ -296,10 +374,18 @@ export default class Index implements Icontroller {
             this.cwsClient.sendMessage("text", "", "output", 200);
 
             this.variableObject.isLoading.state = false;
+
+            if (this.controllerAlert) {
+                this.controllerAlert.open("success", "Client connected.", 5000);
+            }
         });
 
         this.cwsClient.checkStatus("disconnection", () => {
-            //window.location.href = "/logout";
+            this.variableObject.isClientConnected.state = false;
+
+            if (this.controllerAlert) {
+                this.controllerAlert.open("error", "Client disconnected.");
+            }
         });
     }
 
@@ -317,7 +403,9 @@ export default class Index implements Icontroller {
                 uploadFileName: "",
                 isChatVisible: false,
                 clientIdSelected: "",
-                chatMessageReceivedList: []
+                chatMessageReceivedList: [],
+                isClientConnected: false,
+                clientCurrentId: ""
             },
             this.constructor.name
         );
@@ -326,13 +414,15 @@ export default class Index implements Icontroller {
             onClickRun: this.onClickRun,
             onClickLogRun: this.onClickLogRun,
             onClickVideoLoad: this.onClickVideoLoad,
-            onClickVideoDelete: this.onClickVideoDelete,
             onClickVideoShow: this.onClickVideoShow,
+            onClickVideoDelete: this.onClickVideoDelete,
             onClickChooseFile: this.onClickChooseFile,
             onClickUpload: this.onClickUpload,
             onClickClient: this.onClickClient,
             onSendChatMessage: this.onSendChatMessage,
-            onClickChatClose: this.onClickChatClose
+            onClickChatClose: this.onClickChatClose,
+            onClickConnect: this.onClickConnect,
+            onErrorVideo: this.onErrorVideo
         };
     }
 
@@ -372,5 +462,7 @@ export default class Index implements Icontroller {
 
     rendered(): void {}
 
-    destroy(): void {}
+    destroy(): void {
+        this.cwsClient.close();
+    }
 }

@@ -84,7 +84,13 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                                 result.push(
                                     <div>
                                         <p class="name">{variableObject.videoSrc.state.split("/").pop()}</p>
-                                        <video controls src={variableObject.videoSrc.state}></video>
+                                        <video
+                                            controls
+                                            src={`${variableObject.videoSrc.state}?nocache=${Date.now()}`}
+                                            onerror={() => {
+                                                methodObject.onErrorVideo();
+                                            }}
+                                        ></video>
                                     </div>
                                 );
                             }

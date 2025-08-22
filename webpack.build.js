@@ -42,8 +42,8 @@ module.exports = {
     output: {
         filename: "[name].js",
         sourceMapFilename: "[name].js.map",
-        path: Path.resolve(__dirname, "public/js"),
-        publicPath: "/js/"
+        path: Path.resolve(__dirname, "public/asset/js"),
+        publicPath: "/asset/js/"
     },
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".jsx"],

@@ -1,6 +1,7 @@
 import { jsxFactory, IvirtualNode } from "@cimo/jsmvcfw/dist/src/Main";
 
 // Source
+import * as helperSrc from "../HelperSrc";
 import * as modelIndex from "../model/Index";
 
 const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex.Imethod): IvirtualNode => {
@@ -24,10 +25,14 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
                         {(() => {
                             const result: IvirtualNode[] = [];
 
-                            for (const [key, chatMessageReceived] of Object.entries(variableObject.chatMessageReceivedList.state)) {
+                            const list = Object.entries(variableObject.chatMessageReceivedList.state);
+
+                            for (const [key, chatMessageReceived] of list) {
+                                const date = new Date(chatMessageReceived.time);
+
                                 result.push(
                                     <p key={key}>
-                                        <span class="time">{chatMessageReceived.time}</span>
+                                        <span class="time">{helperSrc.localeFormat(date)}</span>
                                         <span class="text">{chatMessageReceived.content}</span>
                                     </p>
                                 );
@@ -49,7 +54,7 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
                                 jsmvcfw-elementHook="inputChatMessageSend"
                                 name="messageSend"
                                 class="mdc-text-field__input"
-                                rows="4"
+                                rows="2"
                                 cols="40"
                                 aria-label="Label"
                             ></textarea>

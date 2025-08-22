@@ -38,7 +38,8 @@
                         text-align: center;
                         vertical-align: middle;
 
-                        .field_container, button {
+                        .field_container,
+                        button {
                             display: inline-block !important;
                             vertical-align: sub !important;
                         }
@@ -85,26 +86,43 @@
                         text-align: left;
                         vertical-align: middle;
 
-                        .field_container, button {
-                            display: inline-block !important;
-                            vertical-align: sub !important;
-                        }
-
                         .item {
                             li {
-                                margin: 5px 0;
-
                                 i,
                                 p {
                                     display: inline-block;
                                     vertical-align: middle;
                                 }
-
-                                p {
-                                    cursor: pointer;
-                                }
                             }
                         }
+
+                        .field_container,
+                        button {
+                            display: inline-block !important;
+                            vertical-align: sub !important;
+                        }
+                    }
+                }
+            }
+        }
+
+        .table_client {
+            .item {
+                li {
+                    .clientId_container {
+                        display: inline-block;
+                        vertical-align: sub;
+
+                        p:not(.exclude) {
+                            cursor: pointer;
+                        }
+                    }
+
+                    .mdc-button {
+                        min-width: 0px !important;
+                        min-height: 0px !important;
+                        width: 38px !important;
+                        height: 30px !important;
                     }
                 }
             }
