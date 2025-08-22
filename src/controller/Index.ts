@@ -24,8 +24,8 @@ export default class Index implements Icontroller {
     // Variable
     private variableObject: modelIndex.Ivariable;
     private methodObject: modelIndex.Imethod;
-    private controllerAlert: ControllerAlert | null;
-    private controllerDialog: ControllerDialog | null;
+    private controllerAlert: ControllerAlert;
+    private controllerDialog: ControllerDialog;
 
     private mdcSelectList: MDCSelect[];
     private mdcRippleList: MDCRipple[];
@@ -98,9 +98,7 @@ export default class Index implements Icontroller {
             return true;
         }
 
-        if (this.controllerAlert) {
-            this.controllerAlert.open("error", "Need connect to the server.", 5000);
-        }
+        this.controllerAlert.open("error", "Need connect to the server.", 5000);
 
         return false;
     };
@@ -137,26 +135,20 @@ export default class Index implements Icontroller {
 
     private receiveDataRun = (): void => {
         this.cwsClient.receiveData<modelTester.IserverData>("run", (data) => {
-            if (this.controllerAlert) {
-                this.controllerAlert.open(data.status, data.result as string);
-            }
+            this.controllerAlert.open(data.status, data.result as string);
         });
     };
 
     private receiveDataLog = (): void => {
         this.cwsClient.receiveData<modelTester.IserverData>("log_run", (data) => {
-            if (this.controllerDialog) {
-                this.controllerDialog.open(data.status, data.result as string, true);
-            }
+            this.controllerDialog.open(data.status, data.result as string, true);
         });
     };
 
     private receiveDataVideo = (): void => {
         this.cwsClient.receiveData<modelTester.IserverData>("video", (data) => {
             if (data.status === "error") {
-                if (this.controllerAlert) {
-                    this.controllerAlert.open(data.status, data.result as string);
-                }
+                this.controllerAlert.open(data.status, data.result as string);
 
                 this.variableObject.videoList.state = [];
             } else {
@@ -165,17 +157,13 @@ export default class Index implements Icontroller {
         });
 
         this.cwsClient.receiveData<modelTester.IserverData>("video_delete", (data) => {
-            if (this.controllerAlert) {
-                this.controllerAlert.open(data.status, data.result as string);
-            }
+            this.controllerAlert.open(data.status, data.result as string);
         });
     };
 
     private receiveDataUpload = (): void => {
         this.cwsClient.receiveData<modelTester.IserverData>("upload", (data) => {
-            if (this.controllerAlert) {
-                this.controllerAlert.open(data.status, data.result as string);
-            }
+            this.controllerAlert.open(data.status, data.result as string);
         });
     };
 
@@ -293,9 +281,7 @@ export default class Index implements Icontroller {
 
                 reader.readAsArrayBuffer(file);
             } else {
-                if (this.controllerAlert) {
-                    this.controllerAlert.open("error", "Select a file.");
-                }
+                this.controllerAlert.open("error", "Select a file.");
             }
         }
     };
@@ -333,9 +319,7 @@ export default class Index implements Icontroller {
     };
 
     private onErrorVideo = () => {
-        if (this.controllerAlert) {
-            this.controllerAlert.open("error", "Content protected, need to be authenticated to view it.");
-        }
+        this.controllerAlert.open("error", "Content protected, need to be authenticated to view it.");
     };
 
     constructor() {
@@ -375,17 +359,13 @@ export default class Index implements Icontroller {
 
             this.variableObject.isLoading.state = false;
 
-            if (this.controllerAlert) {
-                this.controllerAlert.open("success", "Client connected.", 5000);
-            }
+            this.controllerAlert.open("success", "Client connected.", 5000);
         });
 
         this.cwsClient.checkStatus("disconnection", () => {
             this.variableObject.isClientConnected.state = false;
 
-            if (this.controllerAlert) {
-                this.controllerAlert.open("error", "Client disconnected.");
-            }
+            this.controllerAlert.open("error", "Client disconnected.");
         });
     }
 
@@ -452,10 +432,8 @@ export default class Index implements Icontroller {
     subControllerList(): Icontroller[] {
         const resultList: Icontroller[] = [];
 
-        if (this.controllerAlert && this.controllerDialog) {
-            resultList.push(this.controllerAlert);
-            resultList.push(this.controllerDialog);
-        }
+        resultList.push(this.controllerAlert);
+        resultList.push(this.controllerDialog);
 
         return resultList;
     }

@@ -55,5 +55,4 @@ https://localhost:1044/login
 
 1. /info
 2. /login
-3. /ui
 4. /logout
