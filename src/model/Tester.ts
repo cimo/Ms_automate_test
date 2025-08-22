@@ -1,37 +1,33 @@
-export interface IclientDataRun {
-    index: number;
-    name: string;
+export interface Ioutput {
     browser: string;
-}
-
-export interface IclientDataRunLog {
-    index: number;
-}
-
-export interface IclientDataStop {
-    index: number;
-}
-
-export interface IclientDataVideo {
-    name: string;
-}
-
-export interface IserverData {
-    status: string;
-    result: string | string[] | IserverDataOutput[];
-}
-
-export interface IserverDataOutput {
-    state: string;
-    browser: string;
+    phase: string;
     time: string;
     log: string;
 }
 
-export interface IserverDataRun extends IserverData {
-    index: number;
+export interface IserverData extends Record<string, unknown> {
+    status: string;
+    result: string | string[] | Ioutput[];
 }
 
 export interface IserverDataBroadcast extends IserverData {
-    tag: string;
+    label: string;
+}
+
+export interface IclientDataRun extends Record<string, unknown> {
+    index: number;
+    specFileName: string;
+    browser: string;
+}
+
+export interface IclientDataStop extends Record<string, unknown> {
+    index: number;
+}
+
+export interface IclientDataLog extends Record<string, unknown> {
+    index: number;
+}
+
+export interface IclientDataVideo extends Record<string, unknown> {
+    name: string;
 }

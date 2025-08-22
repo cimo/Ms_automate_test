@@ -19,14 +19,6 @@ docker compose -f docker-compose.yaml --env-file ./env/local.env build --no-cach
 docker compose -f docker-compose.yaml --env-file ./env/local.env up --detach --pull "always"
 ```
 
-## Wsl UI
-
-1. Write on the container terminal:
-
-```
-npm run execute_ui
-```
-
 ## Reset
 
 1. Remove this from the root:
@@ -34,15 +26,24 @@ npm run execute_ui
     - .cache
     - .config
     - .local
+    - .ms_cronjob-volume
     - .npm
     - .pki
-    - .ms_cronjob-volume
     - node_modules
     - package-lock.json
     - certificate/tls.crt
     - certificate/tls.key
+    - certificate/tls.pem
 
 2. Follow the "Installation" instructions.
+
+## Wsl UI
+
+1. Write on the container terminal:
+
+```
+npm run execute_ui
+```
 
 ## UI
 

@@ -2,13 +2,12 @@ const Path = require("path");
 const webpack = require("webpack");
 const TerserPlugin = require("terser-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const EsLintPlugin = require("eslint-webpack-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
-const { Ce } = require("@cimo/environment");
+const { Ce } = require("@cimo/environment/dist/src/Main");
 
 const ENV_NAME = Ce.checkVariable("ENV_NAME");
 
-const ceList = Ce.loadFile(`./env/${ENV_NAME}.env`);
+const ceObject = Ce.loadFile(`./env/${ENV_NAME}.env`);
 
 Ce.checkVariable("DOMAIN");
 Ce.checkVariable("TIME_ZONE");
@@ -39,15 +38,15 @@ module.exports = {
     target: "web",
     devtool: "source-map",
     mode: NODE_ENV,
-    entry: `${PATH_ROOT}src/view/Main.ts`,
+    entry: `${PATH_ROOT}src/Main.ts`,
     output: {
         filename: "[name].js",
         sourceMapFilename: "[name].js.map",
-        path: Path.resolve(__dirname, "public/js"),
-        publicPath: URL_ROOT
+        path: Path.resolve(__dirname, "public/asset/js"),
+        publicPath: "/asset/js/"
     },
     resolve: {
-        extensions: [".ts", ".js"],
+        extensions: [".ts", ".tsx", ".js", ".jsx"],
         fallback: {
             fs: false
         }
@@ -55,9 +54,32 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.ts$/,
-                use: "ts-loader",
-                exclude: /(node_modules)/
+                test: /\.(ts)$/,
+                use: [
+                    {
+                        loader: "esbuild-loader",
+                        options: {
+                            loader: "ts",
+                            tsconfig: Path.resolve(__dirname, "tsconfig.json")
+                        }
+                    }
+                ],
+                include: /(src)/,
+                exclude: /(dist|node_modules|public)/
+            },
+            {
+                test: /\.(tsx)$/,
+                use: [
+                    {
+                        loader: "esbuild-loader",
+                        options: {
+                            loader: "tsx",
+                            tsconfig: Path.resolve(__dirname, "tsconfig.json")
+                        }
+                    }
+                ],
+                include: /(src\/view)/,
+                exclude: /(dist|node_modules|public)/
             }
         ]
     },
@@ -65,10 +87,10 @@ module.exports = {
         hints: false
     },
     optimization: {
-        minimize: ENV_NAME === "local" ? false : true,
+        minimize: NODE_ENV === "development" ? false : true,
         minimizer: [
             new TerserPlugin({
-                exclude: /(node_modules)/,
+                exclude: /(dist|node_modules|public)/,
                 parallel: true,
                 terserOptions: {
                     ecma: undefined,
@@ -81,24 +103,20 @@ module.exports = {
         ]
     },
     plugins: [
-        new webpack.DefinePlugin(ceList),
+        new webpack.DefinePlugin(ceObject),
         new HtmlWebpackPlugin({
-            template: `${Path.resolve(__dirname)}/template_index.html`,
-            filename: `${Path.resolve(__dirname, "public")}/index.html`,
+            template: Path.resolve(__dirname, "template_index.html"),
+            filename: Path.resolve(__dirname, "public/index.html"),
             inject: false,
+            minify: false,
             templateParameters: {
                 name: NAME,
                 urlRoot: URL_ROOT
             }
         }),
-        new EsLintPlugin({
-            extensions: ["ts", "js"],
-            configType: "flat",
-            overrideConfigFile: `${Path.resolve(__dirname)}/eslint.config.js`
-        }),
         new CompressionPlugin({
             algorithm: "gzip",
-            test: /\.js$|\.css$|\.html$/,
+            test: /\.(js|jsx|css|html)$/,
             threshold: 10240,
             minRatio: 0.8
         })

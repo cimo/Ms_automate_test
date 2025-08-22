@@ -60,10 +60,11 @@ USER node
 
 WORKDIR ${PATH_ROOT}
 
-RUN npm install \
+RUN rm -rf node_modules package-lock.json \
+    && npm install \
     && npx playwright install \
     && npm run build
 
-CMD node ${PATH_ROOT}dist/controller/Server.js
+CMD node ${PATH_ROOT}dist/src/controller/Server.js
 
 EXPOSE ${SERVER_PORT}

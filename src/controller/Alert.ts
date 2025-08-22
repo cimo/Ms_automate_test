@@ -1,70 +1,93 @@
-import { Icontroller } from "@cimo/jsmvcfw/dist/JsMvcFwInterface";
-import { writeLog } from "@cimo/jsmvcfw/dist/JsMvcFw";
+import { Icontroller, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main";
 import { MDCSnackbar } from "@material/snackbar";
 
 // Source
-import { IvariableList } from "../model/Alert";
+import * as modelAlert from "../model/Alert";
+import viewAlert from "../view/Alert";
 
-export default class ControllerAlert implements Icontroller<IvariableList> {
+export default class Alert implements Icontroller {
     // Variable
-    private variableList: IvariableList;
+    private variableObject: modelAlert.Ivariable;
+    private methodObject: modelAlert.Imethod;
+
     private mdcSnackbar: MDCSnackbar | null;
 
     // Method
-    constructor() {
-        this.variableList = {} as IvariableList;
-        this.mdcSnackbar = null;
+    private mdcEvent = (): void => {
+        const element = this.elementHookObject.mdcSnackbar;
 
-        this.initializeHtmlElement();
-    }
-
-    variable(): IvariableList {
-        return this.variableList;
-    }
-
-    view(variableList: IvariableList): string {
-        writeLog("Alert.ts => view()", variableList);
-
-        return "";
-    }
-
-    event(variableList: IvariableList): void {
-        writeLog("Alert.ts => event()", variableList);
-    }
-
-    destroy(variableList: IvariableList): void {
-        writeLog("Alert.ts => destroy()", variableList);
-    }
-
-    private initializeHtmlElement = (): void => {
-        const elementMdcSnackbar = document.querySelector<HTMLElement>(".mdc-snackbar");
-
-        if (elementMdcSnackbar) {
-            this.mdcSnackbar = new MDCSnackbar(elementMdcSnackbar);
-
-            if (this.mdcSnackbar) {
-                this.mdcSnackbar.timeoutMs = -1;
-            }
+        if (element) {
+            this.mdcSnackbar = new MDCSnackbar(element);
+            this.mdcSnackbar.timeoutMs = -1;
+            this.mdcSnackbar.listen("MDCSnackbar:closed", () => {
+                this.variableObject.className.state = "";
+                this.variableObject.label.state = "";
+            });
         }
     };
 
-    open = (className: string, text: string, timeout = -1) => {
+    private onClickClose = (): void => {
+        this.close();
+    };
+
+    constructor() {
+        this.variableObject = {} as modelAlert.Ivariable;
+        this.methodObject = {} as modelAlert.Imethod;
+
+        this.mdcSnackbar = null;
+    }
+
+    open = (className: string, text: string, timeout = -1): void => {
         this.close();
 
+        this.variableObject.className.state = className;
+        this.variableObject.label.state = text;
+
         if (this.mdcSnackbar) {
-            this.mdcSnackbar.root.classList.add(className);
-            this.mdcSnackbar.labelText = text;
             this.mdcSnackbar.timeoutMs = timeout;
             this.mdcSnackbar.open();
         }
     };
 
-    close = () => {
+    close = (): void => {
         if (this.mdcSnackbar) {
             this.mdcSnackbar.close();
-            this.mdcSnackbar.root.classList.remove("success");
-            this.mdcSnackbar.root.classList.remove("error");
-            this.mdcSnackbar.labelText = "";
         }
     };
+
+    elementHookObject = {} as modelAlert.IelementHook;
+
+    variable(): void {
+        this.variableObject = variableBind(
+            {
+                className: "",
+                label: ""
+            },
+            this.constructor.name
+        );
+
+        this.methodObject = {
+            onClickClose: this.onClickClose
+        };
+    }
+
+    variableEffect(): void {}
+
+    view(): IvirtualNode {
+        return viewAlert(this.variableObject, this.methodObject);
+    }
+
+    event(): void {}
+
+    subControllerList(): Icontroller[] {
+        const list: Icontroller[] = [];
+
+        return list;
+    }
+
+    rendered(): void {
+        this.mdcEvent();
+    }
+
+    destroy(): void {}
 }

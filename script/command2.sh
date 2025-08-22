@@ -5,8 +5,8 @@ find "${1}" -type f -name "*.webm" -exec sh -c '
 
     for data; do
         parentDir=$(dirname "${data}")
-        filenameNew=$(basename "${parentDir}").webm
-        destination="${p2}file/${filenameNew}"
+        fileNameNew=$(basename "${parentDir}").webm
+        destination="${p2}file/${fileNameNew}"
         rm "${destination}"
         mv "${data}" "${destination}"
     done

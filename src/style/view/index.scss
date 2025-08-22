@@ -1,23 +1,9 @@
 @use "../color.scss" as color;
 @use "../media.scss" as media;
 
-.page_container {
-    & > .left {
-        display: none !important;
-    }
-
-    & > .right {
-        width: 100% !important;
-    }
-}
-
 .view_index {
-    text-align: center;
-
-    .left {
-        display: inline-block;
+    & > .left {
         margin: 10px;
-        text-align: left;
         width: 55%;
 
         .table_data {
@@ -25,10 +11,10 @@
                 width: 5%;
             }
             .column_title {
-                width: 30%;
+                width: 20%;
             }
             .column_action {
-                width: 30%;
+                width: 40%;
             }
             .column_time {
                 width: 25%;
@@ -37,27 +23,25 @@
                 width: 10%;
             }
 
+            thead {
+                tr {
+                    th {
+                        text-align: center;
+                        vertical-align: middle;
+                    }
+                }
+            }
+
             tbody {
                 tr {
                     td {
-                        &.column_id,
-                        &.column_status {
-                            text-align: center;
-                        }
+                        text-align: center;
+                        vertical-align: middle;
 
-                        .field_container {
+                        .field_container,
+                        button {
                             display: inline-block !important;
-                        }
-
-                        .button_log {
-                            display: none !important;
-                        }
-
-                        .icon_loading,
-                        .icon_success,
-                        .icon_fail {
-                            display: none;
-                            vertical-align: middle;
+                            vertical-align: sub !important;
                         }
 
                         .icon_loading {
@@ -77,10 +61,8 @@
         }
     }
 
-    .right {
-        display: inline-block;
+    & > .right {
         margin: 10px;
-        text-align: left;
         width: 35%;
         vertical-align: top;
 
@@ -89,42 +71,69 @@
         .table_upload {
             margin-bottom: 10px;
 
-            tbody {
+            thead {
                 tr {
-                    td {
+                    th {
                         text-align: center;
-
-                        .field_container {
-                            display: inline-block !important;
-                        }
-
-                        p {
-                            text-align: left;
-                        }
-                    }
-                }
-            }
-        }
-
-        .table_client,
-        .table_video {
-            .item {
-                text-align: left;
-                margin: 10px;
-
-                li {
-                    margin: 5px 0 5px 0;
-
-                    i,
-                    p {
-                        display: inline-block;
                         vertical-align: middle;
                     }
                 }
             }
+
+            tbody {
+                tr {
+                    td {
+                        text-align: left;
+                        vertical-align: middle;
+
+                        .item {
+                            li {
+                                i,
+                                p {
+                                    display: inline-block;
+                                    vertical-align: middle;
+                                }
+                            }
+                        }
+
+                        .field_container,
+                        button {
+                            display: inline-block !important;
+                            vertical-align: sub !important;
+                        }
+                    }
+                }
+            }
+        }
+
+        .table_client {
+            .item {
+                li {
+                    .clientId_container {
+                        display: inline-block;
+                        vertical-align: sub;
+
+                        p:not(.exclude) {
+                            cursor: pointer;
+                        }
+                    }
+
+                    .mdc-button {
+                        min-width: 0px !important;
+                        min-height: 0px !important;
+                        width: 38px !important;
+                        height: 30px !important;
+                    }
+                }
+            }
         }
 
         .table_video {
+            .instruction {
+                list-style: auto;
+                margin: 0 0 10px 20px;
+            }
+
             .item {
                 li {
                     i,
@@ -134,25 +143,39 @@
                 }
             }
 
-            video {
-                display: none;
-                width: 400px;
-                height: 200px;
-                margin: 10px auto;
+            .name {
+                text-align: center;
+                margin-top: 10px;
+                font-weight: bold;
             }
 
-            .field_container {
-                margin-top: 10px;
+            video {
+                display: block;
+                width: 400px;
+                margin: 10px auto;
+                text-align: center;
+                border: 1px solid;
             }
         }
 
         .table_upload {
-            .input_upload {
-                display: none;
+            .instruction {
+                list-style: disc;
+                margin: 0 0 10px 20px;
             }
 
-            button {
-                margin-top: 10px !important;
+            .name {
+                text-align: center;
+                margin-top: 10px;
+                font-weight: bold;
+            }
+
+            .button_container {
+                margin-top: 10px;
+            }
+
+            .input_upload {
+                display: none;
             }
         }
     }

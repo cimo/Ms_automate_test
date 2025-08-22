@@ -1,52 +1,19 @@
 {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true,
-    "editor.codeActionsOnSave": {
-        "source.fixAll": "explicit"
-    },
-    "javascript.validate.enable": false,
-    "typescript.validate.enable": false,
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "typescript.enablePromptUseWorkspaceTsdk": true,
-    "eslint.format.enable": true,
-    "containers.commands.attach": "${containerCommand} exec -it ${containerId} bash",
-    "[dockercompose]": {
-        "editor.defaultFormatter": "ms-azuretools.vscode-docker"
-    },
-    "[dockerfile]": {
-        "editor.defaultFormatter": "ms-azuretools.vscode-docker"
-    },
-    "[typescript]": {
-        "editor.formatOnSave": false
-    },
-    "[javascript]": {
-        "editor.formatOnSave": false
-    },
-    "[html]": {
-        "editor.defaultFormatter": "vscode.html-language-features"
-    },
-    "[python]": {
-        "editor.defaultFormatter": "ms-python.black-formatter"
-    },
-    "diffEditor.ignoreTrimWhitespace": false,
     "l13Diff.exclude": [
         ".git",
         ".cache",
         ".config",
         ".local",
+        ".ms_cronjob-volume",
         ".npm",
         ".pki",
-        "node_modules",
-        "log",
         "dist",
-        "file/document",
-        "file/input",
-        "file/output",
-        "file/web_app",
+        "file",
+        "log",
+        "node_modules",
         "public/file",
-        "public/js",
-        "public/style",
-        "kubernetes"
+        "public/asset/js",
+        "public/asset/style"
     ],
     "l13Diff.ignoreEndOfLine": false,
     "l13Diff.ignoreTrimWhitespace": "default",
