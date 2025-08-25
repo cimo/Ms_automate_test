@@ -106,13 +106,13 @@ export default class Server {
             this.router.get("/login", (_request: Request, response: Response) => {
                 Ca.writeCookie(`${helperSrc.LABEL}_authentication`, response);
 
-                response.redirect("/");
+                response.redirect(`${helperSrc.URL_ROOT}/`);
             });
 
             this.router.get("/logout", Ca.authenticationMiddleware, (request: Request, response: Response) => {
                 Ca.removeCookie(`${helperSrc.LABEL}_authentication`, request, response);
 
-                response.redirect("/info");
+                response.redirect(`${helperSrc.URL_ROOT}/info`);
             });
 
             this.router.get("/info", (request: modelServer.Irequest, response: Response) => {
