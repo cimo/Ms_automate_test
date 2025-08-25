@@ -42,7 +42,7 @@ export default class Server {
     createSetting = (): void => {
         this.app.use(Express.json());
         this.app.use(Express.urlencoded({ extended: true }));
-        this.app.use("/asset", Express.static(`${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}asset/`));
+        this.app.use(`${helperSrc.URL_ROOT}/asset`, Express.static(`${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}asset/`));
         this.app.use(CookieParser());
         this.app.use(
             Cors({
@@ -129,8 +129,12 @@ export default class Server {
                 }
             });
 
-            this.router.get("*", Ca.authenticationMiddleware, (_request: Request, response: Response) => {
-                response.sendFile(`${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}index.html`);
+            this.router.get("*", Ca.authenticationMiddleware, (request: Request, response: Response) => {
+                if (request.accepts("html")) {
+                    response.sendFile(`${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}index.html`);
+                } else {
+                    response.status(404).send("Html not found!");
+                }
             });
         });
     };
