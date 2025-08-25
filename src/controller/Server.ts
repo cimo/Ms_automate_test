@@ -1,4 +1,4 @@
-import Express, { Request, Response, NextFunction } from "express";
+import Express, { Request, Response, NextFunction, Router } from "express";
 import { rateLimit } from "express-rate-limit";
 import CookieParser from "cookie-parser";
 import Cors from "cors";
@@ -19,6 +19,7 @@ export default class Server {
     private corsOption: modelServer.Icors;
     private limiterOption: modelServer.Ilimiter;
     private app: Express.Express;
+    private router: Router;
 
     // Method
     constructor() {
@@ -35,6 +36,7 @@ export default class Server {
         };
 
         this.app = Express();
+        this.router = Router();
     }
 
     createSetting = (): void => {
@@ -70,6 +72,7 @@ export default class Server {
 
             next();
         });
+        this.app.use(helperSrc.URL_ROOT, this.router);
     };
 
     createServer = (): void => {
@@ -100,23 +103,23 @@ export default class Server {
 
             helperSrc.writeLog("Server.ts - createServer() - listen()", `Port: ${helperSrc.SERVER_PORT} - Time: ${serverTime}`);
 
-            this.app.get("/login", (_request: Request, response: Response) => {
+            this.router.get("/login", (_request: Request, response: Response) => {
                 Ca.writeCookie(`${helperSrc.LABEL}_authentication`, response);
 
                 response.redirect("/");
             });
 
-            this.app.get("/logout", Ca.authenticationMiddleware, (request: Request, response: Response) => {
+            this.router.get("/logout", Ca.authenticationMiddleware, (request: Request, response: Response) => {
                 Ca.removeCookie(`${helperSrc.LABEL}_authentication`, request, response);
 
                 response.redirect("/info");
             });
 
-            this.app.get("/info", (request: modelServer.Irequest, response: Response) => {
+            this.router.get("/info", (request: modelServer.Irequest, response: Response) => {
                 helperSrc.responseBody(`Client ip: ${request.clientIp || ""}`, "", response, 200);
             });
 
-            this.app.get("/file/*", Ca.authenticationMiddleware, (request: Request, response: Response) => {
+            this.router.get("/file/*", Ca.authenticationMiddleware, (request: Request, response: Response) => {
                 const filePath = `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}${request.path}`;
 
                 if (Fs.existsSync(filePath)) {
@@ -126,7 +129,7 @@ export default class Server {
                 }
             });
 
-            this.app.get("*", Ca.authenticationMiddleware, (_request: Request, response: Response) => {
+            this.router.get("*", Ca.authenticationMiddleware, (_request: Request, response: Response) => {
                 response.sendFile(`${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}index.html`);
             });
         });
