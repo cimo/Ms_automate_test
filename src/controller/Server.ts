@@ -103,16 +103,16 @@ export default class Server {
 
             helperSrc.writeLog("Server.ts - createServer() - listen()", `Port: ${helperSrc.SERVER_PORT} - Time: ${serverTime}`);
 
-            this.router.get("/login", (_request: Request, response: Response) => {
+            this.router.get("/login", (request: Request, response: Response) => {
                 Ca.writeCookie(`${helperSrc.LABEL}_authentication`, response);
 
-                response.redirect(`${helperSrc.URL_ROOT}/`);
+                response.redirect(`${request.baseUrl}/`);
             });
 
             this.router.get("/logout", Ca.authenticationMiddleware, (request: Request, response: Response) => {
                 Ca.removeCookie(`${helperSrc.LABEL}_authentication`, request, response);
 
-                response.redirect(`${helperSrc.URL_ROOT}/info`);
+                response.redirect(`${request.baseUrl}/info`);
             });
 
             this.router.get("/info", (request: modelServer.Irequest, response: Response) => {

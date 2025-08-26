@@ -9,7 +9,7 @@ setUrlRoot(helperSrc.URL_ROOT);
 route([
     {
         title: "Index",
-        path: `${helperSrc.URL_ROOT}/`,
+        path: "/",
         controller: () => new ControllerIndex()
     }
 ]);
