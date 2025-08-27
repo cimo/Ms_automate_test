@@ -111,7 +111,8 @@ module.exports = {
             minify: false,
             templateParameters: {
                 name: NAME,
-                urlRoot: URL_ROOT
+                urlRoot: URL_ROOT,
+                dateNow: Date.now()
             }
         }),
         new CompressionPlugin({

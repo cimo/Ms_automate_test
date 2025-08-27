@@ -32,7 +32,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                     <p>{index + 1}</p>
                                 </td>
                                 <td class="cell column_title">
-                                    <p>{value}</p>
+                                    <p title={value}>{value}</p>
                                 </td>
                                 <td class="cell column_action">
                                     <div class="field_container">

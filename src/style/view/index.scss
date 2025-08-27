@@ -11,7 +11,7 @@
                 width: 5%;
             }
             .column_title {
-                width: 35%;
+                width: 25%;
             }
             .column_action {
                 width: 30%;
@@ -40,6 +40,13 @@
 
                         &.column_title {
                             text-align: left;
+
+                            p {
+                                white-space: nowrap;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                width: 200px;
+                            }
                         }
 
                         .field_container,

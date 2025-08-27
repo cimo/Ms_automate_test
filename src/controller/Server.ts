@@ -1,4 +1,4 @@
-import Express, { Request, Response, NextFunction, Router } from "express";
+import Express, { Request, Response, NextFunction } from "express";
 import { rateLimit } from "express-rate-limit";
 import CookieParser from "cookie-parser";
 import Cors from "cors";
@@ -19,7 +19,6 @@ export default class Server {
     private corsOption: modelServer.Icors;
     private limiterOption: modelServer.Ilimiter;
     private app: Express.Express;
-    private router: Router;
 
     // Method
     constructor() {
@@ -36,13 +35,12 @@ export default class Server {
         };
 
         this.app = Express();
-        this.router = Router();
     }
 
     createSetting = (): void => {
         this.app.use(Express.json());
         this.app.use(Express.urlencoded({ extended: true }));
-        this.app.use(`${helperSrc.URL_ROOT}/asset`, Express.static(`${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}asset/`));
+        this.app.use("/asset", Express.static(`${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}asset/`));
         this.app.use(CookieParser());
         this.app.use(
             Cors({
@@ -57,22 +55,18 @@ export default class Server {
                 limit: this.limiterOption.limit
             })
         );
-        this.app.use((_request: modelServer.Irequest, response: Response, next: NextFunction) => {
+        this.app.use((request: modelServer.Irequest, response: Response, next: NextFunction) => {
             response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, private");
             response.setHeader("Pragma", "no-cache");
             response.setHeader("Expires", "0");
 
-            next();
-        });
-        this.app.use((request: modelServer.Irequest, _, next: NextFunction) => {
             const headerForwarded = request.headers["x-forwarded-for"] ? request.headers["x-forwarded-for"][0] : "";
-            const removeAddress = request.socket.remoteAddress ? request.socket.remoteAddress : "";
+            const remoteAddress = request.socket.remoteAddress ? request.socket.remoteAddress : "";
 
-            request.clientIp = headerForwarded || removeAddress;
+            request.clientIp = headerForwarded || remoteAddress;
 
             next();
         });
-        this.app.use(helperSrc.URL_ROOT, this.router);
     };
 
     createServer = (): void => {
@@ -103,38 +97,39 @@ export default class Server {
 
             helperSrc.writeLog("Server.ts - createServer() - listen()", `Port: ${helperSrc.SERVER_PORT} - Time: ${serverTime}`);
 
-            this.router.get("/login", (request: Request, response: Response) => {
-                Ca.writeCookie(`${helperSrc.LABEL}_authentication`, response);
-
-                response.redirect(`${request.baseUrl}/`);
+            this.app.get("/", Ca.authenticationMiddleware, (request: Request, response: Response) => {
+                if (request.accepts("html")) {
+                    response.sendFile(`${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}index.html`);
+                } else {
+                    response.status(404).send("/: html not found!");
+                }
             });
 
-            this.router.get("/logout", Ca.authenticationMiddleware, (request: Request, response: Response) => {
-                Ca.removeCookie(`${helperSrc.LABEL}_authentication`, request, response);
-
-                response.redirect(`${request.baseUrl}/info`);
-            });
-
-            this.router.get("/info", (request: modelServer.Irequest, response: Response) => {
-                helperSrc.responseBody(`Client ip: ${request.clientIp || ""}`, "", response, 200);
-            });
-
-            this.router.get("/file/*", Ca.authenticationMiddleware, (request: Request, response: Response) => {
-                const filePath = `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}${request.path}`;
+            this.app.get("/file/*", Ca.authenticationMiddleware, (request: Request, response: Response) => {
+                const relativePath = request.path.replace("/file/", "");
+                const filePath = `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}file/${relativePath}`;
 
                 if (Fs.existsSync(filePath)) {
                     response.sendFile(filePath);
                 } else {
-                    response.status(404).send("File not found!");
+                    response.status(404).send("/file/*: file not found!");
                 }
             });
 
-            this.router.get("*", Ca.authenticationMiddleware, (request: Request, response: Response) => {
-                if (request.accepts("html")) {
-                    response.sendFile(`${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}index.html`);
-                } else {
-                    response.status(404).send("Html not found!");
-                }
+            this.app.get("/info", (request: modelServer.Irequest, response: Response) => {
+                helperSrc.responseBody(`Client ip: ${request.clientIp || ""}`, "", response, 200);
+            });
+
+            this.app.get("/login", (_request: Request, response: Response) => {
+                Ca.writeCookie(`${helperSrc.LABEL}_authentication`, response);
+
+                response.redirect(`${helperSrc.URL_ROOT}/`);
+            });
+
+            this.app.get("/logout", Ca.authenticationMiddleware, (request: Request, response: Response) => {
+                Ca.removeCookie(`${helperSrc.LABEL}_authentication`, request, response);
+
+                response.redirect(`${helperSrc.URL_ROOT}/info`);
             });
         });
     };
