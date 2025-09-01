@@ -1,5 +1,5 @@
 import Express, { Request, Response, NextFunction } from "express";
-import rateLimit from "express-rate-limit";
+import rateLimit, { RateLimitRequestHandler } from "express-rate-limit";
 import CookieParser from "cookie-parser";
 import Cors from "cors";
 import * as Http from "http";
@@ -17,7 +17,7 @@ import ControllerTester from "./Tester";
 export default class Server {
     // Variable
     private corsOption: modelServer.Icors;
-    private limiter: ReturnType<typeof rateLimit>;
+    private limiter: RateLimitRequestHandler;
     private app: Express.Express;
 
     // Method
