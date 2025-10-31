@@ -64,7 +64,7 @@ export const PATH_FILE_SCRIPT = Ce.checkVariable("MS_AT_PATH_FILE_SCRIPT");
 export const MIME_TYPE = Ce.checkVariable("MS_AT_MIME_TYPE") || (process.env.MS_AT_MIME_TYPE as string);
 export const FILE_SIZE_MB = Ce.checkVariable("MS_AT_FILE_SIZE_MB") || (process.env.MS_AT_FILE_SIZE_MB as string);
 export const WS_ADRESS = Ce.checkVariable("MS_AT_WS_ADDRESS") || (process.env.MS_AT_WS_ADDRESS as string);
-export const SECRET_KEY = Ce.checkVariable("MS_AT_SECRET_KEY");
+export const WEBSOCKET_SECRET_KEY = Ce.checkVariable("MS_AT_WEBSOCKET_SECRET_KEY");
 
 export const localeFromEnvName = (): string => {
     let result = ENV_NAME.split("_").pop();
@@ -78,7 +78,7 @@ export const localeFromEnvName = (): string => {
 
 export const LOCALE = localeFromEnvName();
 
-export const localeFormat = (value: number | Date): string | undefined => {
+export const localeFormat = (value: number | Date, isTime = true): string | undefined => {
     if (typeof value === "number") {
         const formatOption: Intl.NumberFormatOptions = {
             style: "decimal",
@@ -87,7 +87,7 @@ export const localeFormat = (value: number | Date): string | undefined => {
 
         return new Intl.NumberFormat(localeConfiguration[LOCALE].locale, formatOption).format(value);
     } else if (value instanceof Date) {
-        const formatOption: Intl.DateTimeFormatOptions = {
+        let formatOption: Intl.DateTimeFormatOptions = {
             year: "numeric",
             month: "numeric",
             day: "numeric",
@@ -95,6 +95,14 @@ export const localeFormat = (value: number | Date): string | undefined => {
             minute: "2-digit",
             second: "2-digit"
         };
+
+        if (!isTime) {
+            formatOption = {
+                year: "numeric",
+                month: "numeric",
+                day: "numeric"
+            };
+        }
 
         return new Intl.DateTimeFormat(localeConfiguration[LOCALE].locale, formatOption).format(value);
     }
@@ -151,7 +159,7 @@ export const fileReadStream = (filePath: string, callback: (result: NodeJS.Errno
     });
 };
 
-export const fileRemove = (path: string, callback: (result: NodeJS.ErrnoException | boolean) => void): void => {
+export const fileOrFolderRemove = (path: string, callback: (result: NodeJS.ErrnoException | boolean) => void): void => {
     Fs.stat(path, (error, stats) => {
         if (error) {
             return callback(error);
@@ -204,7 +212,7 @@ export const responseBody = (stdoutValue: string, stderrValue: string | Error, r
 export const keepProcess = (): void => {
     for (const event of ["uncaughtException", "unhandledRejection"]) {
         process.on(event, (error: Error) => {
-            writeLog("HelperSrc.ts - keepProcess()", `Event: ${event} - Error: ${error.toString()}`);
+            writeLog("HelperSrc.ts - keepProcess()", `Event: "${event}" - ${error.toString()}`);
         });
     }
 };
@@ -235,20 +243,29 @@ export const generateUniqueId = (): string => {
 export const findFileInDirectoryRecursive = async (path: string, extension: string): Promise<string[]> => {
     const resultList: string[] = [];
 
+    const directoryExists = await Fs.promises
+        .access(path, Fs.constants.F_OK)
+        .then(() => true)
+        .catch(() => false);
+
+    if (!directoryExists) {
+        return resultList;
+    }
+
     const dataList = await Fs.promises.readdir(path);
 
-    for (let a = 0; a < dataList.length; a++) {
-        const data = `${path}${dataList[a]}`;
-        const dataStat = await Fs.promises.stat(data);
+    for (const data of dataList) {
+        const pathData = `${path}${data}`;
+        const statData = await Fs.promises.stat(pathData);
 
-        if (dataStat.isDirectory()) {
-            const dataSubList = await findFileInDirectoryRecursive(`${data}/`, extension);
+        if (statData.isDirectory()) {
+            const dataSubList = await findFileInDirectoryRecursive(`${pathData}/`, extension);
 
-            for (let b = 0; b < dataSubList.length; b++) {
-                resultList.push(dataSubList[b]);
+            for (const dataSub of dataSubList) {
+                resultList.push(dataSub);
             }
-        } else if (dataStat.isFile() && data.endsWith(extension)) {
-            resultList.push(data);
+        } else if (statData.isFile() && data.endsWith(extension)) {
+            resultList.push(pathData);
         }
     }
 

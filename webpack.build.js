@@ -32,7 +32,7 @@ Ce.checkVariable("MS_AT_PATH_FILE_SCRIPT");
 Ce.checkVariable("MS_AT_MIME_TYPE");
 Ce.checkVariable("MS_AT_FILE_SIZE_MB");
 Ce.checkVariable("MS_AT_WS_ADDRESS");
-Ce.checkVariable("MS_AT_SECRET_KEY");
+Ce.checkVariable("MS_AT_WEBSOCKET_SECRET_KEY");
 
 module.exports = {
     target: "web",

@@ -4,7 +4,6 @@
         ".git",
         ".cache",
         ".config",
-        ".local",
         ".ms_cronjob-volume",
         ".npm",
         ".pki",
@@ -14,6 +13,7 @@
         "node_modules",
         "public/file",
         "public/asset/js",
+        "public/asset/library",
         "public/asset/style"
     ],
     "l13Diff.ignoreEndOfLine": false,

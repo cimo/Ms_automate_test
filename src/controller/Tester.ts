@@ -73,7 +73,7 @@ export default class Tester {
                         this.outputList[data.index] = {
                             browser: data.browser,
                             phase: "running",
-                            time: helperSrc.serverTime(),
+                            time: helperSrc.localeFormat(new Date()) as string,
                             log: ""
                         };
 
@@ -98,7 +98,7 @@ export default class Tester {
                                     this.outputList[data.index] = {
                                         browser: data.browser,
                                         phase: status,
-                                        time: helperSrc.serverTime(),
+                                        time: helperSrc.localeFormat(new Date()) as string,
                                         log: helperSrc.removeAnsiEscape(stderr1)
                                     };
 
@@ -127,7 +127,7 @@ export default class Tester {
                                         this.outputList[data.index] = {
                                             browser: data.browser,
                                             phase: status,
-                                            time: helperSrc.serverTime(),
+                                            time: helperSrc.localeFormat(new Date()) as string,
                                             log: helperSrc.removeAnsiEscape(stdout1)
                                         };
 
