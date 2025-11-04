@@ -45,6 +45,9 @@ RUN cd ~ \
     # Apt
     && apt-get update && apt-get install -y \
     media-types \
+    # Dbus
+    dbus \
+    dbus-x11 \
     # Playwright
     && npx playwright install --force --with-deps chromium chrome msedge firefox webkit \
     && chown -R node:node ${PATH_ROOT}.cache/ms-playwright/ \

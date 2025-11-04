@@ -31,6 +31,7 @@ docker compose -f docker-compose.yaml --env-file ./env/local.env up --detach --p
 
     - .cache
     - .config
+    - .dbus
     - .ms_cronjob-volume
     - .npm
     - .pki
