@@ -4,6 +4,12 @@ Microservice automate test.
 
 Depend from Ms_cronjob (use the volume "ms_cronjob-volume" for share the certificate).
 
+## Info:
+
+-   Cross platform (Windows, Linux)
+-   X11 for WSL2 (Run linux GUI app directly in windows).
+-   Playwright
+
 ## Installation
 
 1. For full build write on terminal:
