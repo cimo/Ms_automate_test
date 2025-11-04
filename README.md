@@ -42,13 +42,11 @@ docker compose -f docker-compose.yaml --env-file ./env/local.env up --detach --p
 
 2. Follow the "Installation" instructions.
 
-## Wsl UI
+3. For execute "Playwright" GUI write on terminal:
 
-1. Write on the container terminal:
-
-```
-npm run execute_ui
-```
+    ```
+    bash script/playwright.sh
+    ```
 
 ## UI
 

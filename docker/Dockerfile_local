@@ -22,6 +22,7 @@ ENV PLAYWRIGHT_BROWSERS_PATH=${PATH_ROOT}.cache/ms-playwright/
 ENV PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT=60000
 
 COPY ./certificate/proxy/ /usr/local/share/ca-certificates/
+COPY ./docker/NotoSansJP-Regular.ttf /usr/share/fonts/truetype/noto/
 
 RUN cd ~ \
     # No root
@@ -40,8 +41,6 @@ RUN cd ~ \
     && apt-get install -y nodejs \
     # Apt
     && apt-get update && apt-get install -y \
-    fonts-noto \
-    fonts-noto-cjk \
     media-types \
     # Playwright
     && npx playwright install --force --with-deps chromium chrome msedge firefox webkit \
