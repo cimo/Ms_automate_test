@@ -16,7 +16,7 @@ Ce.checkVariable("SERVER_PORT");
 const PATH_ROOT = Ce.checkVariable("PATH_ROOT");
 const NAME = Ce.checkVariable("MS_AT_NAME");
 Ce.checkVariable("MS_AT_LABEL");
-Ce.checkVariable("MS_AT_DEBUG");
+Ce.checkVariable("MS_AT_IS_DEBUG");
 const NODE_ENV = Ce.checkVariable("MS_AT_NODE_ENV");
 const URL_ROOT = Ce.checkVariable("MS_AT_URL_ROOT");
 Ce.checkVariable("MS_AT_URL_CORS_ORIGIN");
