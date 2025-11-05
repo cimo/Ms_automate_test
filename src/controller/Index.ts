@@ -270,7 +270,17 @@ export default class Index implements Icontroller {
                     if (event.target && event.target.result) {
                         const result = event.target.result as ArrayBuffer;
 
-                        this.cwsClient.sendDataUpload(file.name, result);
+                        let mimeType = file.type;
+
+                        const fileExtension = file.name.split(".").pop();
+
+                        if (fileExtension) {
+                            if (fileExtension.toLowerCase() === "ts") {
+                                mimeType = "application/typescript";
+                            }
+                        }
+
+                        this.cwsClient.sendDataUpload(mimeType, file.name, result);
 
                         this.cwsClient.sendMessage("text", "", "spec_file");
 

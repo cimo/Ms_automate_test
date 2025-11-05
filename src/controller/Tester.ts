@@ -245,19 +245,22 @@ export default class Tester {
     };
 
     private upload = (): void => {
-        this.cwsServer.receiveDataUpload((data, fileName, clientId) => {
+        this.cwsServer.receiveDataUpload((data, mimeType, fileName, clientId) => {
             const file = Buffer.concat(data);
 
+            const isMimeTypeOk = helperSrc.fileCheckMimeType(mimeType);
             const isSizeOk = helperSrc.fileCheckSize(file.length);
 
             let serverData = {} as modelTester.IserverData;
 
-            if (isSizeOk) {
+            if (!isMimeTypeOk) {
+                serverData = { status: "error", result: "Only .ts file are allowed." };
+            } else if (!isSizeOk) {
+                serverData = { status: "error", result: `File limit is: ${helperSrc.FILE_SIZE_MB} MB.` };
+            } else {
                 Fs.writeFileSync(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_INPUT}${fileName}`, file);
 
                 serverData = { status: "success", result: "Upload completed." };
-            } else {
-                serverData = { status: "error", result: `File limit is: ${helperSrc.FILE_SIZE_MB} MB.` };
             }
 
             this.cwsServer.sendMessage("text", serverData, "upload", clientId);

@@ -36,16 +36,16 @@ RUN cd ~ \
     # Update
     && VERSION_CODENAME=$(grep VERSION_CODENAME= /etc/os-release | cut -d= -f2) \
     && chmod -R 0644 /usr/local/share/ca-certificates/ \
-    && apt-get update && apt-get install -y ca-certificates tzdata curl \
+    && apt-get update && apt-get install -y ca-certificates tzdata curl media-types \
     && update-ca-certificates \
     && ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone \
+    && echo "application/typescript ts" >> /etc/mime.types \
     # NodeJs
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    # Apt
     && apt-get update && apt-get install -y \
-    media-types \
+    nodejs \
     # Dbus
+    && apt-get update && apt-get install -y \
     dbus \
     dbus-x11 \
     # Playwright
@@ -62,11 +62,13 @@ USER node
 
 WORKDIR ${PATH_ROOT}
 
+# Npm
 RUN rm -rf node_modules package-lock.json \
     && npm install \
     && npx playwright install \
     && npm run build
 
+# Node
 CMD node ${PATH_ROOT}dist/src/controller/Server.js
 
 EXPOSE ${SERVER_PORT}
