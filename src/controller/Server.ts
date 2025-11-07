@@ -98,7 +98,7 @@ export default class Server {
 
         server.listen(helperSrc.SERVER_PORT, () => {
             const cp = new Cp();
-            const cwsServer = new CwsServer(server, helperSrc.WEBSOCKET_SECRET_KEY);
+            const cwsServer = new CwsServer(server, helperSrc.WS_KEY);
 
             const controllerTester = new ControllerTester(cp, cwsServer);
             controllerTester.websocket();

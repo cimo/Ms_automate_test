@@ -55,16 +55,14 @@ export const URL_CORS_ORIGIN = Ce.checkVariable("MS_AT_URL_CORS_ORIGIN") || (pro
 export const URL_TEST = Ce.checkVariable("MS_AT_URL_TEST") || (process.env.MS_AT_URL_TEST as string);
 export const PATH_CERTIFICATE_KEY = Ce.checkVariable("MS_AT_PATH_CERTIFICATE_KEY");
 export const PATH_CERTIFICATE_CRT = Ce.checkVariable("MS_AT_PATH_CERTIFICATE_CRT");
-export const PATH_PUBLIC = Ce.checkVariable("MS_AT_PATH_PUBLIC");
+export const PATH_FILE = Ce.checkVariable("MS_AT_PATH_FILE");
 export const PATH_LOG = Ce.checkVariable("MS_AT_PATH_LOG");
-export const PATH_FILE_INPUT = Ce.checkVariable("MS_AT_PATH_FILE_INPUT");
-export const PATH_FILE_OUTPUT = Ce.checkVariable("MS_AT_PATH_FILE_OUTPUT");
-export const PATH_FILE_DOWNLOAD = Ce.checkVariable("MS_AT_PATH_FILE_DOWNLOAD");
-export const PATH_FILE_SCRIPT = Ce.checkVariable("MS_AT_PATH_FILE_SCRIPT");
+export const PATH_PUBLIC = Ce.checkVariable("MS_AT_PATH_PUBLIC");
+export const PATH_SCRIPT = Ce.checkVariable("MS_AT_PATH_SCRIPT");
 export const MIME_TYPE = Ce.checkVariable("MS_AT_MIME_TYPE") || (process.env.MS_AT_MIME_TYPE as string);
 export const FILE_SIZE_MB = Ce.checkVariable("MS_AT_FILE_SIZE_MB") || (process.env.MS_AT_FILE_SIZE_MB as string);
 export const WS_ADRESS = Ce.checkVariable("MS_AT_WS_ADDRESS") || (process.env.MS_AT_WS_ADDRESS as string);
-export const WEBSOCKET_SECRET_KEY = Ce.checkVariable("MS_AT_WEBSOCKET_SECRET_KEY");
+export const WS_KEY = Ce.checkVariable("MS_AT_WS_KEY");
 
 export const localeFromEnvName = (): string => {
     let result = ENV_NAME.split("_").pop();

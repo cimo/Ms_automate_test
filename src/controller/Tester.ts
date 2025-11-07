@@ -26,7 +26,7 @@ export default class Tester {
 
     private specFile = (): void => {
         this.cwsServer.receiveData("spec_file", () => {
-            const fileList = Fs.readdirSync(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_INPUT}`);
+            const fileList = Fs.readdirSync(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`);
 
             const fileFilteredList: string[] = [];
 
@@ -82,7 +82,7 @@ export default class Tester {
 
                         this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcastObject));
 
-                        const execCommand1 = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command1.sh`;
+                        const execCommand1 = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command1.sh`;
                         const execArgumentList1 = [`"${data.specFileName}"`, `"${browserCheck}"`];
 
                         const processRun = execFile(
@@ -115,9 +115,9 @@ export default class Tester {
 
                                     this.pidKey = 0;
                                 } else {
-                                    const execCommand2 = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command2.sh`;
+                                    const execCommand2 = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command2.sh`;
                                     const execArgumentList2 = [
-                                        `"${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_OUTPUT}artifact"`,
+                                        `"${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}output/artifact/"`,
                                         `"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`
                                     ];
 
@@ -193,7 +193,7 @@ export default class Tester {
             const serverData = {} as modelTester.IserverData;
 
             if (data.name !== "") {
-                const execCommand = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command3.sh`;
+                const execCommand = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command3.sh`;
                 const execArgumentList = [`"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`, `"${data.name}"`];
 
                 execFile(execCommand, execArgumentList, { shell: "/bin/bash", encoding: "utf8" }, (_, stdout) => {
@@ -228,7 +228,7 @@ export default class Tester {
             const serverData = {} as modelTester.IserverData;
 
             if (data.name !== "") {
-                const execCommand = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_SCRIPT}command4.sh`;
+                const execCommand = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command4.sh`;
                 const execArgumentList = [`"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`, `"${data.name}"`];
 
                 execFile(execCommand, execArgumentList, { shell: "/bin/bash", encoding: "utf8" }, () => {
@@ -258,7 +258,7 @@ export default class Tester {
             } else if (!isSizeOk) {
                 serverData = { status: "error", result: `File limit is: ${helperSrc.FILE_SIZE_MB} MB.` };
             } else {
-                Fs.writeFileSync(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_INPUT}${fileName}`, file);
+                Fs.writeFileSync(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/${fileName}`, file);
 
                 serverData = { status: "success", result: "Upload completed." };
             }

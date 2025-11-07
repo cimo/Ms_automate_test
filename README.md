@@ -3,6 +3,7 @@
 Microservice automate test.
 
 Depend from Ms_cronjob (use the volume "ms_cronjob-volume" for share the certificate).
+It's possible use personal certificate instead "Ms_cronjob", just put the certificate in ".ms_cronjob-volume" folder before the build.
 
 ## Info:
 
@@ -32,14 +33,10 @@ docker compose -f docker-compose.yaml --env-file ./env/local.env up --detach --p
     - .cache
     - .config
     - .dbus
-    - .ms_cronjob-volume
     - .npm
     - .pki
     - node_modules
     - package-lock.json
-    - certificate/tls.crt
-    - certificate/tls.key
-    - certificate/tls.pem
 
 2. Follow the "Installation" instructions.
 

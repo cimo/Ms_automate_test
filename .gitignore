@@ -24,13 +24,8 @@ pnpm-debug.log*
 .cache
 .config
 .dbus
-.ms_cronjob-volume
 .npm
 .pki
-certificate/*
-!certificate/.gitkeep
-certificate/proxy/*
-!certificate/proxy/.gitkeep
 dist
 file/download/*
 !file/download/.gitkeep

@@ -4,8 +4,8 @@ import { defineConfig, devices } from "@playwright/test";
 import * as helperSrc from "./HelperSrc";
 
 export default defineConfig({
-    testDir: `${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_INPUT}`,
-    outputDir: `${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE_OUTPUT}artifact`,
+    testDir: `${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`,
+    outputDir: `${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}output/artifact/`,
     fullyParallel: false,
     reporter: "line",
     reportSlowTests: null,

@@ -23,14 +23,14 @@ ENV NODE_OPTIONS=--use-openssl-ca
 ENV PLAYWRIGHT_BROWSERS_PATH=${PATH_ROOT}.cache/ms-playwright/
 ENV PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT=60000
 
-COPY ./certificate/proxy/ /usr/local/share/ca-certificates/
+COPY ./.ms_cronjob-volume/certificate/proxy/* /usr/local/share/ca-certificates/
 COPY ./docker/NotoSansJP-Regular.ttf /usr/share/fonts/truetype/noto/
 COPY ./ ${PATH_ROOT}
 
 RUN cd ~ \
     # No root
-    && mkdir -p ${PATH_ROOT} \
     && useradd -U node -d ${PATH_ROOT} -s /bin/bash \
+    && mkdir -p ${PATH_ROOT} \
     && chown -R node:node ${PATH_ROOT} \
     && chmod -R 775 ${PATH_ROOT} \
     # Update

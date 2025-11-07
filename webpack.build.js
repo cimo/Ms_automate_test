@@ -23,16 +23,14 @@ Ce.checkVariable("MS_AT_URL_CORS_ORIGIN");
 Ce.checkVariable("MS_AT_URL_TEST");
 Ce.checkVariable("MS_AT_PATH_CERTIFICATE_KEY");
 Ce.checkVariable("MS_AT_PATH_CERTIFICATE_CRT");
-Ce.checkVariable("MS_AT_PATH_PUBLIC");
+Ce.checkVariable("MS_AT_PATH_FILE");
 Ce.checkVariable("MS_AT_PATH_LOG");
-Ce.checkVariable("MS_AT_PATH_FILE_INPUT");
-Ce.checkVariable("MS_AT_PATH_FILE_OUTPUT");
-Ce.checkVariable("MS_AT_PATH_FILE_DOWNLOAD");
-Ce.checkVariable("MS_AT_PATH_FILE_SCRIPT");
+Ce.checkVariable("MS_AT_PATH_PUBLIC");
+Ce.checkVariable("MS_AT_PATH_SCRIPT");
 Ce.checkVariable("MS_AT_MIME_TYPE");
 Ce.checkVariable("MS_AT_FILE_SIZE_MB");
 Ce.checkVariable("MS_AT_WS_ADDRESS");
-Ce.checkVariable("MS_AT_WEBSOCKET_SECRET_KEY");
+Ce.checkVariable("MS_AT_WS_KEY");
 
 module.exports = {
     target: "web",

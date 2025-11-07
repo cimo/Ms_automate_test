@@ -5,7 +5,6 @@
         ".cache",
         ".config",
         ".dbus",
-        ".ms_cronjob-volume",
         ".npm",
         ".pki",
         "dist",
