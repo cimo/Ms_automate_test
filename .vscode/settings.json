@@ -11,6 +11,7 @@
         "file",
         "log",
         "node_modules",
+        "package-lock.json",
         "public/file",
         "public/asset/js",
         "public/asset/library",
