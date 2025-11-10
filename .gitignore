@@ -26,6 +26,9 @@ pnpm-debug.log*
 .dbus
 .npm
 .pki
+.ms_cronjob-volume/**/*
+!.ms_cronjob-volume/**/
+!.ms_cronjob-volume/**/.gitkeep
 dist
 file/download/*
 !file/download/.gitkeep
