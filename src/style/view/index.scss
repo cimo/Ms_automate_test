@@ -2,6 +2,10 @@
 @use "../media.scss" as media;
 
 .view_index {
+    & > .header {
+        height: 0 !important;
+    }
+
     & > .left {
         margin: 10px;
         width: 55%;
