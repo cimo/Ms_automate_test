@@ -216,7 +216,7 @@ export default class Index implements Icontroller {
 
     private onClickVideoShow = (name: string): void => {
         if (name !== "") {
-            this.variableObject.videoSrc.state = `${helperSrc.URL_ROOT}/file/${name}`;
+            this.variableObject.videoSrc.state = `${helperSrc.URL_ROOT}${helperSrc.PATH_FILE}${name}`;
         }
     };
 
