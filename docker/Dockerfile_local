@@ -60,7 +60,7 @@ USER node
 WORKDIR ${PATH_ROOT}
 
 # Npm
-CMD rm -rf node_modules/ package-lock.json \
+CMD rm -rf ${PATH_ROOT}node_modules/ ${PATH_ROOT}package-lock.json \
     && npm install \
     && npx playwright install \
     && npm run execute
