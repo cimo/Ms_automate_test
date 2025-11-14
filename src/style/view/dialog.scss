@@ -1,12 +1,11 @@
 @use "../color.scss" as color;
-@use "../font.scss" as font;
 
 .view_dialog {
     .mdc-dialog__surface {
         max-width: unset !important;
 
         .mdc-dialog__title {
-            font-size: font.$sizeNormal !important;
+            font-size: 18px !important;
             font-weight: bold !important;
         }
 

@@ -1,6 +1,5 @@
 @use "../color.scss" as color;
 @use "../media.scss" as media;
-@use "../font.scss" as font;
 
 .view_loader {
     position: fixed;
@@ -32,7 +31,7 @@
         .text {
             margin-top: 10px;
             color: color.$blueMedium700;
-            font-size: font.$sizeMedium;
+            font-size: 30px;
         }
     }
 

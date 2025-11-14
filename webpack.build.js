@@ -36,10 +36,9 @@ module.exports = {
     target: "web",
     devtool: "source-map",
     mode: NODE_ENV,
-    entry: `${PATH_ROOT}src/Main.ts`,
+    entry: Path.resolve(__dirname, "src/Main.ts"),
     output: {
         filename: "[name].js",
-        sourceMapFilename: "[name].js.map",
         path: Path.resolve(__dirname, "public/asset/js"),
         publicPath: "/asset/js/"
     },

@@ -1,10 +1,12 @@
 @use "reset.scss";
+@use "font.scss";
 
 @use "button.scss";
 @use "field.scss";
 @use "filter.scss";
-@use "page.scss";
 @use "table.scss";
+@use "page.scss";
+
 @use "view/alert.scss";
 @use "view/chat.scss";
 @use "view/dialog.scss";

@@ -1,5 +1,6 @@
 .page_container {
     text-align: center;
+    text-wrap-style: balance;
 
     & > .header {
         height: 50px;
@@ -19,6 +20,14 @@
         width: 70%;
         position: relative;
         display: inline-block;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    & > .bottom {
+        height: 50px;
+        position: relative;
+        margin-top: 10px;
         text-align: left;
     }
 }
