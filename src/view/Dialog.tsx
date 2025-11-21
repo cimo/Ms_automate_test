@@ -5,7 +5,7 @@ import * as modelDialog from "../model/Dialog";
 
 const viewDialog = (variableObject: modelDialog.Ivariable, methodObject: modelDialog.Imethod): IvirtualNode => {
     return (
-        <div jsmvcfw-elementHook="mdcDialog" class="mdc-dialog view_dialog">
+        <div jsmvcfw-elementHookName="mdcDialog" class="mdc-dialog view_dialog">
             <div class="mdc-dialog__container">
                 <div
                     class="mdc-dialog__surface"

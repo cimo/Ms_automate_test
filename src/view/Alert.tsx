@@ -5,7 +5,7 @@ import * as modelAlert from "../model/Alert";
 
 const viewAlert = (variableObject: modelAlert.Ivariable, methodObject: modelAlert.Imethod): IvirtualNode => {
     return (
-        <div jsmvcfw-elementHook="mdcSnackbar" class={`mdc-snackbar mdc-snackbar--stacked view_alert ${variableObject.className.state}`}>
+        <div jsmvcfw-elementHookName="mdcSnackbar" class={`mdc-snackbar mdc-snackbar--stacked view_alert ${variableObject.className.state}`}>
             <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
                 <div class="mdc-snackbar__label" aria-atomic="false">
                     {variableObject.label.state}

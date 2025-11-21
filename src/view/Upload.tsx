@@ -44,7 +44,7 @@ const viewUpload = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                                 </button>
                             </div>
                         </div>
-                        <input jsmvcfw-elementHook="inputSpecUpload" class="input_upload" name="fileName" type="file" value="" />
+                        <input jsmvcfw-elementHookName="inputSpecUpload" class="input_upload" name="fileName" type="file" value="" />
                     </td>
                 </tr>
             </tbody>

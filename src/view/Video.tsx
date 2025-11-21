@@ -30,7 +30,13 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                                         </span>
                                         <span class="mdc-notched-outline__trailing"></span>
                                     </span>
-                                    <input jsmvcfw-elementHook="inputVideoName" name="videoName" type="text" class="mdc-text-field__input" value="" />
+                                    <input
+                                        jsmvcfw-elementHookName="inputVideoName"
+                                        name="videoName"
+                                        type="text"
+                                        class="mdc-text-field__input"
+                                        value=""
+                                    />
                                 </label>
                             </div>
                             <div class="mdc-touch-target-wrapper">

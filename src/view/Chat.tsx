@@ -51,7 +51,7 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
                                 <span class="mdc-notched-outline__trailing"></span>
                             </span>
                             <textarea
-                                jsmvcfw-elementHook="inputChatMessageSend"
+                                jsmvcfw-elementHookName="inputChatMessageSend"
                                 name="messageSend"
                                 class="mdc-text-field__input"
                                 rows="2"

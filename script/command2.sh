@@ -3,7 +3,8 @@
 find "${1}" -type f -name "*.webm" -exec sh -c '
     pathPublic="'${2}'"
 
-    for data; do
+    for data
+    do
         parentDir="$(dirname "${data}")"
         
         fileName="$(basename "${parentDir}").webm"
