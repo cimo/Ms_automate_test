@@ -1,12 +1,12 @@
-@use "../color.scss" as color;
-@use "../media.scss" as media;
+@use "../../setting/color.scss" as color;
+@use "../../setting/parameter.scss" as parameter;
 
 .view_alert {
     top: 0 !important;
     right: 0 !important;
     left: auto !important;
     bottom: auto !important;
-    z-index: media.$zIndexAlert !important;
+    z-index: parameter.$zIndexAlert !important;
 
     &.success {
         .mdc-snackbar__surface {

@@ -1,0 +1,11 @@
+.filter {
+    .row {
+        .cell {
+            &.field_container {
+                .field_value {
+                    width: unset !important;
+                }
+            }
+        }
+    }
+}

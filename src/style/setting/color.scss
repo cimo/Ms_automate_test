@@ -127,15 +127,13 @@ $yellow800: #706700;
 // Generic
 $white: #ffffff;
 $black: #000000;
-$blackRgb: rgba(0, 0, 0, 0.4);
+$blackRgba: rgba(0, 0, 0, 0.4);
 
 // Button
-$buttonPrimary: $blueMedium600;
-$buttonPrimaryHover: $blueMedium500;
-$buttonSecondary: $purple600;
-$buttonSecondaryHover: $purple500;
-$buttonGhost: $blueMedium600;
-$buttonGhostHover: $grey100;
+$buttonPrimary: $green600;
+$buttonPrimaryHover: $green500;
+$buttonSecondary: $blueMedium600;
+$buttonSecondaryHover: $blueMedium500;
 $buttonFlat: $blueMedium600;
 $buttonFlatHover: $grey100;
 $buttonDanger: $red500;
@@ -146,3 +144,6 @@ $buttonDisabled: $grey1000;
 $backgroundLight: $grey100;
 $backgroundSuccess: $green100;
 $backgroundFail: $red100;
+
+//Shadow
+$boxShadow: 0px 1px 6px 0px $blackRgba;

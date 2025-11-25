@@ -23,6 +23,7 @@ const viewIndex = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                     {viewVideo(variableObject, methodObject)}
                     {viewUpload(variableObject, methodObject)}
                 </div>
+                <div class="footer"></div>
             </div>
             {viewChat(variableObject, methodObject)}
         </div>

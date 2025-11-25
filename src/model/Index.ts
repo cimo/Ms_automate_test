@@ -14,9 +14,9 @@ export interface Ivariable {
     uploadFileName: IvariableBind<string>;
     isChatVisible: IvariableBind<boolean>;
     clientIdSelected: IvariableBind<string>;
-    chatMessageReceivedList: IvariableBind<ImessageDirect[]>;
+    chatMessageList: IvariableBind<ImessageDirect[]>;
     isClientConnected: IvariableBind<boolean>;
-    clientCurrentId: IvariableBind<string | undefined>;
+    clientIdCurrent: IvariableBind<string | undefined>;
 }
 
 export interface Imethod {

@@ -6,6 +6,9 @@ import * as modelIndex from "../model/Index";
 const viewClient = (variableObject: modelIndex.Ivariable, methodObject: modelIndex.Imethod): IvirtualNode => {
     return (
         <table class="table_client">
+            <colgroup>
+                <col class="cell" />
+            </colgroup>
             <thead class="filter">
                 <tr className="row filter_action"></tr>
                 <tr class="row not_hover">
@@ -29,19 +32,19 @@ const viewClient = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                                                     person
                                                 </i>
                                                 <p
-                                                    class={`${variableObject.clientCurrentId.state === value ? "exclude" : ""}`}
+                                                    class={`${variableObject.clientIdCurrent.state === value ? "exclude" : ""}`}
                                                     onclick={() => {
                                                         methodObject.onClickClient(index, value);
                                                     }}
                                                 >
-                                                    {variableObject.clientCurrentId.state === value ? "You" : value}
+                                                    {variableObject.clientIdCurrent.state === value ? "You" : value}
                                                 </p>
                                             </div>
 
                                             {(() => {
                                                 const result: IvirtualNode[] = [];
 
-                                                if (variableObject.clientCurrentId.state === value && !variableObject.isClientConnected.state) {
+                                                if (variableObject.clientIdCurrent.state === value && !variableObject.isClientConnected.state) {
                                                     result.push(
                                                         <button
                                                             class="mdc-button mdc-button--raised mdc-button--leading button_primary"

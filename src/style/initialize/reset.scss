@@ -82,10 +82,14 @@ meter {
     all: revert;
 }
 
+body {
+    overflow-x: hidden !important;
+}
+
 .hidden {
-  visibility: hidden !important;
+    visibility: hidden !important;
 }
 
 .none {
-  display: none !important;
+    display: none !important;
 }

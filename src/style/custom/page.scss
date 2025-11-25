@@ -1,0 +1,15 @@
+.page_container {
+    & > .header {
+        height: 0 !important;
+    }
+
+    & > .left {
+        width: 60% !important;
+        margin: 10px !important;
+    }
+
+    & > .right {
+        width: 30% !important;
+        margin: 10px !important;
+    }
+}

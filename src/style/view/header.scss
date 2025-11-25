@@ -1,0 +1,32 @@
+@use "../setting/color.scss" as color;
+@use "../setting/parameter.scss" as parameter;
+
+.view_header {
+    position: fixed !important;
+    color: color.$white !important;
+    background-color: color.$blueMedium !important;
+    height: parameter.$heightHeader !important;
+    width: 100% !important;
+
+    .menu {
+        float: right !important;
+        padding: 5px 10px !important;
+
+        &::after {
+            content: "" !important;
+            clear: both !important;
+            display: block !important;
+        }
+
+        button {
+            padding: 0 !important;
+            position: relative !important;
+            top: 5px !important;
+
+            svg {
+                font-size: parameter.$fontSizeMedium !important;
+                color: color.$white !important;
+            }
+        }
+    }
+}

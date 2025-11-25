@@ -1,33 +1,39 @@
+@use "setting/color.scss" as color;
+@use "setting/parameter.scss" as parameter;
+
+html {
+    background-color: color.$backgroundLight;
+}
+
 .page_container {
-    text-align: center;
-    text-wrap-style: balance;
+    text-align: left !important;
+    text-wrap-style: balance !important;
 
     & > .header {
-        height: 50px;
-        position: relative;
-        margin-bottom: 10px;
-        text-align: left;
+        height: calc(
+            parameter.$heightHeader + parameter.$heightBreadcrumb
+        ) !important;
+        z-index: parameter.$zIndexHeader !important;
+        position: relative !important;
     }
 
     & > .left {
-        width: 30%;
-        position: relative;
-        display: inline-block;
-        text-align: left;
+        width: 30% !important;
+        position: relative !important;
+        display: inline-block !important;
+        vertical-align: top !important;
     }
 
     & > .right {
-        width: 70%;
-        position: relative;
-        display: inline-block;
-        text-align: left;
-        vertical-align: top;
+        width: 70% !important;
+        position: relative !important;
+        display: inline-block !important;
+        vertical-align: top !important;
     }
 
-    & > .bottom {
-        height: 50px;
-        position: relative;
-        margin-top: 10px;
-        text-align: left;
+    & > .footer {
+        height: 40px !important;
+        position: relative !important;
+        margin-top: 10px !important;
     }
 }

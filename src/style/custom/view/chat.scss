@@ -1,0 +1,67 @@
+@use "../setting/parameter.scss" as customParameter;
+
+@use "../../setting/color.scss" as color;
+
+.view_chat {
+    position: fixed !important;
+    background-color: color.$blackRgba !important;
+    z-index: customParameter.$zIndexChat !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+
+    .container {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        text-align: center !important;
+        margin: 0 auto !important;
+        border: 1px solid !important;
+        padding: 10px !important;
+        background-color: color.$white !important;
+
+        .header {
+            text-align: right !important;
+            margin-bottom: 10px !important;
+
+            i {
+                cursor: pointer !important;
+            }
+        }
+
+        .message_received_container {
+            overflow-y: auto !important;
+            width: 95% !important;
+            height: 200px !important;
+            background-color: color.$grey1400 !important;
+            margin: 10px auto !important;
+            color: color.$white !important;
+            text-align: left !important;
+            padding: 10px !important;
+            white-space: pre !important;
+
+            .time,
+            .text {
+                display: block !important;
+            }
+
+            .time {
+                margin-bottom: 5px !important;
+            }
+
+            .text {
+                margin-bottom: 15px !important;
+            }
+        }
+
+        .field_container {
+            margin: 10px 0 !important;
+        }
+
+        .mdc-touch-target-wrapper {
+            display: inline-block !important;
+        }
+    }
+}

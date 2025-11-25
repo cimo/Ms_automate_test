@@ -6,6 +6,9 @@ import * as modelIndex from "../model/Index";
 const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelIndex.Imethod): IvirtualNode => {
     return (
         <table class="table_video">
+            <colgroup>
+                <col class="cell" />
+            </colgroup>
             <thead class="filter">
                 <tr className="row filter_action"></tr>
                 <tr class="row not_hover">

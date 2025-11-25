@@ -1,0 +1,51 @@
+@use "../../setting/color.scss" as color;
+@use "../../setting/parameter.scss" as parameter;
+
+.view_loader {
+    position: fixed !important;
+    background-color: color.$white !important;
+    z-index: parameter.$zIndexLoader !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+
+    .container {
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 130px !important;
+        text-align: center !important;
+        margin: 0 auto !important;
+
+        .square {
+            display: inline-block !important;
+            width: 24px !important;
+            height: 32px !important;
+            border: 2px solid color.$blueMedium700 !important;
+            margin: 1px !important;
+            animation: animation_loader 1s infinite !important;
+        }
+
+        .text {
+            margin-top: 10px !important;
+            color: color.$blueMedium700 !important;
+            font-size: 30px !important;
+        }
+    }
+
+    @keyframes animation_loader {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        50% {
+            transform: rotate(180deg) scale(0.5, 0.5);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+}

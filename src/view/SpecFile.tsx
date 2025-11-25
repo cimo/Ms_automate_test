@@ -6,14 +6,21 @@ import * as modelIndex from "../model/Index";
 const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelIndex.Imethod): IvirtualNode => {
     return (
         <table class="table_data">
+            <colgroup>
+                <col class="cell column_id" />
+                <col class="cell column_title" />
+                <col class="cell column_action" />
+                <col class="cell column_time" />
+                <col class="cell column_status" />
+            </colgroup>
             <thead class="filter">
                 <tr className="row filter_action"></tr>
                 <tr class="row not_hover">
-                    <th class="cell column_id">Id</th>
-                    <th class="cell column_title">Filename</th>
-                    <th class="cell column_action">Action</th>
-                    <th class="cell column_time">Time</th>
-                    <th class="cell column_status">Status</th>
+                    <th class="cell">Id</th>
+                    <th class="cell">Filename</th>
+                    <th class="cell">Action</th>
+                    <th class="cell">Time</th>
+                    <th class="cell">Status</th>
                 </tr>
             </thead>
             <tbody>

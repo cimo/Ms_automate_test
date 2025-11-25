@@ -1,14 +1,11 @@
-@use "reset.scss";
-@use "font.scss";
+@use "initialize/reset.scss";
 
 @use "button.scss";
-@use "field.scss";
 @use "filter.scss";
-@use "table.scss";
 @use "page.scss";
+@use "table.scss";
 
-@use "view/alert.scss";
-@use "view/chat.scss";
-@use "view/dialog.scss";
-@use "view/index.scss";
-@use "view/loader.scss";
+@use "view/header.scss";
+@use "view/page_404.scss";
+
+@use "custom/main.scss";

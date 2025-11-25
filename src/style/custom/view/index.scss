@@ -1,0 +1,210 @@
+@use "../../setting/color.scss" as color;
+@use "../../setting/parameter.scss" as parameter;
+
+.view_index {
+    text-align: center !important;
+
+    .table_data {
+        .column_id {
+            width: 5% !important;
+        }
+        .column_title {
+            width: 25% !important;
+        }
+        .column_action {
+            width: 30% !important;
+        }
+        .column_time {
+            width: 20% !important;
+        }
+        .column_status {
+            width: 10% !important;
+        }
+
+        thead {
+            tr {
+                th {
+                    text-align: center !important;
+                    vertical-align: middle !important;
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                td {
+                    text-align: center !important;
+                    vertical-align: middle !important;
+
+                    &.column_title {
+                        text-align: left !important;
+
+                        p {
+                            white-space: nowrap !important;
+                            overflow: hidden !important;
+                            text-overflow: ellipsis !important;
+                            width: 200px !important;
+                        }
+                    }
+
+                    .field_container,
+                    button {
+                        display: inline-block !important;
+                        vertical-align: middle !important;
+                    }
+
+                    .icon_loading {
+                        animation: animation_icon_loading 1s infinite !important;
+                    }
+
+                    .icon_success {
+                        color: color.$green !important;
+                    }
+
+                    .icon_fail {
+                        color: color.$red !important;
+                    }
+
+                    .field_container {
+                        .mdc-select {
+                            width: 180px !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .table_client,
+    .table_video,
+    .table_upload {
+        margin-bottom: 10px !important;
+
+        thead {
+            tr {
+                th {
+                    text-align: center !important;
+                    vertical-align: middle !important;
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                td {
+                    text-align: left !important;
+                    vertical-align: middle !important;
+
+                    .item {
+                        margin: 10px 0 !important;
+
+                        li {
+                            i,
+                            p {
+                                display: inline-block !important;
+                                vertical-align: middle !important;
+                            }
+                        }
+                    }
+
+                    .field_container,
+                    button {
+                        display: inline-block !important;
+                        vertical-align: middle !important;
+                    }
+                }
+            }
+        }
+    }
+
+    .table_client {
+        .item {
+            li {
+                .clientId_container {
+                    display: inline-block !important;
+                    vertical-align: middle !important;
+
+                    p:not(.exclude) {
+                        cursor: pointer !important;
+                    }
+                }
+
+                .mdc-button {
+                    min-width: 0px !important;
+                    min-height: 0px !important;
+                    width: 38px !important;
+                    height: 30px !important;
+                }
+            }
+        }
+    }
+
+    .table_video {
+        .item {
+            li {
+                i,
+                p {
+                    cursor: pointer !important;
+                }
+            }
+        }
+
+        .name {
+            text-align: center !important;
+            margin-top: 10px !important;
+            font-weight: bold !important;
+        }
+
+        video {
+            display: block !important;
+            width: 400px !important;
+            margin: 10px auto !important;
+            text-align: center !important;
+            border: 1px solid !important;
+        }
+    }
+
+    .table_upload {
+        .name {
+            text-align: center !important;
+            margin-top: 10px !important;
+            font-weight: bold !important;
+        }
+
+        .input_upload {
+            display: none !important;
+        }
+    }
+
+    .instruction {
+        list-style: disc !important;
+        margin: 10px 0 10px 20px !important;
+    }
+
+    @media screen and (max-width: parameter.$screenMobile) {
+        .left,
+        .right {
+            display: block !important;
+            margin: 10px auto !important;
+            width: 90% !important;
+
+            .field_container {
+                min-width: auto !important;
+            }
+        }
+    }
+
+    @keyframes animation_icon_loading {
+        0% {
+            transform: rotate(360deg);
+        }
+
+        50% {
+            transform: rotate(180deg);
+        }
+
+        100% {
+            transform: rotate(0);
+        }
+    }
+}

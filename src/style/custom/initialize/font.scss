@@ -1,16 +1,16 @@
 @font-face {
-    font-family: "roboto-regular";
-    font-weight: 100;
-    font-style: normal;
+    font-family: "roboto-regular" !important;
+    font-weight: 100 !important;
+    font-style: normal !important;
     src:
         url("../font/roboto-regular.ttf") format("truetype"),
         url("../font/roboto-regular.woff") format("woff"),
-        url("../font/roboto-regular.woff2") format("woff2");
+        url("../font/roboto-regular.woff2") format("woff2") !important;
 }
 
 body {
     & *:not(.material-icons) {
         font-family: "roboto-regular" !important;
-        font-size: 14px;
+        font-size: 15px !important;
     }
 }

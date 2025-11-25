@@ -1,0 +1,13 @@
+button {
+    .mdc-button__label {
+        display: inline-block !important;
+
+        .material-icons {
+            margin: 0 !important;
+        }
+    }
+}
+
+.button_container {
+    margin: 10px !important;
+}

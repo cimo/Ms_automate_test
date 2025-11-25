@@ -1,0 +1,14 @@
+@use "../setting/color.scss" as color;
+
+table {
+    .row {
+        &:not(.row_empty):not(.not_hover):hover {
+            .field_value {
+                .mdc-floating-label,
+                .mdc-select__selected-text {
+                    color: color.$white !important;
+                }
+            }
+        }
+    }
+}

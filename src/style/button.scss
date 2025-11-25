@@ -1,11 +1,10 @@
-@use "color.scss" as color;
+@use "setting/color.scss" as color;
 
 button {
     display: block !important;
     margin: 0 10px !important;
     padding: 5px 10px !important;
     min-width: fit-content !important;
-    min-height: 42px !important;
     text-align: center !important;
 
     & :not(:disabled) {
@@ -17,18 +16,24 @@ button {
         background-color: color.$buttonDisabled !important;
     }
 
-    .mdc-button__label {
+    .button_label {
         display: inline-block !important;
+    }
 
-        .material-icons {
-            margin: 0 !important;
-        }
+    .icon_progress {
+        width: 18px !important;
+        height: 18px !important;
+        color: color.$white !important;
+        top: 3px !important;
+        position: relative !important;
+        vertical-align: initial !important;
     }
 }
 
 .button_primary {
     color: color.$white !important;
     background-color: color.$buttonPrimary !important;
+    box-shadow: color.$boxShadow !important;
 
     &:hover {
         background-color: color.$buttonPrimaryHover !important;
@@ -38,25 +43,17 @@ button {
 .button_secondary {
     color: color.$white !important;
     background-color: color.$buttonSecondary !important;
+    box-shadow: color.$boxShadow !important;
 
     &:hover {
         background-color: color.$buttonSecondaryHover !important;
     }
 }
 
-.button_ghost {
-    color: color.$buttonGhost !important;
-    background-color: color.$white !important;
-    border: 1px solid !important;
-
-    &:hover {
-        background-color: color.$buttonGhostHover !important;
-    }
-}
-
 .button_flat {
     color: color.$buttonFlat !important;
     background-color: color.$white !important;
+    border: 1px solid !important;
 
     &:hover {
         background-color: color.$buttonFlatHover !important;
@@ -66,6 +63,7 @@ button {
 .button_danger {
     color: color.$white !important;
     background-color: color.$buttonDanger !important;
+    box-shadow: color.$boxShadow !important;
 
     &:hover {
         background-color: color.$buttonDangerHover !important;
@@ -75,9 +73,16 @@ button {
 .button_remove {
     color: color.$red !important;
     cursor: pointer !important;
+    box-shadow: color.$boxShadow !important;
 }
 
 .button_container {
     display: block !important;
     text-align: center !important;
+}
+
+.button_icon {
+    color: color.$red !important;
+    cursor: pointer !important;
+    filter: drop-shadow(1px 0px 6px color.$blackRgba) !important;
 }

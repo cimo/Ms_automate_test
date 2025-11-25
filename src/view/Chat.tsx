@@ -25,15 +25,17 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
                         {(() => {
                             const result: IvirtualNode[] = [];
 
-                            const list = Object.entries(variableObject.chatMessageReceivedList.state);
+                            const list = Object.entries(variableObject.chatMessageList.state);
 
-                            for (const [key, chatMessageReceived] of list) {
-                                const date = new Date(chatMessageReceived.time);
-
+                            for (const [key, chatMessage] of list) {
                                 result.push(
                                     <p key={key}>
-                                        <span class="time">{helperSrc.localeFormat(date)}</span>
-                                        <span class="text">{chatMessageReceived.content}</span>
+                                        <span class="time">{helperSrc.localeFormat(new Date(chatMessage.time))}</span>
+                                        <span class="text">
+                                            {chatMessage.fromClientId === variableObject.clientIdCurrent.state
+                                                ? `You: ${chatMessage.content}`
+                                                : chatMessage.content}
+                                        </span>
                                     </p>
                                 );
                             }

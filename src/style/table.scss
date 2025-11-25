@@ -1,4 +1,5 @@
-@use "color.scss" as color;
+@use "setting/color.scss" as color;
+@use "setting/parameter.scss" as parameter;
 
 table {
     display: table !important;
@@ -6,7 +7,8 @@ table {
     width: 100% !important;
     position: relative !important;
     border-collapse: collapse !important;
-    box-shadow: 0px 1px 6px 0px color.$blackRgb !important;
+    box-shadow: color.$boxShadow !important;
+    border: 1px solid color.$grey600 !important;
 
     .row_empty {
         display: table-row !important;
@@ -15,11 +17,11 @@ table {
         position: relative !important;
 
         .icon_progress {
-            width: 40px !important;
-            height: 40px !important;
+            width: 18px !important;
+            height: 18px !important;
             position: absolute !important;
             left: 50% !important;
-            top: 5px !important;
+            top: 36px !important;
         }
 
         .text {
@@ -38,12 +40,12 @@ table {
         word-break: break-word !important;
 
         &:not(.row_empty):not(.not_hover):hover {
-            background-color: color.$grey600 !important;
+            background-color: color.$grey1000 !important;
             color: color.$white !important;
         }
 
         &.even {
-            background-color: color.$grey100 !important;
+            background-color: color.$grey300 !important;
         }
 
         &.selected_row {
@@ -60,12 +62,36 @@ table {
         .cell {
             display: table-cell !important;
             vertical-align: middle !important;
-            padding: 5px !important;
+            padding: 0px 10px !important;
             height: 50px !important;
 
             &.center {
                 text-align: center !important;
             }
+
+            &.button {
+                button:not(:first-child) {
+                    margin-top: 5px !important;
+                }
+            }
+        }
+    }
+
+    .empty_state {
+        height: auto !important;
+        text-align: center !important;
+        padding-top: 10px !important;
+        color: color.$grey800 !important;
+
+        p {
+            font-size: parameter.$fontSizeNormal !important;
+            padding: 0 !important;
+        }
+
+        .icon_folder_open {
+            width: 50px !important;
+            height: 50px !important;
+            color: color.$grey500 !important;
         }
     }
 }

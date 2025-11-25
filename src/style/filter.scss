@@ -1,8 +1,9 @@
-@use "color.scss" as color;
+@use "setting/color.scss" as color;
 
 .filter {
     height: 40px !important;
     display: table-header-group !important;
+    border-bottom: 1px solid color.$grey600 !important;
 
     .row {
         background-color: color.$blueMedium !important;
@@ -10,6 +11,8 @@
         word-break: break-word !important;
 
         &.filter_action {
+            border: none !important;
+
             .button_action {
                 position: absolute !important;
                 top: -50px !important;
@@ -19,14 +22,8 @@
 
         .cell {
             vertical-align: middle !important;
-            padding: 0px 10px !important;
+            padding: 10px !important;
             min-width: auto !important;
-
-            &.field_container {
-                .field_value {
-                    width: unset !important;
-                }
-            }
         }
     }
 }

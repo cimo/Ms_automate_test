@@ -8,6 +8,7 @@ import {
     elementObserverOn
 } from "@cimo/jsmvcfw/dist/src/Main";
 import CwsClient from "@cimo/websocket/dist/src/client/Manager";
+import { ImessageDirect } from "@cimo/websocket/dist/src/client/Model";
 import { MDCSelect } from "@material/select";
 import { MDCRipple } from "@material/ripple";
 import { MDCTextField } from "@material/textfield";
@@ -121,7 +122,7 @@ export default class Index implements Icontroller {
 
     private receiveDataClientIdCurrent = (): void => {
         this.cwsClient.receiveData<string>("clientId_current", (data) => {
-            this.variableObject.clientCurrentId.state = data;
+            this.variableObject.clientIdCurrent.state = data;
         });
     };
 
@@ -129,7 +130,7 @@ export default class Index implements Icontroller {
         this.cwsClient.receiveDataDirect((data) => {
             this.variableObject.isChatVisible.state = true;
             this.variableObject.clientIdSelected.state = data.fromClientId;
-            this.variableObject.chatMessageReceivedList.state = [data, ...this.variableObject.chatMessageReceivedList.state];
+            this.variableObject.chatMessageList.state = [data, ...this.variableObject.chatMessageList.state];
         });
     };
 
@@ -297,7 +298,7 @@ export default class Index implements Icontroller {
     };
 
     private onClickClient = (index: number, clientId: string): void => {
-        if (this.variableObject.clientCurrentId.state !== clientId) {
+        if (this.variableObject.clientIdCurrent.state !== clientId) {
             this.variableObject.isChatVisible.state = true;
             this.variableObject.clientIdSelected.state = this.variableObject.clientList.state[index];
         }
@@ -310,8 +311,17 @@ export default class Index implements Icontroller {
             return;
         }
 
-        if (this.elementHookObject.inputChatMessageSend.value !== "") {
+        if (this.variableObject.clientIdCurrent.state && this.elementHookObject.inputChatMessageSend.value !== "") {
             this.cwsClient.sendDataDirect(this.elementHookObject.inputChatMessageSend.value, this.variableObject.clientIdSelected.state);
+
+            const data: ImessageDirect = {
+                time: new Date().toISOString(),
+                content: this.elementHookObject.inputChatMessageSend.value,
+                fromClientId: this.variableObject.clientIdCurrent.state,
+                toClientId: this.variableObject.clientIdSelected.state
+            };
+
+            this.variableObject.chatMessageList.state = [data, ...this.variableObject.chatMessageList.state];
         }
     };
 
@@ -319,7 +329,7 @@ export default class Index implements Icontroller {
         this.variableObject.isChatVisible.state = false;
         this.variableObject.clientIdSelected.state = "";
         this.elementHookObject.inputChatMessageSend.value = "";
-        this.variableObject.chatMessageReceivedList.state = [];
+        this.variableObject.chatMessageList.state = [];
     };
 
     private onClickConnect = (): void => {
@@ -393,9 +403,9 @@ export default class Index implements Icontroller {
                 uploadFileName: "",
                 isChatVisible: false,
                 clientIdSelected: "",
-                chatMessageReceivedList: [],
+                chatMessageList: [],
                 isClientConnected: false,
-                clientCurrentId: ""
+                clientIdCurrent: ""
             },
             this.constructor.name
         );
