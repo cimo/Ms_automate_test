@@ -1,5 +1,5 @@
-@use "../../setting/color.scss" as color;
-@use "../../setting/parameter.scss" as parameter;
+@use "../setting/color.scss" as color;
+@use "../setting/parameter.scss" as parameter;
 
 .view_loader {
     position: fixed !important;
@@ -23,7 +23,6 @@
             display: inline-block !important;
             width: 24px !important;
             height: 32px !important;
-            border: 2px solid color.$blueMedium700 !important;
             margin: 1px !important;
             animation: animation_loader 1s infinite !important;
         }
@@ -31,7 +30,7 @@
         .text {
             margin-top: 10px !important;
             color: color.$blueMedium700 !important;
-            font-size: 30px !important;
+            font-size: parameter.$fontSizeMedium !important;
         }
     }
 

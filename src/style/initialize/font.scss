@@ -9,7 +9,7 @@
 }
 
 body {
-    & *:not(.material-icons) {
+    *:not(.cls_icon) {
         font-family: "roboto-regular" !important;
         font-size: 15px !important;
     }

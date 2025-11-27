@@ -1,17 +1,6 @@
-import {
-    Icontroller,
-    IvariableEffect,
-    IvirtualNode,
-    variableBind,
-    elementObserver,
-    elementObserverOff,
-    elementObserverOn
-} from "@cimo/jsmvcfw/dist/src/Main";
+import { Icontroller, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main";
 import CwsClient from "@cimo/websocket/dist/src/client/Manager";
 import { ImessageDirect } from "@cimo/websocket/dist/src/client/Model";
-import { MDCSelect } from "@material/select";
-import { MDCRipple } from "@material/ripple";
-import { MDCTextField } from "@material/textfield";
 
 // Source
 import * as helperSrc from "../HelperSrc";
@@ -28,72 +17,9 @@ export default class Index implements Icontroller {
     private controllerAlert: ControllerAlert;
     private controllerDialog: ControllerDialog;
 
-    private mdcSelectList: MDCSelect[];
-    private mdcRippleList: MDCRipple[];
-    private mdcTextFieldList: MDCTextField[];
-
     private cwsClient: CwsClient;
 
     // Method
-    private mdcEvent = (): void => {
-        // MDCSelect
-        for (const value of this.mdcSelectList) {
-            value.destroy();
-        }
-
-        this.mdcSelectList = [];
-
-        const elementMdcSelectList = document.querySelectorAll<HTMLElement>(".mdc-select");
-
-        if (elementMdcSelectList) {
-            for (const [key, elementMdcSelect] of Object.entries(elementMdcSelectList)) {
-                const index = parseInt(key);
-
-                this.mdcSelectList.push(new MDCSelect(elementMdcSelect));
-
-                elementObserver(elementMdcSelect, (element, change) => {
-                    elementObserverOff(element);
-
-                    if (change.type === "childList") {
-                        this.mdcSelectList[index].setValue(this.mdcSelectList[index].value);
-                    }
-
-                    elementObserverOn(element);
-                });
-            }
-        }
-
-        // MDCRipple
-        for (const value of this.mdcRippleList) {
-            value.destroy();
-        }
-
-        this.mdcRippleList = [];
-
-        const elementMdcButtonList = document.querySelectorAll<HTMLElement>(".mdc-button");
-
-        if (elementMdcButtonList) {
-            for (const [, elementMdcButton] of Object.entries(elementMdcButtonList)) {
-                this.mdcRippleList.push(new MDCRipple(elementMdcButton));
-            }
-        }
-
-        // MDCTextField
-        for (const value of this.mdcTextFieldList) {
-            value.destroy();
-        }
-
-        this.mdcTextFieldList = [];
-
-        const elementMdcTextFieldList = document.querySelectorAll<HTMLElement>(".mdc-text-field");
-
-        if (elementMdcTextFieldList) {
-            for (const elementMdcTextField of elementMdcTextFieldList) {
-                this.mdcTextFieldList.push(new MDCTextField(elementMdcTextField));
-            }
-        }
-    };
-
     private checkCwsConnection = (): boolean => {
         if (this.variableObject.isClientConnected.state) {
             return true;
@@ -176,13 +102,10 @@ export default class Index implements Icontroller {
         }
 
         if (!this.variableObject.outputList.state[index] || this.variableObject.outputList.state[index].phase !== "running") {
-            const elementSelected = this.elementHookObject.selectBrowserName[index].querySelector(".mdc-deprecated-list-item--selected");
-            const attributeValue = elementSelected ? (elementSelected.getAttribute("data-value") as string) : "";
-
             const clientData: modelTester.IclientDataRun = {
                 index,
                 specFileName,
-                browser: attributeValue
+                browser: this.elementHookObject.selectBrowserName[index].value
             };
             this.cwsClient.sendMessage("text", clientData, "run");
         } else {
@@ -348,10 +271,6 @@ export default class Index implements Icontroller {
         this.controllerAlert = new ControllerAlert();
         this.controllerDialog = new ControllerDialog();
 
-        this.mdcSelectList = [];
-        this.mdcRippleList = [];
-        this.mdcTextFieldList = [];
-
         this.cwsClient = new CwsClient(helperSrc.WS_ADRESS);
 
         this.cwsClient.open();
@@ -426,22 +345,7 @@ export default class Index implements Icontroller {
         };
     }
 
-    variableEffect(watch: IvariableEffect): void {
-        watch([
-            {
-                list: ["specFileList"],
-                action: () => {
-                    this.mdcEvent();
-                }
-            },
-            {
-                list: ["outputList"],
-                action: () => {
-                    this.mdcEvent();
-                }
-            }
-        ]);
-    }
+    variableEffect(): void {}
 
     view(): IvirtualNode {
         return viewIndex(this.variableObject, this.methodObject);

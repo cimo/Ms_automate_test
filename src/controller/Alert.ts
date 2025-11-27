@@ -1,5 +1,4 @@
 import { Icontroller, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main";
-import { MDCSnackbar } from "@material/snackbar";
 
 // Source
 import * as modelAlert from "../model/Alert";
@@ -10,19 +9,15 @@ export default class Alert implements Icontroller {
     private variableObject: modelAlert.Ivariable;
     private methodObject: modelAlert.Imethod;
 
-    private mdcSnackbar: MDCSnackbar | null;
+    private clsAlert: Element | null;
+    private timeout: NodeJS.Timeout | null;
 
     // Method
-    private mdcEvent = (): void => {
-        const element = this.elementHookObject.mdcSnackbar;
+    private clsEvent = (): void => {
+        this.clsAlert = this.elementHookObject.clsAlert;
 
-        if (element) {
-            this.mdcSnackbar = new MDCSnackbar(element);
-            this.mdcSnackbar.timeoutMs = -1;
-            this.mdcSnackbar.listen("MDCSnackbar:closed", () => {
-                this.variableObject.className.state = "";
-                this.variableObject.label.state = "";
-            });
+        if (this.clsAlert) {
+            this.clsAlert.classList.add("hidden");
         }
     };
 
@@ -34,25 +29,38 @@ export default class Alert implements Icontroller {
         this.variableObject = {} as modelAlert.Ivariable;
         this.methodObject = {} as modelAlert.Imethod;
 
-        this.mdcSnackbar = null;
+        this.clsAlert = null;
+        this.timeout = null;
     }
 
     open = (className: string, text: string, timeout = -1): void => {
         this.close();
 
+        if (this.clsAlert) {
+            this.clsAlert.classList.remove("hidden");
+        }
+
         this.variableObject.className.state = className;
         this.variableObject.label.state = text;
+        this.variableObject.isOpen.state = true;
 
-        if (this.mdcSnackbar) {
-            this.mdcSnackbar.timeoutMs = timeout;
-            this.mdcSnackbar.open();
+        if (timeout > 0) {
+            this.timeout = setTimeout(() => {
+                this.close();
+            }, timeout);
         }
     };
 
     close = (): void => {
-        if (this.mdcSnackbar) {
-            this.mdcSnackbar.close();
+        if (this.timeout) {
+            clearTimeout(this.timeout);
         }
+
+        if (this.clsAlert) {
+            this.clsAlert.classList.add("hidden");
+        }
+
+        this.variableObject.isOpen.state = false;
     };
 
     elementHookObject = {} as modelAlert.IelementHook;
@@ -61,7 +69,8 @@ export default class Alert implements Icontroller {
         this.variableObject = variableBind(
             {
                 className: "",
-                label: ""
+                label: "",
+                isOpen: false
             },
             this.constructor.name
         );
@@ -86,7 +95,7 @@ export default class Alert implements Icontroller {
     }
 
     rendered(): void {
-        this.mdcEvent();
+        this.clsEvent();
     }
 
     destroy(): void {}

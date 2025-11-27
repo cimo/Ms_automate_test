@@ -11,8 +11,7 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
                 <div class="container">
                     <div class="header">
                         <i
-                            class="mdc-button__icon material-icons"
-                            aria-hidden="true"
+                            class="cls_button cls_button_icon"
                             onclick={() => {
                                 methodObject.onClickChatClose();
                             }}
@@ -44,33 +43,23 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
                         })()}
                     </div>
                     <div class="field_container">
-                        <label class="mdc-text-field mdc-text-field--outlined mdc-text-field--textarea field_value">
-                            <span class="mdc-notched-outline">
-                                <span class="mdc-notched-outline__leading"></span>
-                                <span class="mdc-notched-outline__notch">
-                                    <span class="mdc-floating-label">Message to send</span>
-                                </span>
-                                <span class="mdc-notched-outline__trailing"></span>
-                            </span>
-                            <textarea
-                                jsmvcfw-elementHookName="inputChatMessageSend"
-                                name="messageSend"
-                                class="mdc-text-field__input"
-                                rows="2"
-                                cols="40"
-                                aria-label="Label"
-                            ></textarea>
-                        </label>
+                        <label for="messageSend">Message to send</label>
+                        <textarea
+                            jsmvcfw-elementHookName="inputChatMessageSend"
+                            id="messageSend"
+                            name="messageSend"
+                            class="cls_textarea field_value"
+                            rows="4"
+                        ></textarea>
                     </div>
-                    <div class="mdc-touch-target-wrapper">
+                    <div class="button_container">
                         <button
-                            class="mdc-button mdc-button--raised mdc-button--leading button_primary"
+                            class="cls_button cls_button_primary"
                             onclick={() => {
                                 methodObject.onSendChatMessage();
                             }}
                         >
-                            <span class="mdc-button__ripple"></span>
-                            <span class="mdc-button__label">Send</span>
+                            <span class="cls_button_label">Send</span>
                         </button>
                     </div>
                 </div>

@@ -19,7 +19,8 @@
         "removeComments": true,
         "sourceMap": true,
         "jsx": "preserve",
-        "jsxFactory": "jsxFactory"
+        "jsxFactory": "jsxFactory",
+        "jsxFragmentFactory": "jsxFragment"
     },
     "include": [
         "eslint.customRule.ts",

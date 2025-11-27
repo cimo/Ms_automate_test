@@ -24,28 +24,22 @@ const viewUpload = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                         </ul>
                         <p class="name">{variableObject.uploadFileName.state}</p>
                         <div class="button_container">
-                            <div class="mdc-touch-target-wrapper">
-                                <button
-                                    class="mdc-button mdc-button--raised mdc-button--leading button_primary"
-                                    onclick={() => {
-                                        methodObject.onClickChooseFile();
-                                    }}
-                                >
-                                    <span class="mdc-button__ripple"></span>
-                                    <span class="mdc-button__label">Choose file</span>
-                                </button>
-                            </div>
-                            <div class="mdc-touch-target-wrapper">
-                                <button
-                                    class="mdc-button mdc-button--raised mdc-button--leading button_primary"
-                                    onclick={() => {
-                                        methodObject.onClickUpload();
-                                    }}
-                                >
-                                    <span class="mdc-button__ripple"></span>
-                                    <span class="mdc-button__label">Upload</span>
-                                </button>
-                            </div>
+                            <button
+                                class="cls_button cls_button_primary"
+                                onclick={() => {
+                                    methodObject.onClickChooseFile();
+                                }}
+                            >
+                                <span class="cls_button_label">Choose file</span>
+                            </button>
+                            <button
+                                class="cls_button cls_button_primary"
+                                onclick={() => {
+                                    methodObject.onClickUpload();
+                                }}
+                            >
+                                <span class="cls_button_label">Upload</span>
+                            </button>
                         </div>
                         <input jsmvcfw-elementHookName="inputSpecUpload" class="input_upload" name="fileName" type="file" value="" />
                     </td>

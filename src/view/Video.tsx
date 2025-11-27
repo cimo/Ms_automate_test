@@ -23,36 +23,26 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                             <li>For search it write the name, present in the "Filename" table column, inside the input and click on the button.</li>
                             <li>Click on the generated list item for load the specific video.</li>
                         </ul>
+                        <div class="field_container">
+                            <label for="videoName">Filename</label>
+                            <input
+                                jsmvcfw-elementHookName="inputVideoName"
+                                id="videoName"
+                                name="videoName"
+                                type="text"
+                                class="cls_input_text field_value"
+                                value=""
+                            />
+                        </div>
                         <div class="button_container">
-                            <div class="field_container">
-                                <label class="mdc-text-field mdc-text-field--outlined field_value">
-                                    <span class="mdc-notched-outline">
-                                        <span class="mdc-notched-outline__leading"></span>
-                                        <span class="mdc-notched-outline__notch">
-                                            <span class="mdc-floating-label">Filename</span>
-                                        </span>
-                                        <span class="mdc-notched-outline__trailing"></span>
-                                    </span>
-                                    <input
-                                        jsmvcfw-elementHookName="inputVideoName"
-                                        name="videoName"
-                                        type="text"
-                                        class="mdc-text-field__input"
-                                        value=""
-                                    />
-                                </label>
-                            </div>
-                            <div class="mdc-touch-target-wrapper">
-                                <button
-                                    class="mdc-button mdc-button--raised mdc-button--leading button_primary"
-                                    onclick={() => {
-                                        methodObject.onClickVideoLoad();
-                                    }}
-                                >
-                                    <span class="mdc-button__ripple"></span>
-                                    <span class="mdc-button__label">Load</span>
-                                </button>
-                            </div>
+                            <button
+                                class="cls_button cls_button_primary"
+                                onclick={() => {
+                                    methodObject.onClickVideoLoad();
+                                }}
+                            >
+                                <span class="cls_button_label">Load</span>
+                            </button>
                         </div>
                         <ul class="item">
                             {(() => {
@@ -64,8 +54,7 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                                     result.push(
                                         <li key={key}>
                                             <i
-                                                class="mdc-button__icon material-icons"
-                                                aria-hidden="true"
+                                                class="cls_button cls_button_icon cls_button_remove"
                                                 onclick={() => {
                                                     methodObject.onClickVideoDelete(index, value);
                                                 }}

@@ -28,9 +28,7 @@ const viewClient = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                                     result.push(
                                         <li key={key}>
                                             <div class="clientId_container">
-                                                <i class="mdc-button__icon material-icons" aria-hidden="true">
-                                                    person
-                                                </i>
+                                                <i class="cls_icon">person</i>
                                                 <p
                                                     class={`${variableObject.clientIdCurrent.state === value ? "exclude" : ""}`}
                                                     onclick={() => {
@@ -47,16 +45,13 @@ const viewClient = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                                                 if (variableObject.clientIdCurrent.state === value && !variableObject.isClientConnected.state) {
                                                     result.push(
                                                         <button
-                                                            class="mdc-button mdc-button--raised mdc-button--leading button_primary"
+                                                            class="cls_button cls_button_primary"
                                                             onclick={() => {
                                                                 methodObject.onClickConnect();
                                                             }}
                                                         >
-                                                            <span class="mdc-button__ripple"></span>
-                                                            <span class="mdc-button__label">
-                                                                <i class="mdc-button__icon material-icons" aria-hidden="true">
-                                                                    lan
-                                                                </i>
+                                                            <span class="cls_button_label">
+                                                                <i class="cls_button_icon">lan</i>
                                                             </span>
                                                         </button>
                                                     );

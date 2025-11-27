@@ -1,11 +1,14 @@
 @use "setting/color.scss" as color;
 
-button {
+.cls_button {
     display: block !important;
     margin: 0 10px !important;
     padding: 5px 10px !important;
     min-width: fit-content !important;
     text-align: center !important;
+    border-radius: 4px !important;
+    text-transform: uppercase !important;
+    box-shadow: color.$boxShadow !important;
 
     &:not(:disabled) {
         cursor: pointer !important;
@@ -14,75 +17,64 @@ button {
     &:disabled {
         color: color.$grey1400 !important;
         background-color: color.$buttonDisabled !important;
+        box-shadow: none !important;
     }
 
-    .button_label {
-        display: inline-block !important;
-    }
-
-    .icon_progress {
-        width: 18px !important;
-        height: 18px !important;
+    &.cls_button_primary {
         color: color.$white !important;
-        top: 3px !important;
-        position: relative !important;
-        vertical-align: initial !important;
+        background-color: color.$buttonPrimary !important;
+
+        &:hover {
+            background-color: color.$buttonPrimaryHover !important;
+        }
     }
-}
 
-.button_primary {
-    color: color.$white !important;
-    background-color: color.$buttonPrimary !important;
-    box-shadow: color.$boxShadow !important;
+    &.cls_button_secondary {
+        color: color.$white !important;
+        background-color: color.$buttonSecondary !important;
 
-    &:hover {
-        background-color: color.$buttonPrimaryHover !important;
+        &:hover {
+            background-color: color.$buttonSecondaryHover !important;
+        }
     }
-}
 
-.button_secondary {
-    color: color.$white !important;
-    background-color: color.$buttonSecondary !important;
-    box-shadow: color.$boxShadow !important;
+    &.cls_button_flat {
+        color: color.$buttonFlat !important;
+        background-color: color.$white !important;
+        border: 1px solid color.$buttonFlat !important;
+        box-shadow: none !important;
 
-    &:hover {
-        background-color: color.$buttonSecondaryHover !important;
+        &:hover {
+            background-color: color.$buttonFlatHover !important;
+        }
     }
-}
 
-.button_flat {
-    color: color.$buttonFlat !important;
-    background-color: color.$white !important;
-    border: 1px solid !important;
+    &.cls_button_danger {
+        color: color.$white !important;
+        background-color: color.$buttonDanger !important;
 
-    &:hover {
-        background-color: color.$buttonFlatHover !important;
+        &:hover {
+            background-color: color.$buttonDangerHover !important;
+        }
     }
-}
 
-.button_danger {
-    color: color.$white !important;
-    background-color: color.$buttonDanger !important;
-    box-shadow: color.$boxShadow !important;
-
-    &:hover {
-        background-color: color.$buttonDangerHover !important;
+    &.cls_button_remove {
+        color: color.$red !important;
     }
-}
 
-.button_remove {
-    color: color.$red !important;
-    cursor: pointer !important;
-    box-shadow: color.$boxShadow !important;
-}
+    &.cls_button_icon {
+        filter: drop-shadow(1px 0px 6px color.$blackRgba) !important;
+        text-transform: none !important;
+        box-shadow: none !important;
+    }
 
-.button_container {
-    display: block !important;
-    text-align: center !important;
-}
+    .cls_button_label {
+        display: inline-block !important;
 
-.button_icon {
-    color: color.$red !important;
-    cursor: pointer !important;
-    filter: drop-shadow(1px 0px 6px color.$blackRgba) !important;
+        .cls_button_icon {
+            width: 18px !important;
+            height: 18px !important;
+            text-transform: none !important;
+        }
+    }
 }

@@ -10,22 +10,22 @@ html {
     text-wrap-style: balance !important;
 
     & > .header {
-        height: calc(
-            parameter.$heightHeader + parameter.$heightBreadcrumb
-        ) !important;
+        height: 0 !important;
         z-index: parameter.$zIndexHeader !important;
         position: relative !important;
     }
 
     & > .left {
-        width: 30% !important;
+        width: 60% !important;
+        margin: 10px !important;
         position: relative !important;
         display: inline-block !important;
         vertical-align: top !important;
     }
 
     & > .right {
-        width: 70% !important;
+        width: 30% !important;
+        margin: 10px !important;
         position: relative !important;
         display: inline-block !important;
         vertical-align: top !important;

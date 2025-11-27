@@ -38,5 +38,5 @@ export interface IelementHook extends Record<string, Element | Element[]> {
     selectBrowserName: HTMLSelectElement[];
     inputVideoName: HTMLInputElement;
     inputSpecUpload: HTMLInputElement;
-    inputChatMessageSend: HTMLInputElement;
+    inputChatMessageSend: HTMLTextAreaElement;
 }

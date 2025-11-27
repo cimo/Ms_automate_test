@@ -1,0 +1,63 @@
+@use "../setting/color.scss" as color;
+@use "../setting/parameter.scss" as parameter;
+
+.view_alert {
+    .cls_alert_surface {
+        position: fixed !important;
+        top: 10px !important;
+        right: 10px !important;
+        left: auto !important;
+        bottom: auto !important;
+        z-index: parameter.$zIndexAlert !important;
+        width: fit-content !important;
+        height: fit-content !important;
+        box-shadow: color.$boxShadow;
+        padding: 10px !important;
+        border: 1px solid color.$grey600 !important;
+        flex-direction: revert !important;
+        align-items: revert !important;
+
+        .cls_alert_label {
+            padding: 10px 0 !important;
+            white-space: pre !important;
+            overflow-x: hidden !important;
+            overflow-y: auto !important;
+            text-overflow: ellipsis !important;
+        }
+
+        .cls_alert_action {
+            margin: 0 !important;
+            vertical-align: top !important;
+            display: contents !important;
+            cursor: pointer !important;
+
+            .cls_alert_icon {
+                position: absolute !important;
+                top: 5px !important;
+                right: 10px !important;
+            }
+        }
+    }
+
+    &.success {
+        .cls_alert_surface {
+            background-color: color.$backgroundSuccess !important;
+
+            .cls_alert_label,
+            .cls_alert_action {
+                color: color.$green800 !important;
+            }
+        }
+    }
+
+    &.error {
+        .cls_alert_surface {
+            background-color: color.$backgroundFail !important;
+
+            .cls_alert_label,
+            .cls_alert_action {
+                color: color.$red800 !important;
+            }
+        }
+    }
+}

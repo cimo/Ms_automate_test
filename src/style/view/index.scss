@@ -1,5 +1,5 @@
-@use "../../setting/color.scss" as color;
-@use "../../setting/parameter.scss" as parameter;
+@use "../setting/color.scss" as color;
+@use "../setting/parameter.scss" as parameter;
 
 .view_index {
     text-align: center !important;
@@ -21,9 +21,9 @@
             width: 10% !important;
         }
 
-        thead {
-            tr {
-                th {
+        .filter {
+            .row {
+                .cell {
                     text-align: center !important;
                     vertical-align: middle !important;
                 }
@@ -31,44 +31,18 @@
         }
 
         tbody {
-            tr {
-                td {
+            .row {
+                .cell {
                     text-align: center !important;
                     vertical-align: middle !important;
 
-                    &.column_title {
-                        text-align: left !important;
-
-                        p {
-                            white-space: nowrap !important;
-                            overflow: hidden !important;
-                            text-overflow: ellipsis !important;
-                            width: 200px !important;
-                        }
-                    }
-
                     .field_container,
-                    button {
+                    .cls_button {
                         display: inline-block !important;
-                        vertical-align: middle !important;
                     }
 
-                    .icon_loading {
-                        animation: animation_icon_loading 1s infinite !important;
-                    }
-
-                    .icon_success {
-                        color: color.$green !important;
-                    }
-
-                    .icon_fail {
-                        color: color.$red !important;
-                    }
-
-                    .field_container {
-                        .mdc-select {
-                            width: 180px !important;
-                        }
+                    .cls_button {
+                        vertical-align: top !important;
                     }
                 }
             }
@@ -80,9 +54,9 @@
     .table_upload {
         margin-bottom: 10px !important;
 
-        thead {
-            tr {
-                th {
+        .filter {
+            .row {
+                .cell {
                     text-align: center !important;
                     vertical-align: middle !important;
                 }
@@ -90,8 +64,8 @@
         }
 
         tbody {
-            tr {
-                td {
+            .row {
+                .cell {
                     text-align: left !important;
                     vertical-align: middle !important;
 
@@ -107,10 +81,11 @@
                         }
                     }
 
-                    .field_container,
-                    button {
-                        display: inline-block !important;
-                        vertical-align: middle !important;
+                    .field_container {
+                        .field_value,
+                        .cls_button {
+                            display: inline-block !important;
+                        }
                     }
                 }
             }
@@ -129,17 +104,27 @@
                     }
                 }
 
-                .mdc-button {
+                .cls_button {
                     min-width: 0px !important;
                     min-height: 0px !important;
                     width: 38px !important;
                     height: 30px !important;
+                    display: inline-block !important;
+                    vertical-align: middle !important;
                 }
             }
         }
     }
 
     .table_video {
+        .field_container {
+            text-align: center !important;
+
+            .field_value {
+                display: inline-block !important;
+            }
+        }
+
         .item {
             li {
                 i,
@@ -181,12 +166,33 @@
         margin: 10px 0 10px 20px !important;
     }
 
+    .button_container {
+        margin: 10px !important;
+        text-align: center !important;
+
+        .cls_button {
+            display: inline-block !important;
+        }
+    }
+
+    .icon_loading {
+        animation: animation_icon_loading 1s infinite !important;
+    }
+
+    .icon_success {
+        color: color.$green !important;
+    }
+
+    .icon_fail {
+        color: color.$red !important;
+    }
+
     @media screen and (max-width: parameter.$screenMobile) {
         .left,
         .right {
             display: block !important;
             margin: 10px auto !important;
-            width: 90% !important;
+            width: 100% !important;
 
             .field_container {
                 min-width: auto !important;

@@ -1,5 +1,4 @@
 import { Icontroller, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main";
-import { MDCDialog } from "@material/dialog";
 
 // Source
 import * as modelDialog from "../model/Dialog";
@@ -10,20 +9,16 @@ export default class Dialog implements Icontroller {
     private variableObject: modelDialog.Ivariable;
     private methodObject: modelDialog.Imethod;
 
-    private mdcDialog: MDCDialog | null;
+    private clsDialog: Element | null;
     private callbackAccept: (() => void) | null;
     private callbackClose: (() => void) | null;
 
     // Method
-    private mdcEvent = (): void => {
-        const element = this.elementHookObject.mdcDialog;
+    private clsEvent = (): void => {
+        this.clsDialog = this.elementHookObject.clsDialog;
 
-        if (element) {
-            this.mdcDialog = new MDCDialog(element);
-            this.mdcDialog.listen("MDCDialog:closed", () => {
-                this.variableObject.title.state = "";
-                this.variableObject.content.state = "";
-            });
+        if (this.clsDialog) {
+            this.clsDialog.classList.add("hidden");
         }
     };
 
@@ -47,7 +42,7 @@ export default class Dialog implements Icontroller {
         this.variableObject = {} as modelDialog.Ivariable;
         this.methodObject = {} as modelDialog.Imethod;
 
-        this.mdcDialog = null;
+        this.clsDialog = null;
         this.callbackAccept = null;
         this.callbackClose = null;
     }
@@ -58,25 +53,28 @@ export default class Dialog implements Icontroller {
         this.variableObject.title.state = title;
         this.variableObject.content.state = message;
 
-        if (this.mdcDialog) {
-            this.mdcDialog.open();
+        if (this.clsDialog) {
+            this.clsDialog.classList.remove("hidden");
+        }
 
-            this.variableObject.isSingleButton.state = isSingleButton;
+        this.variableObject.isSingleButton.state = isSingleButton;
+        this.variableObject.isOpen.state = true;
 
-            if (callbackAcceptValue) {
-                this.callbackAccept = callbackAcceptValue;
-            }
+        if (callbackAcceptValue) {
+            this.callbackAccept = callbackAcceptValue;
+        }
 
-            if (callbackCloseValue) {
-                this.callbackClose = callbackCloseValue;
-            }
+        if (callbackCloseValue) {
+            this.callbackClose = callbackCloseValue;
         }
     };
 
     close = (): void => {
-        if (this.mdcDialog) {
-            this.mdcDialog.close();
+        if (this.clsDialog) {
+            this.clsDialog.classList.add("hidden");
         }
+
+        this.variableObject.isOpen.state = true;
     };
 
     elementHookObject = {} as modelDialog.IelementHook;
@@ -86,7 +84,8 @@ export default class Dialog implements Icontroller {
             {
                 title: "",
                 content: "",
-                isSingleButton: false
+                isSingleButton: false,
+                isOpen: false
             },
             this.constructor.name
         );
@@ -112,7 +111,7 @@ export default class Dialog implements Icontroller {
     }
 
     rendered(): void {
-        this.mdcEvent();
+        this.clsEvent();
     }
 
     destroy(): void {}
