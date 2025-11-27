@@ -7,7 +7,7 @@ button {
     min-width: fit-content !important;
     text-align: center !important;
 
-    & :not(:disabled) {
+    &:not(:disabled) {
         cursor: pointer !important;
     }
 
