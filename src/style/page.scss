@@ -2,7 +2,7 @@
 @use "setting/parameter.scss" as parameter;
 
 html {
-    background-color: color.$backgroundLight;
+    background-color: color.$backgroundLight !important;
 }
 
 .page_container {

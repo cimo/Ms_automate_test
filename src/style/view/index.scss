@@ -175,19 +175,6 @@
         color: color.$red !important;
     }
 
-    @media screen and (max-width: parameter.$screenMobile) {
-        .left,
-        .right {
-            display: block !important;
-            margin: 10px auto !important;
-            width: 100% !important;
-
-            .field_container {
-                min-width: auto !important;
-            }
-        }
-    }
-
     @keyframes animation_loading {
         0% {
             transform: rotate(360deg);
@@ -199,6 +186,38 @@
 
         100% {
             transform: rotate(0);
+        }
+    }
+
+    @media screen and (max-width: parameter.$screenMobile) {
+        .left,
+        .right {
+            display: block !important;
+            width: 90% !important;
+            margin: 10px auto !important;
+        }
+
+        .table_data {
+            tbody {
+                .row {
+                    .cell {
+                        &.column_action {
+                            .field_container {
+                                margin: 10px 0 5px 0 !important;
+                            }
+                            .cls_button {
+                                margin: 5px 0 10px 0 !important;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .table_video {
+            video {
+                width: 100% !important;
+            }
         }
     }
 }
