@@ -9,6 +9,7 @@
     border-radius: 4px !important;
     text-transform: uppercase !important;
     box-shadow: color.$boxShadow !important;
+    height: calc(15px * 2) !important;
 
     &:not(:disabled) {
         cursor: pointer !important;
@@ -62,19 +63,12 @@
         color: color.$red !important;
     }
 
-    &.cls_button_icon {
-        filter: drop-shadow(1px 0px 6px color.$blackRgba) !important;
-        text-transform: none !important;
+    &.cls_icon {
+        filter: drop-shadow(1px 0 6px color.$blackRgba) !important;
         box-shadow: none !important;
     }
 
     .cls_button_label {
         display: inline-block !important;
-
-        .cls_button_icon {
-            width: 18px !important;
-            height: 18px !important;
-            text-transform: none !important;
-        }
     }
 }

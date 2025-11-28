@@ -62,7 +62,7 @@ table {
         .cell {
             display: table-cell !important;
             vertical-align: middle !important;
-            padding: 0px 10px !important;
+            padding: 0 10px !important;
             height: 50px !important;
 
             &.center {
@@ -88,7 +88,7 @@ table {
             padding: 0 !important;
         }
 
-        .icon_folder_open {
+        .icon {
             width: 50px !important;
             height: 50px !important;
             color: color.$grey500 !important;

@@ -51,7 +51,7 @@ const viewClient = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                                                             }}
                                                         >
                                                             <span class="cls_button_label">
-                                                                <i class="cls_button_icon">lan</i>
+                                                                <i class="cls_icon">lan</i>
                                                             </span>
                                                         </button>
                                                     );

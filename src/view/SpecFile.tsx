@@ -50,7 +50,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                             id={`browser_${index}`}
                                             name="browser"
                                         >
-                                            <option value="">Select browser</option>
+                                            <option value="">Select</option>
                                             <option value="desktop_chrome">Desktop - Chrome</option>
                                             <option value="desktop_edge">Desktop - Edge</option>
                                             <option value="desktop_firefox">Desktop - Firefox</option>
@@ -72,7 +72,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                                 }}
                                             >
                                                 <span class="cls_button_label">
-                                                    <i class="cls_button_icon">{label}</i>
+                                                    <i class="cls_icon">{label}</i>
                                                 </span>
                                             </button>
                                         );
@@ -88,7 +88,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                         const result: IvirtualNode[] = [];
 
                                         if (outputPhase === "running") {
-                                            result.push(<i class="cls_button cls_button_icon icon_loading">cached</i>);
+                                            result.push(<i class="cls_button cls_icon icon_loading">cached</i>);
                                         } else if (outputPhase !== "" && outputPhase !== "running") {
                                             result.push(
                                                 <button
@@ -102,9 +102,9 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                                             const result: IvirtualNode[] = [];
 
                                                             if (outputPhase === "success") {
-                                                                result.push(<i class="cls_button_icon icon_success">done</i>);
+                                                                result.push(<i class="cls_button cls_icon icon_success">done</i>);
                                                             } else if (outputPhase === "error") {
-                                                                result.push(<i class="cls_button_icon icon_fail">priority_high</i>);
+                                                                result.push(<i class="cls_button cls_icon icon_fail">priority_high</i>);
                                                             }
 
                                                             return result;

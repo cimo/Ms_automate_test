@@ -25,7 +25,6 @@
             .row {
                 .cell {
                     text-align: center !important;
-                    vertical-align: middle !important;
                 }
             }
         }
@@ -34,15 +33,11 @@
             .row {
                 .cell {
                     text-align: center !important;
-                    vertical-align: middle !important;
 
                     .field_container,
                     .cls_button {
                         display: inline-block !important;
-                    }
-
-                    .cls_button {
-                        vertical-align: top !important;
+                        vertical-align: middle !important;
                     }
                 }
             }
@@ -58,7 +53,6 @@
             .row {
                 .cell {
                     text-align: center !important;
-                    vertical-align: middle !important;
                 }
             }
         }
@@ -67,7 +61,6 @@
             .row {
                 .cell {
                     text-align: left !important;
-                    vertical-align: middle !important;
 
                     .item {
                         margin: 10px 0 !important;
@@ -105,12 +98,7 @@
                 }
 
                 .cls_button {
-                    min-width: 0px !important;
-                    min-height: 0px !important;
-                    width: 38px !important;
-                    height: 30px !important;
                     display: inline-block !important;
-                    vertical-align: middle !important;
                 }
             }
         }
@@ -176,7 +164,7 @@
     }
 
     .icon_loading {
-        animation: animation_icon_loading 1s infinite !important;
+        animation: animation_loading 1s infinite !important;
     }
 
     .icon_success {
@@ -200,7 +188,7 @@
         }
     }
 
-    @keyframes animation_icon_loading {
+    @keyframes animation_loading {
         0% {
             transform: rotate(360deg);
         }

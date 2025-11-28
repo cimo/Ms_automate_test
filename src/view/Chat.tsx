@@ -11,7 +11,7 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
                 <div class="container">
                     <div class="header">
                         <i
-                            class="cls_button cls_button_icon"
+                            class="cls_button cls_icon"
                             onclick={() => {
                                 methodObject.onClickChatClose();
                             }}
