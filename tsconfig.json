@@ -18,6 +18,7 @@
         "skipLibCheck": true,
         "removeComments": true,
         "sourceMap": true,
+        "noPropertyAccessFromIndexSignature": true,
         "jsx": "preserve",
         "jsxFactory": "jsxFactory",
         "jsxFragmentFactory": "jsxFragment"
