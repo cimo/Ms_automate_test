@@ -16,9 +16,10 @@
         left: 50% !important;
         transform: translate(-50%, -50%) !important;
         z-index: parameter.$zIndexDialog !important;
-        box-shadow: color.$boxShadow;
+        box-shadow: color.$boxShadow !important;
         max-width: unset !important;
         background-color: color.$white !important;
+        width: 50% !important;
 
         .cls_dialog_title {
             font-size: 18px !important;
@@ -32,6 +33,8 @@
             color: color.$white !important;
             overflow-x: hidden !important;
             padding: 10px !important;
+            overflow: auto !important;
+            height: 250px !important;
         }
 
         .cls_dialog_action {
