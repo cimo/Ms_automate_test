@@ -26,24 +26,31 @@ export default class Tester {
 
     private specFile = (): void => {
         this.cwsServer.receiveData("spec_file", () => {
-            const fileList = Fs.readdirSync(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`);
+            Fs.readdir(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`, (error, fileList) => {
+                if (error) {
+                    const serverDataObject: modelTester.IserverDataBroadcast = { label: "spec_file", status: "", result: [] };
+                    this.cwsServer.sendDataBroadcast(serverDataObject);
 
-            const fileFilteredList: string[] = [];
-
-            for (let a = 0; a < fileList.length; a++) {
-                if (fileList[a].endsWith(".spec.ts")) {
-                    fileFilteredList.push(fileList[a]);
+                    return;
                 }
-            }
 
-            const resultList: string[] = [];
+                const fileFilteredList: string[] = [];
 
-            for (let a = 0; a < fileFilteredList.length; a++) {
-                resultList.push(fileFilteredList[a].replace(/\.spec\.ts$/, ""));
-            }
+                for (let a = 0; a < fileList.length; a++) {
+                    if (fileList[a].endsWith(".spec.ts")) {
+                        fileFilteredList.push(fileList[a]);
+                    }
+                }
 
-            const serverDataObject: modelTester.IserverDataBroadcast = { label: "spec_file", status: "", result: resultList };
-            this.cwsServer.sendDataBroadcast(serverDataObject);
+                const resultList: string[] = [];
+
+                for (let a = 0; a < fileFilteredList.length; a++) {
+                    resultList.push(fileFilteredList[a].replace(/\.spec\.ts$/, ""));
+                }
+
+                const serverDataObject: modelTester.IserverDataBroadcast = { label: "spec_file", status: "", result: resultList };
+                this.cwsServer.sendDataBroadcast(serverDataObject);
+            });
         });
     };
 
@@ -255,15 +262,27 @@ export default class Tester {
 
             if (!isMimeTypeOk) {
                 serverData = { status: "error", result: "Only .ts file are allowed." };
-            } else if (!isSizeOk) {
-                serverData = { status: "error", result: `File limit is: ${helperSrc.FILE_SIZE_MB} MB.` };
-            } else {
-                Fs.writeFileSync(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/${fileName}`, file);
+                this.cwsServer.sendMessage("text", serverData, "upload", clientId);
 
-                serverData = { status: "success", result: "Upload completed." };
+                return;
             }
 
-            this.cwsServer.sendMessage("text", serverData, "upload", clientId);
+            if (!isSizeOk) {
+                serverData = { status: "error", result: `File limit is: ${helperSrc.FILE_SIZE_MB} MB.` };
+                this.cwsServer.sendMessage("text", serverData, "upload", clientId);
+
+                return;
+            }
+
+            Fs.writeFile(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/${fileName}`, file, (error) => {
+                if (error) {
+                    serverData = { status: "error", result: "Upload failed." };
+                } else {
+                    serverData = { status: "success", result: "Upload completed." };
+                }
+
+                this.cwsServer.sendMessage("text", serverData, "upload", clientId);
+            });
         });
     };
 
