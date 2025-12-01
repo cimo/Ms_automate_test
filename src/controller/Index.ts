@@ -159,16 +159,14 @@ export default class Index implements Icontroller {
     };
 
     private onClickChooseFile = (): void => {
-        const element = this.elementHookObject.inputSpecUpload;
+        if (this.elementHookObject.inputSpecUpload) {
+            this.elementHookObject.inputSpecUpload.click();
 
-        if (element) {
-            element.click();
-
-            element.onchange = () => {
-                if (element.files && element.files.length > 0) {
-                    this.variableObject.uploadFileName.state = element.files[0].name;
+            this.elementHookObject.inputSpecUpload.onchange = () => {
+                if (this.elementHookObject.inputSpecUpload.files && this.elementHookObject.inputSpecUpload.files.length > 0) {
+                    this.variableObject.uploadFileName.state = this.elementHookObject.inputSpecUpload.files[0].name;
                 } else {
-                    element.value = "";
+                    this.elementHookObject.inputSpecUpload.value = "";
                     this.variableObject.uploadFileName.state = "";
                 }
             };
@@ -182,10 +180,8 @@ export default class Index implements Icontroller {
             return;
         }
 
-        const element = this.elementHookObject.inputSpecUpload;
-
-        if (element && element.files) {
-            const file = element.files[0];
+        if (this.elementHookObject.inputSpecUpload && this.elementHookObject.inputSpecUpload.files) {
+            const file = this.elementHookObject.inputSpecUpload.files[0];
 
             if (file) {
                 const reader = new FileReader();
@@ -208,8 +204,9 @@ export default class Index implements Icontroller {
 
                         this.cwsClient.sendMessage("text", "", "spec_file");
 
-                        element.value = "";
                         this.variableObject.uploadFileName.state = "";
+
+                        this.elementHookObject.inputSpecUpload.value = "";
                     }
                 };
 
@@ -251,8 +248,9 @@ export default class Index implements Icontroller {
     private onClickChatClose = (): void => {
         this.variableObject.isChatVisible.state = false;
         this.variableObject.clientIdSelected.state = "";
-        this.elementHookObject.inputChatMessageSend.value = "";
         this.variableObject.chatMessageList.state = [];
+
+        this.elementHookObject.inputChatMessageSend.value = "";
     };
 
     private onClickConnect = (): void => {

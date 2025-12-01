@@ -9,17 +9,12 @@ export default class Dialog implements Icontroller {
     private variableObject: modelDialog.Ivariable;
     private methodObject: modelDialog.Imethod;
 
-    private clsDialog: Element | null;
     private callbackAccept: (() => void) | null;
     private callbackClose: (() => void) | null;
 
     // Method
     private clsEvent = (): void => {
-        this.clsDialog = this.elementHookObject.clsDialog;
-
-        if (this.clsDialog) {
-            this.clsDialog.classList.add("hidden");
-        }
+        this.elementHookObject.clsDialog.classList.add("hidden");
     };
 
     private onClickAccept = (): void => {
@@ -42,7 +37,6 @@ export default class Dialog implements Icontroller {
         this.variableObject = {} as modelDialog.Ivariable;
         this.methodObject = {} as modelDialog.Imethod;
 
-        this.clsDialog = null;
         this.callbackAccept = null;
         this.callbackClose = null;
     }
@@ -53,9 +47,7 @@ export default class Dialog implements Icontroller {
         this.variableObject.title.state = title;
         this.variableObject.content.state = message;
 
-        if (this.clsDialog) {
-            this.clsDialog.classList.remove("hidden");
-        }
+        this.elementHookObject.clsDialog.classList.remove("hidden");
 
         this.variableObject.isSingleButton.state = isSingleButton;
         this.variableObject.isOpen.state = true;
@@ -70,9 +62,7 @@ export default class Dialog implements Icontroller {
     };
 
     close = (): void => {
-        if (this.clsDialog) {
-            this.clsDialog.classList.add("hidden");
-        }
+        this.elementHookObject.clsDialog.classList.add("hidden");
 
         this.variableObject.isOpen.state = true;
     };

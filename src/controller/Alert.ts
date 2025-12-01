@@ -9,16 +9,11 @@ export default class Alert implements Icontroller {
     private variableObject: modelAlert.Ivariable;
     private methodObject: modelAlert.Imethod;
 
-    private clsAlert: Element | null;
     private timeout: NodeJS.Timeout | null;
 
     // Method
     private clsEvent = (): void => {
-        this.clsAlert = this.elementHookObject.clsAlert;
-
-        if (this.clsAlert) {
-            this.clsAlert.classList.add("hidden");
-        }
+        this.elementHookObject.clsAlert.classList.add("hidden");
     };
 
     private onClickClose = (): void => {
@@ -29,16 +24,13 @@ export default class Alert implements Icontroller {
         this.variableObject = {} as modelAlert.Ivariable;
         this.methodObject = {} as modelAlert.Imethod;
 
-        this.clsAlert = null;
         this.timeout = null;
     }
 
     open = (className: string, text: string, timeout = -1): void => {
         this.close();
 
-        if (this.clsAlert) {
-            this.clsAlert.classList.remove("hidden");
-        }
+        this.elementHookObject.clsAlert.classList.remove("hidden");
 
         this.variableObject.className.state = className;
         this.variableObject.label.state = text;
@@ -56,9 +48,7 @@ export default class Alert implements Icontroller {
             clearTimeout(this.timeout);
         }
 
-        if (this.clsAlert) {
-            this.clsAlert.classList.add("hidden");
-        }
+        this.elementHookObject.clsAlert.classList.add("hidden");
 
         this.variableObject.isOpen.state = false;
     };
