@@ -14,7 +14,7 @@ export default class Dialog implements Icontroller {
 
     // Method
     private clsEvent = (): void => {
-        this.elementHookObject.clsDialog.classList.add("hidden");
+        this.hookObject.clsDialog.classList.add("hidden");
     };
 
     private onClickAccept = (): void => {
@@ -47,7 +47,7 @@ export default class Dialog implements Icontroller {
         this.variableObject.title.state = title;
         this.variableObject.content.state = message;
 
-        this.elementHookObject.clsDialog.classList.remove("hidden");
+        this.hookObject.clsDialog.classList.remove("hidden");
 
         this.variableObject.isSingleButton.state = isSingleButton;
         this.variableObject.isOpen.state = true;
@@ -62,12 +62,12 @@ export default class Dialog implements Icontroller {
     };
 
     close = (): void => {
-        this.elementHookObject.clsDialog.classList.add("hidden");
+        this.hookObject.clsDialog.classList.add("hidden");
 
         this.variableObject.isOpen.state = true;
     };
 
-    elementHookObject = {} as modelDialog.IelementHook;
+    hookObject = {} as modelDialog.IelementHook;
 
     variable(): void {
         this.variableObject = variableBind(

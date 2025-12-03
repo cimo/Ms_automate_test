@@ -105,7 +105,7 @@ export default class Index implements Icontroller {
             const clientData: modelTester.IclientDataRun = {
                 index,
                 specFileName,
-                browser: this.elementHookObject.selectBrowserName[index].value
+                browser: this.hookObject.selectBrowserName[index].value
             };
             this.cwsClient.sendMessage("text", clientData, "run");
         } else {
@@ -134,7 +134,7 @@ export default class Index implements Icontroller {
             return;
         }
 
-        const clientData: modelTester.IclientDataVideo = { name: this.elementHookObject.inputVideoName.value };
+        const clientData: modelTester.IclientDataVideo = { name: this.hookObject.inputVideoName.value };
         this.cwsClient.sendMessage("text", clientData, "video");
     };
 
@@ -159,14 +159,14 @@ export default class Index implements Icontroller {
     };
 
     private onClickChooseFile = (): void => {
-        if (this.elementHookObject.inputSpecUpload) {
-            this.elementHookObject.inputSpecUpload.click();
+        if (this.hookObject.inputSpecUpload) {
+            this.hookObject.inputSpecUpload.click();
 
-            this.elementHookObject.inputSpecUpload.onchange = () => {
-                if (this.elementHookObject.inputSpecUpload.files && this.elementHookObject.inputSpecUpload.files.length > 0) {
-                    this.variableObject.uploadFileName.state = this.elementHookObject.inputSpecUpload.files[0].name;
+            this.hookObject.inputSpecUpload.onchange = () => {
+                if (this.hookObject.inputSpecUpload.files && this.hookObject.inputSpecUpload.files.length > 0) {
+                    this.variableObject.uploadFileName.state = this.hookObject.inputSpecUpload.files[0].name;
                 } else {
-                    this.elementHookObject.inputSpecUpload.value = "";
+                    this.hookObject.inputSpecUpload.value = "";
                     this.variableObject.uploadFileName.state = "";
                 }
             };
@@ -180,8 +180,8 @@ export default class Index implements Icontroller {
             return;
         }
 
-        if (this.elementHookObject.inputSpecUpload && this.elementHookObject.inputSpecUpload.files) {
-            const file = this.elementHookObject.inputSpecUpload.files[0];
+        if (this.hookObject.inputSpecUpload && this.hookObject.inputSpecUpload.files) {
+            const file = this.hookObject.inputSpecUpload.files[0];
 
             if (file) {
                 const reader = new FileReader();
@@ -206,7 +206,7 @@ export default class Index implements Icontroller {
 
                         this.variableObject.uploadFileName.state = "";
 
-                        this.elementHookObject.inputSpecUpload.value = "";
+                        this.hookObject.inputSpecUpload.value = "";
                     }
                 };
 
@@ -231,12 +231,12 @@ export default class Index implements Icontroller {
             return;
         }
 
-        if (this.variableObject.clientIdCurrent.state && this.elementHookObject.inputChatMessageSend.value !== "") {
-            this.cwsClient.sendDataDirect(this.elementHookObject.inputChatMessageSend.value, this.variableObject.clientIdSelected.state);
+        if (this.variableObject.clientIdCurrent.state && this.hookObject.inputChatMessageSend.value !== "") {
+            this.cwsClient.sendDataDirect(this.hookObject.inputChatMessageSend.value, this.variableObject.clientIdSelected.state);
 
             const data: ImessageDirect = {
                 time: new Date().toISOString(),
-                content: this.elementHookObject.inputChatMessageSend.value,
+                content: this.hookObject.inputChatMessageSend.value,
                 fromClientId: this.variableObject.clientIdCurrent.state,
                 toClientId: this.variableObject.clientIdSelected.state
             };
@@ -250,7 +250,7 @@ export default class Index implements Icontroller {
         this.variableObject.clientIdSelected.state = "";
         this.variableObject.chatMessageList.state = [];
 
-        this.elementHookObject.inputChatMessageSend.value = "";
+        this.hookObject.inputChatMessageSend.value = "";
     };
 
     private onClickConnect = (): void => {
@@ -306,7 +306,7 @@ export default class Index implements Icontroller {
         });
     }
 
-    elementHookObject = {} as modelIndex.IelementHook;
+    hookObject = {} as modelIndex.IelementHook;
 
     variable(): void {
         this.variableObject = variableBind(

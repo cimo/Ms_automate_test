@@ -13,7 +13,7 @@ export default class Alert implements Icontroller {
 
     // Method
     private clsEvent = (): void => {
-        this.elementHookObject.clsAlert.classList.add("hidden");
+        this.hookObject.clsAlert.classList.add("hidden");
     };
 
     private onClickClose = (): void => {
@@ -30,7 +30,7 @@ export default class Alert implements Icontroller {
     open = (className: string, text: string, timeout = -1): void => {
         this.close();
 
-        this.elementHookObject.clsAlert.classList.remove("hidden");
+        this.hookObject.clsAlert.classList.remove("hidden");
 
         this.variableObject.className.state = className;
         this.variableObject.label.state = text;
@@ -48,12 +48,12 @@ export default class Alert implements Icontroller {
             clearTimeout(this.timeout);
         }
 
-        this.elementHookObject.clsAlert.classList.add("hidden");
+        this.hookObject.clsAlert.classList.add("hidden");
 
         this.variableObject.isOpen.state = false;
     };
 
-    elementHookObject = {} as modelAlert.IelementHook;
+    hookObject = {} as modelAlert.IelementHook;
 
     variable(): void {
         this.variableObject = variableBind(
