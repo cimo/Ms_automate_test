@@ -42,7 +42,13 @@ bash docker/container_execute.sh "local" "up"
 3. For execute "Playwright" GUI write on terminal:
 
     ```
-    bash script/playwright.sh
+    bash script/playwright.sh ui
+    ```
+
+4. For execute "Playwright" codegen (recording and generate test directly in the browser) write on terminal:
+
+    ```
+    bash script/playwright.sh code
     ```
 
 ## UI
