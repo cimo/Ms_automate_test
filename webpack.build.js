@@ -1,9 +1,13 @@
-const Path = require("path");
-const webpack = require("webpack");
-const TerserPlugin = require("terser-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CompressionPlugin = require("compression-webpack-plugin");
-const { Ce } = require("@cimo/environment/dist/src/Main");
+import Path from "path";
+import { fileURLToPath } from "url";
+import webpack from "webpack";
+import TerserPlugin from "terser-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import CompressionPlugin from "compression-webpack-plugin";
+import { Ce } from "@cimo/environment/dist/src/Main.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = Path.dirname(__filename);
 
 const ENV_NAME = Ce.checkVariable("ENV_NAME");
 
@@ -13,7 +17,7 @@ Ce.checkVariable("DOMAIN");
 Ce.checkVariable("TIME_ZONE");
 Ce.checkVariable("LANG");
 Ce.checkVariable("SERVER_PORT");
-const PATH_ROOT = Ce.checkVariable("PATH_ROOT");
+Ce.checkVariable("PATH_ROOT");
 const NAME = Ce.checkVariable("MS_AT_NAME");
 Ce.checkVariable("MS_AT_LABEL");
 Ce.checkVariable("MS_AT_IS_DEBUG");
@@ -32,7 +36,7 @@ Ce.checkVariable("MS_AT_FILE_SIZE_MB");
 Ce.checkVariable("MS_AT_WS_ADDRESS");
 Ce.checkVariable("MS_AT_WS_KEY");
 
-module.exports = {
+export default {
     target: "web",
     devtool: "source-map",
     mode: NODE_ENV,
@@ -45,7 +49,10 @@ module.exports = {
     resolve: {
         extensions: [".ts", ".tsx", ".js", ".jsx"],
         fallback: {
-            fs: false
+            fs: false,
+            crypto: false,
+            http: false,
+            https: false
         }
     },
     module: {

@@ -1,4 +1,4 @@
-import { Icontroller, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main";
+import { Icontroller, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main.js";
 
 // Source
 import * as modelDialog from "../model/Dialog";

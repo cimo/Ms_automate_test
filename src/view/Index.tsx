@@ -1,4 +1,4 @@
-import { jsxFactory, IvirtualNode } from "@cimo/jsmvcfw/dist/src/Main";
+import { jsxFactory, IvirtualNode } from "@cimo/jsmvcfw/dist/src/Main.js";
 
 // Source
 import * as modelIndex from "../model/Index";

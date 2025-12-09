@@ -5,14 +5,14 @@ import Cors from "cors";
 import * as Http from "http";
 import * as Https from "https";
 import Fs from "fs";
-import { Ca } from "@cimo/authentication/dist/src/Main";
-import { Cp } from "@cimo/pid/dist/src/Main";
-import { CwsServer } from "@cimo/websocket/dist/src/Main";
+import { Ca } from "@cimo/authentication/dist/src/Main.js";
+import { Cp } from "@cimo/pid/dist/src/Main.js";
+import { CwsServer } from "@cimo/websocket/dist/src/Main.js";
 
 // Source
-import * as helperSrc from "../HelperSrc";
-import * as modelServer from "../model/Server";
-import ControllerTester from "./Tester";
+import * as helperSrc from "../HelperSrc.js";
+import * as modelServer from "../model/Server.js";
+import ControllerTester from "./Tester.js";
 
 export default class Server {
     // Variable
@@ -103,10 +103,7 @@ export default class Server {
             const controllerTester = new ControllerTester(cp, cwsServer);
             controllerTester.websocket();
 
-            helperSrc.writeLog(
-                "Server.ts - createServer() - listen()",
-                `Port: ${helperSrc.SERVER_PORT} - Time: ${helperSrc.localeFormat(new Date())}`
-            );
+            helperSrc.writeLog("Server.ts - createServer() - listen()", `Port: ${helperSrc.SERVER_PORT}`);
 
             this.app.get("/", this.limiter, Ca.authenticationMiddleware, (request: Request, response: Response) => {
                 if (request.accepts("html")) {

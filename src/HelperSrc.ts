@@ -1,6 +1,6 @@
 import Fs from "fs";
 import { Response } from "express";
-import { Ce } from "@cimo/environment/dist/src/Main";
+import { Ce } from "@cimo/environment/dist/src/Main.js";
 
 // Source
 import * as modelHelperSrc from "./model/HelperSrc";

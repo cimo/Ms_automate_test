@@ -1,5 +1,5 @@
-import { IvariableBind } from "@cimo/jsmvcfw/dist/src/Main";
-import { ImessageDirect } from "@cimo/websocket/dist/src/client/Model";
+import { IvariableBind } from "@cimo/jsmvcfw/dist/src/Main.js";
+import { CwsClientModel } from "@cimo/websocket/dist/src/Main.js";
 
 // Source
 import * as modelTester from "../model/Tester";
@@ -14,7 +14,7 @@ export interface Ivariable {
     uploadFileName: IvariableBind<string>;
     isChatVisible: IvariableBind<boolean>;
     clientIdSelected: IvariableBind<string>;
-    chatMessageList: IvariableBind<ImessageDirect[]>;
+    chatMessageList: IvariableBind<CwsClientModel.ImessageDirect[]>;
     isClientConnected: IvariableBind<boolean>;
     clientIdCurrent: IvariableBind<string | undefined>;
 }

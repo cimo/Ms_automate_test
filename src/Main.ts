@@ -1,4 +1,4 @@
-import { setUrlRoot, setAppLabel, route } from "@cimo/jsmvcfw/dist/src/Main";
+import { setUrlRoot, setAppLabel, route } from "@cimo/jsmvcfw/dist/src/Main.js";
 
 // Source
 import * as helperSrc from "./HelperSrc";

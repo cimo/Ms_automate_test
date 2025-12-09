@@ -1,11 +1,11 @@
 import Fs from "fs";
 import { execFile, spawn } from "child_process";
-import { Cp } from "@cimo/pid/dist/src/Main";
-import { CwsServer } from "@cimo/websocket/dist/src/Main";
+import { Cp } from "@cimo/pid/dist/src/Main.js";
+import { CwsServer } from "@cimo/websocket/dist/src/Main.js";
 
 // Source
-import * as helperSrc from "../HelperSrc";
-import * as modelTester from "../model/Tester";
+import * as helperSrc from "../HelperSrc.js";
+import * as modelTester from "../model/Tester.js";
 
 export default class Tester {
     // Variable

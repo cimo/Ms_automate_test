@@ -1,6 +1,5 @@
-import { Icontroller, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main";
-import CwsClient from "@cimo/websocket/dist/src/client/Manager";
-import { ImessageDirect } from "@cimo/websocket/dist/src/client/Model";
+import { Icontroller, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main.js";
+import { CwsClient, CwsClientModel } from "@cimo/websocket/dist/src/Main.js";
 
 // Source
 import * as helperSrc from "../HelperSrc";
@@ -234,7 +233,7 @@ export default class Index implements Icontroller {
         if (this.variableObject.clientIdCurrent.state && this.hookObject.inputChatMessageSend.value !== "") {
             this.cwsClient.sendDataDirect(this.hookObject.inputChatMessageSend.value, this.variableObject.clientIdSelected.state);
 
-            const data: ImessageDirect = {
+            const data: CwsClientModel.ImessageDirect = {
                 time: new Date().toISOString(),
                 content: this.hookObject.inputChatMessageSend.value,
                 fromClientId: this.variableObject.clientIdCurrent.state,

@@ -1,4 +1,4 @@
-import { IvariableBind } from "@cimo/jsmvcfw/dist/src/Main";
+import { IvariableBind } from "@cimo/jsmvcfw/dist/src/Main.js";
 
 export interface Ivariable {
     title: IvariableBind<string>;

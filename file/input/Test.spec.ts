@@ -1,5 +1,7 @@
 import { test } from "@playwright/test";
-import * as helperSrc from "../../src/HelperSrc";
+
+// Source
+import * as helperSrc from "../../src/HelperSrc.js";
 
 test("01", async ({ page }) => {
     await page.goto(helperSrc.URL_TEST);
