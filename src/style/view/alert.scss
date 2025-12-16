@@ -18,7 +18,7 @@
         align-items: revert !important;
 
         .cls_alert_label {
-            padding: 10px 0 !important;
+            padding: 0 10px !important;
             white-space: pre !important;
             overflow-x: hidden !important;
             overflow-y: auto !important;
@@ -32,7 +32,7 @@
             cursor: pointer !important;
 
             .cls_icon {
-                position: absolute !important;
+                position: relative !important;
                 top: 0 !important;
                 right: 0 !important;
             }
@@ -42,10 +42,13 @@
     &.success {
         .cls_alert_surface {
             background-color: color.$backgroundSuccess !important;
+            border-left: 5px solid color.$green800 !important;
 
             .cls_alert_label,
             .cls_alert_action {
                 color: color.$green800 !important;
+                display: inline-block !important;
+                vertical-align: sub !important;
             }
         }
     }
@@ -53,10 +56,13 @@
     &.error {
         .cls_alert_surface {
             background-color: color.$backgroundFail !important;
+            border-left: 5px solid color.$red800 !important;
 
             .cls_alert_label,
             .cls_alert_action {
                 color: color.$red800 !important;
+                display: inline-block !important;
+                vertical-align: sub !important;
             }
         }
     }
