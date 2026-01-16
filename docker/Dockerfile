@@ -49,7 +49,7 @@ RUN cd ~ \
     dbus \
     dbus-x11 \
     # Playwright
-    && npx playwright install --force --with-deps chromium chrome msedge firefox webkit \
+    && npx -y playwright install --force --with-deps chromium chrome msedge firefox webkit \
     && chown -R node:node ${PATH_ROOT}.cache/ms-playwright/ \
     # Clean
     && apt-get remove --purge -y sudo \
@@ -65,7 +65,7 @@ WORKDIR ${PATH_ROOT}
 # Npm
 RUN rm -rf ${PATH_ROOT}node_modules/ ${PATH_ROOT}package-lock.json \
     && npm install \
-    && npx playwright install \
+    && npx -y playwright install \
     && npm run build
 
 # Node
