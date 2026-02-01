@@ -8,7 +8,7 @@ It's possible to use a personal certificate instead of "Ms_cronjob", just add th
 ## Info:
 
 -   Cross platform (Windows, Linux)
--   X11 for WSL2 (Run linux GUI app directly in windows).
+-   WSLg for WSL2 (Run linux GUI app directly in windows).
 -   Playwright
 
 ## Installation
@@ -42,13 +42,13 @@ bash docker/container_execute.sh "local" "up"
 3. For execute "Playwright" GUI write on terminal:
 
     ```
-    bash script/playwright.sh ui
+    bash script/playwright.sh "ui"
     ```
 
 4. For execute "Playwright" codegen (recording and generate test directly in the browser) write on terminal:
 
     ```
-    bash script/playwright.sh code
+    bash script/playwright.sh "code"
     ```
 
 ## UI
