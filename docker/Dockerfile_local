@@ -88,7 +88,7 @@ USER node
 
 WORKDIR ${PATH_ROOT}
 
-RUN \
+CMD \
     # Command
     command -v nvidia-smi > /dev/null && nvidia-smi --query-gpu=name --format=csv,noheader || echo "Host without nvidia GPU support." \
     # Dbus

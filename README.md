@@ -47,16 +47,16 @@ NVIDIA GeForce RTX 3060 - (Host GPU available)
 
 2. Follow the "Installation" instructions.
 
-3. For execute "Playwright" GUI write on terminal:
+3. For execute "Playwright" GUI test (execute test with debug) write on terminal:
 
     ```
-    bash script/playwright.sh "gui"
+    bash script/playwright.sh "test"
     ```
 
-4. For execute "Playwright" codegen (recording and generate test directly in the browser) write on terminal:
+4. For execute "Playwright" GUI codegen (recording and generate test directly in the browser) write on terminal:
 
     ```
-    bash script/playwright.sh "code"
+    bash script/playwright.sh "codegen"
     ```
 
 ## UI
