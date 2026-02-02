@@ -1,11 +1,9 @@
 #!/bin/bash
 
-eval "$(dbus-launch --auto-syntax)"
-
-if [ "${1}" = "ui" ]
+if [ "${1}" = "gui" ]
 then
-    npx -y playwright test --ui --config="${PATH_ROOT}src/playwright.config.ts"
+    XDG_RUNTIME_DIR="/mnt/wslg/runtime-dir" npx -y playwright test --ui --config="${PATH_ROOT}src/playwright.config.ts" >> "${PATH_ROOT}${MS_AT_PATH_LOG}playwright_gui.log" 2>&1 &
 elif [ "${1}" = "code" ]
 then
-    npx -y playwright codegen
+    XDG_RUNTIME_DIR="/mnt/wslg/runtime-dir" npx -y playwright codegen >> "${PATH_ROOT}${MS_AT_PATH_LOG}playwright_code.log" 2>&1 &
 fi
