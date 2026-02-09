@@ -98,7 +98,7 @@ export default class Tester {
                             { shell: "/bin/bash", encoding: "utf8" },
                             (_, stdout1, stderr1) => {
                                 if (stderr1 !== "") {
-                                    helperSrc.writeLog("Tester.ts - run() - execFile()", `stderr1: ${stderr1}`);
+                                    helperSrc.writeLog("Tester.ts - run() - execFile() - stderr", stderr1);
 
                                     const status = "error";
 

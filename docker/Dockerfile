@@ -28,7 +28,7 @@ ENV ELECTRON_OZONE_PLATFORM_HINT=auto
 ENV OZONE_PLATFORM=wayland
 ENV EGL_PLATFORM=wayland
 ENV ANGLE_DEFAULT_PLATFORM=egl
-ENV DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}/bus"
+ENV DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR}bus"
 ENV PULSE_SERVER="unix:/mnt/wslg/PulseServer"
 ENV PLAYWRIGHT_BROWSERS_PATH=${PATH_ROOT}.cache/ms-playwright/
 ENV PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT=60000
@@ -101,10 +101,8 @@ RUN \
     && npm run build
 
 CMD \
-    # Command
-    command -v nvidia-smi > /dev/null && nvidia-smi --query-gpu=name --format=csv,noheader || echo "Host without nvidia GPU support." \
     # Dbus
-    && bash ${PATH_ROOT}script/dbus.sh \
+    bash ${PATH_ROOT}script/dbus.sh \
     # Node
     && node ${PATH_ROOT}dist/src/controller/Server.js
 
