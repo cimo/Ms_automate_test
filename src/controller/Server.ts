@@ -117,7 +117,7 @@ export default class Server {
                 helperSrc.responseBody(`Client ip: ${request.clientIp || ""}`, "", response, 200);
             });
 
-            this.app.get("/login", this.limiter, (_request: Request, response: Response) => {
+            this.app.get("/login", this.limiter, (_, response: Response) => {
                 Ca.writeCookie(`${helperSrc.LABEL}_authentication`, response);
 
                 response.redirect(`${helperSrc.URL_ROOT}/`);
