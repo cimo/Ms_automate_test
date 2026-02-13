@@ -40,13 +40,15 @@ bash docker/container_execute.sh "local" "up"
 
 2. Follow the "Installation" instructions.
 
-3. For execute "Playwright" GUI test (execute test with debug) write on terminal:
+## Command
+
+1. For execute "Playwright" GUI test (execute test with debug) write on terminal:
 
     ```
     bash script/playwright.sh "test"
     ```
 
-4. For execute "Playwright" GUI codegen (recording and generate test directly in the browser) write on terminal:
+2. For execute "Playwright" GUI codegen (recording and generate test directly in the browser) write on terminal:
 
     ```
     bash script/playwright.sh "codegen"
