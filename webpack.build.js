@@ -27,6 +27,7 @@ Ce.checkVariable("MS_AT_URL_CORS_ORIGIN");
 Ce.checkVariable("MS_AT_URL_TEST");
 Ce.checkVariable("MS_AT_PATH_CERTIFICATE_KEY");
 Ce.checkVariable("MS_AT_PATH_CERTIFICATE_CRT");
+Ce.checkVariable("MS_AT_PATH_CERTIFICATE_PEM");
 Ce.checkVariable("MS_AT_PATH_FILE");
 Ce.checkVariable("MS_AT_PATH_LOG");
 Ce.checkVariable("MS_AT_PATH_PUBLIC");
