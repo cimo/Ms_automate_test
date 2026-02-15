@@ -33,7 +33,7 @@ ENV PULSE_SERVER="unix:/mnt/wslg/PulseServer"
 ENV PLAYWRIGHT_BROWSERS_PATH=${PATH_ROOT}.cache/ms-playwright/
 ENV PLAYWRIGHT_DOWNLOAD_CONNECTION_TIMEOUT=60000
 
-COPY ./.ms_cronjob-volume/certificate/* /usr/local/share/ca-certificates/
+COPY ./certificate/ /usr/local/share/ca-certificates/
 COPY ./docker/NotoSansJP-Regular.ttf /usr/share/fonts/truetype/noto/
 COPY ./docker/NotoSansSymbols2-Regular.ttf /usr/share/fonts/truetype/noto/
 COPY ./docker/NotoColorEmoji-Regular.ttf /usr/share/fonts/truetype/noto/
