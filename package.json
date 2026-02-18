@@ -22,7 +22,7 @@
         "execute": "nodemon --config nodemon.json"
     },
     "dependencies": {
-        "@cimo/authentication": "1.1.31",
+        "@cimo/authentication": "1.1.32",
         "@cimo/environment": "1.0.23",
         "@cimo/websocket": "1.5.62",
         "@cimo/jsmvcfw": "1.4.34",
