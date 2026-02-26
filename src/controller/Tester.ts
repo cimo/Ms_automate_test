@@ -28,6 +28,8 @@ export default class Tester {
         this.cwsServer.receiveData("spec_file", () => {
             Fs.readdir(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`, (error, fileList) => {
                 if (error) {
+                    helperSrc.writeLog("Tester.ts - specFile() - receiveData() - readdir() - Error", error.message);
+
                     const serverDataObject: modelTester.IserverDataBroadcast = { label: "spec_file", status: "", result: [] };
                     this.cwsServer.sendDataBroadcast(serverDataObject);
 
@@ -276,6 +278,8 @@ export default class Tester {
 
             Fs.writeFile(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/${fileName}`, file, (error) => {
                 if (error) {
+                    helperSrc.writeLog("Tester.ts - upload() - writeFile() - Error", error.message);
+
                     serverData = { status: "error", result: "Upload failed." };
                 } else {
                     serverData = { status: "success", result: "Upload completed." };

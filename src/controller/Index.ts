@@ -193,10 +193,8 @@ export default class Index implements Icontroller {
 
                         const fileExtension = file.name.split(".").pop();
 
-                        if (fileExtension) {
-                            if (fileExtension.toLowerCase() === "ts") {
-                                mimeType = "application/typescript";
-                            }
+                        if (fileExtension && fileExtension.toLowerCase() === "ts") {
+                            mimeType = "application/typescript";
                         }
 
                         this.cwsClient.sendDataUpload(mimeType, file.name, result);
