@@ -26,14 +26,12 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
 
                             const list = Object.entries(variableObject.chatMessageList.state);
 
-                            for (const [key, chatMessage] of list) {
+                            for (const [key, value] of list) {
                                 result.push(
                                     <p key={key}>
-                                        <span class="time">{helperSrc.localeFormat(new Date(chatMessage.time))}</span>
+                                        <span class="time">{helperSrc.localeFormat(new Date(value.time))}</span>
                                         <span class="text">
-                                            {chatMessage.fromClientId === variableObject.clientIdCurrent.state
-                                                ? `You: ${chatMessage.content}`
-                                                : chatMessage.content}
+                                            {value.fromClientId === variableObject.clientIdCurrent.state ? `You: ${value.content}` : value.content}
                                         </span>
                                     </p>
                                 );
