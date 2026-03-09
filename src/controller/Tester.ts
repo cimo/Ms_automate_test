@@ -108,7 +108,7 @@ export default class Tester {
                                         browser: data.browser,
                                         phase: status,
                                         time: helperSrc.localeFormat(new Date()) as string,
-                                        log: helperSrc.removeAnsiEscape(stderr1)
+                                        log: helperSrc.deleteAnsiEscape(stderr1)
                                     };
 
                                     serverDataBroadcastObject.result = this.outputList;
@@ -120,7 +120,7 @@ export default class Tester {
                                     serverDataObject.result = "System error, check the log for more info.";
                                     this.cwsServer.sendMessage("text", serverDataObject, "run", clientId);
 
-                                    this.cp.remove(this.pidKey);
+                                    this.cp.delete(this.pidKey);
 
                                     this.pidKey = 0;
                                 } else {
@@ -137,7 +137,7 @@ export default class Tester {
                                             browser: data.browser,
                                             phase: status,
                                             time: helperSrc.localeFormat(new Date()) as string,
-                                            log: helperSrc.removeAnsiEscape(stdout1)
+                                            log: helperSrc.deleteAnsiEscape(stdout1)
                                         };
 
                                         serverDataBroadcastObject.result = this.outputList;
@@ -149,7 +149,7 @@ export default class Tester {
                                         serverDataObject.result = "Test completed, check the log for more info.";
                                         this.cwsServer.sendMessage("text", serverDataObject, "run", clientId);
 
-                                        this.cp.remove(this.pidKey);
+                                        this.cp.delete(this.pidKey);
 
                                         this.pidKey = 0;
                                     });
@@ -183,7 +183,7 @@ export default class Tester {
             if (this.processRunPid) {
                 process.kill(this.processRunPid, "SIGINT");
 
-                this.cp.remove(this.pidKey);
+                this.cp.delete(this.pidKey);
 
                 this.pidKey = 0;
             }

@@ -115,7 +115,7 @@ export default class Server {
             });
 
             this.app.get("/logout", this.limiter, Ca.authenticationMiddleware, (request: Request, response: Response) => {
-                Ca.removeCookie(`${helperSrc.LABEL}_authentication`, request, response);
+                Ca.deleteCookie(`${helperSrc.LABEL}_authentication`, request, response);
 
                 response.redirect(`${helperSrc.URL_ROOT}/info`);
             });
