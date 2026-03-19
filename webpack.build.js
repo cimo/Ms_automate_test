@@ -35,6 +35,9 @@ Ce.checkVariable("MS_AT_PATH_SCRIPT");
 Ce.checkVariable("MS_AT_MIME_TYPE");
 Ce.checkVariable("MS_AT_FILE_SIZE_MB");
 Ce.checkVariable("MS_AT_WS_ADDRESS");
+
+const ceSecretObject = Ce.loadFile(`./env/${ENV_NAME}.secret.env`);
+
 Ce.checkVariable("MS_AT_WS_KEY");
 
 export default {
@@ -108,7 +111,10 @@ export default {
         ]
     },
     plugins: [
-        new webpack.DefinePlugin(ceObject),
+        new webpack.DefinePlugin({
+            ...ceObject,
+            ...ceSecretObject
+        }),
         new HtmlWebpackPlugin({
             template: Path.resolve(__dirname, "template_index.html"),
             filename: Path.resolve(__dirname, "public/index.html"),

@@ -31,6 +31,9 @@ export const PATH_SCRIPT = Ce.checkVariable("MS_AT_PATH_SCRIPT");
 export const MIME_TYPE = Ce.checkVariable("MS_AT_MIME_TYPE") || (process.env["MS_AT_MIME_TYPE"] as string);
 export const FILE_SIZE_MB = Ce.checkVariable("MS_AT_FILE_SIZE_MB") || (process.env["MS_AT_FILE_SIZE_MB"] as string);
 export const WS_ADRESS = Ce.checkVariable("MS_AT_WS_ADDRESS") || (process.env["MS_AT_WS_ADDRESS"] as string);
+
+Ce.loadFile(`./env/${ENV_NAME}.secret.env`);
+
 export const WS_KEY = Ce.checkVariable("MS_AT_WS_KEY");
 
 export const localeConfiguration: Record<string, { locale: string; currency: string; dateFormat: string }> = {
