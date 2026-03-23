@@ -27,10 +27,10 @@
         "@cimo/websocket": "1.5.63",
         "@cimo/jsmvcfw": "1.5.39",
         "@cimo/pid": "1.1.23",
-        "express": "4.22.1",
-        "express-rate-limit": "7.5.0",
+        "express": "5.2.1",
+        "express-rate-limit": "8.3.1",
         "cookie-parser": "1.4.7",
-        "cors": "2.8.5",
+        "cors": "2.8.6",
         "@playwright/test": "latest",
         "material-components-web": "14.0.0"
     },
