@@ -100,6 +100,7 @@ RUN cd ~ \
     libwayland-egl1 \
     libwayland-cursor0 \
     libgomp1 \
+    libatomic1 \
     xdg-utils \
     # Playwright
     && npx -y playwright install --force --with-deps chromium chrome msedge firefox webkit \
