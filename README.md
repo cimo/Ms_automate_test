@@ -17,7 +17,7 @@ It's possible to use a custom certificate instead of "Ms_cronjob", just add it t
 1. Create "local.secret.env" file in "env" folder  and add:
 
 ```
-MS_AT_WS_KEY='xxx'
+MS_AT_WS_KEY='2134lk!h3rmc@uhewarAfsdf3jhowu.htcIynvDhfys:zhnrz'
 ```
 
 ## Installation
