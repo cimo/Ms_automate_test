@@ -1,5 +1,5 @@
 import Fs from "fs";
-import { execFile, spawn } from "child_process";
+import { ChildProcess, execFile, spawn } from "child_process";
 import { Cp } from "@cimo/pid/dist/src/Main.js";
 import { CwsServer } from "@cimo/websocket/dist/src/Main.js";
 
@@ -14,9 +14,41 @@ export default class Tester {
 
     private outputList: modelTester.Ioutput[];
     private pidKey: number;
-    private processRunPid: number | null;
+    private processRun1: ChildProcess | null;
+    private processRun2: ChildProcess | null;
+    private isStopRequested: boolean;
 
     // Method
+    private processKill = (processRun: ChildProcess): void => {
+        this.isStopRequested = true;
+
+        if (!processRun.pid || processRun.pid <= 0) {
+            return;
+        }
+
+        const killScript = `
+            kill_tree() {
+                local parameter1="$1"
+                local childrenList
+                childrenList="$(pgrep -P "$parameter1" || true)"
+                for children in $childrenList
+                do
+                    kill_tree "$children"
+                done
+                kill -KILL "$parameter1" 2>/dev/null || true
+            }
+            kill_tree "${processRun.pid}"
+        `;
+
+        const killer = spawn("/bin/bash", ["-lc", killScript], { detached: true, stdio: "ignore" });
+
+        killer.on("error", (error: Error) => {
+            helperSrc.writeLog("Tester.ts - processKill() - spawn() - Error", error.message);
+        });
+
+        killer.unref();
+    };
+
     private client = (): void => {
         this.cwsServer.receiveData("client", () => {
             const serverDataObject: modelTester.IserverDataBroadcast = { label: "client", status: "", result: this.cwsServer.clientIdList() };
@@ -79,6 +111,8 @@ export default class Tester {
                     if (!pidIsRunning) {
                         this.pidKey = pidKey;
 
+                        this.isStopRequested = false;
+
                         this.outputList[data.index] = {
                             browser: data.browser,
                             phase: "running",
@@ -94,11 +128,18 @@ export default class Tester {
                         const execCommand1 = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command1.sh`;
                         const execArgumentList1 = [`"${data.specFileName}"`, `"${browserCheck}"`];
 
-                        const processRun = execFile(
+                        this.processRun1 = execFile(
                             execCommand1,
                             execArgumentList1,
                             { shell: "/bin/bash", encoding: "utf8" },
                             (_, stdout1, stderr1) => {
+                                if (this.isStopRequested) {
+                                    this.processRun1 = null;
+                                    this.isStopRequested = false;
+
+                                    return;
+                                }
+
                                 if (stderr1 !== "") {
                                     helperSrc.writeLog("Tester.ts - run() - execFile() - stderr", stderr1);
 
@@ -123,14 +164,25 @@ export default class Tester {
                                     this.cp.delete(this.pidKey);
 
                                     this.pidKey = 0;
+
+                                    this.processRun1 = null;
                                 } else {
+                                    this.processRun1 = null;
+
                                     const execCommand2 = `. ${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command2.sh`;
                                     const execArgumentList2 = [
                                         `"${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}output/artifact/"`,
                                         `"${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}"`
                                     ];
 
-                                    execFile(execCommand2, execArgumentList2, { shell: "/bin/bash", encoding: "utf8" }, () => {
+                                    this.processRun2 = execFile(execCommand2, execArgumentList2, { shell: "/bin/bash", encoding: "utf8" }, () => {
+                                        if (this.isStopRequested) {
+                                            this.processRun2 = null;
+                                            this.isStopRequested = false;
+
+                                            return;
+                                        }
+
                                         const status = /Error:|interrupted|not run/.test(stdout1) ? "error" : "success";
 
                                         this.outputList[data.index] = {
@@ -152,18 +204,12 @@ export default class Tester {
                                         this.cp.delete(this.pidKey);
 
                                         this.pidKey = 0;
+
+                                        this.processRun2 = null;
                                     });
                                 }
                             }
                         );
-
-                        if (processRun && processRun.pid) {
-                            const spawnCommand = spawn("pgrep", ["-P", processRun.pid.toString()]);
-
-                            spawnCommand.stdout.on("data", (data: string) => {
-                                this.processRunPid = parseInt(data);
-                            });
-                        }
                     } else {
                         serverDataObject.status = "error";
                         serverDataObject.result = "Another process still running.";
@@ -179,10 +225,35 @@ export default class Tester {
     };
 
     private stop = (): void => {
-        this.cwsServer.receiveData("stop", () => {
-            if (this.processRunPid) {
-                process.kill(this.processRunPid, "SIGINT");
+        this.cwsServer.receiveData<modelTester.IclientDataStop>("stop", (data) => {
+            if (this.processRun1) {
+                this.processKill(this.processRun1);
 
+                this.processRun1 = null;
+            }
+
+            if (this.processRun2) {
+                this.processKill(this.processRun2);
+
+                this.processRun2 = null;
+            }
+
+            const serverDataBroadcastObject = {} as modelTester.IserverDataBroadcast;
+
+            if (data.index >= 0 && this.outputList[data.index]) {
+                this.outputList[data.index] = {
+                    ...this.outputList[data.index],
+                    phase: "error",
+                    time: helperSrc.localeFormat(new Date()) as string,
+                    log: "Interrupted by user."
+                };
+
+                serverDataBroadcastObject.label = "output";
+                serverDataBroadcastObject.result = this.outputList;
+                this.cwsServer.sendDataBroadcast(serverDataBroadcastObject);
+            }
+
+            if (this.pidKey > 0) {
                 this.cp.delete(this.pidKey);
 
                 this.pidKey = 0;
@@ -296,7 +367,9 @@ export default class Tester {
 
         this.outputList = [];
         this.pidKey = 0;
-        this.processRunPid = null;
+        this.processRun1 = null;
+        this.processRun2 = null;
+        this.isStopRequested = false;
     }
 
     websocket = (): void => {

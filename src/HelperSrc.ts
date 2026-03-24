@@ -156,7 +156,7 @@ export const fileWriteStream = (filePath: string, buffer: Buffer, callback: (res
         callback(true);
     });
 
-    writeStream.on("error", (error) => {
+    writeStream.on("error", (error: Error) => {
         callback(error);
     });
 };
@@ -174,7 +174,7 @@ export const fileReadStream = (filePath: string, callback: (result: NodeJS.Errno
         callback(Buffer.concat(chunkList));
     });
 
-    readStream.on("error", (error) => {
+    readStream.on("error", (error: Error) => {
         callback(error);
     });
 };
