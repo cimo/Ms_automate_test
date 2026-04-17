@@ -25,7 +25,7 @@
         "@cimo/authentication": "1.1.33",
         "@cimo/environment": "1.0.24",
         "@cimo/websocket": "1.5.64",
-        "@cimo/jsmvcfw": "1.5.41",
+        "@cimo/jsmvcfw": "1.6.42",
         "@cimo/pid": "1.1.23",
         "express": "5.2.1",
         "express-rate-limit": "8.3.1",
