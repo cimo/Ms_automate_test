@@ -35,7 +35,7 @@ export default class Server {
             standardHeaders: true,
             legacyHeaders: false,
             keyGenerator: (request: Request) => {
-                return helperSrc.readClientIp(request).split(":").pop() || "";
+                return helperSrc.readClientIp(request).split(":").pop() as string;
             }
         });
 

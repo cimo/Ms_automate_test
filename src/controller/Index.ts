@@ -191,9 +191,9 @@ export default class Index implements Icontroller {
 
                         let mimeType = file.type;
 
-                        const fileExtension = file.name.split(".").pop();
+                        const fileExtension = file.name.split(".").pop() as string;
 
-                        if (fileExtension && fileExtension.toLowerCase() === "ts") {
+                        if (fileExtension.toLowerCase() === "ts") {
                             mimeType = "application/typescript";
                         }
 
