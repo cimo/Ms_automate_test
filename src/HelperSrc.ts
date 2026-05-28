@@ -1,6 +1,6 @@
 import Fs from "fs";
 import { Request, Response } from "express";
-import type { ExecException } from "node:child_process";
+import type { ExecException } from "child_process";
 import { Ce } from "@cimo/environment/dist/src/Main.js";
 
 // Source
