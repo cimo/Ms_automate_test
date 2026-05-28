@@ -56,7 +56,8 @@ export default {
             fs: false,
             crypto: false,
             http: false,
-            https: false
+            https: false,
+            child_process: false
         }
     },
     module: {
