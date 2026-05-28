@@ -1,4 +1,4 @@
-import { Icontroller, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main.js";
+import { Icontroller, IvariableEffect, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main.js";
 import { CwsClient, CwsClientModel } from "@cimo/websocket/dist/src/Main.js";
 
 // Source
@@ -340,7 +340,9 @@ export default class Index implements Icontroller {
         };
     }
 
-    variableEffect(): void {}
+    variableEffect(watch: IvariableEffect): void {
+        watch([]);
+    }
 
     view(): IvirtualNode {
         return viewIndex(this.variableObject, this.methodObject);

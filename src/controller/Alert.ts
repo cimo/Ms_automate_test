@@ -1,4 +1,4 @@
-import { Icontroller, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main.js";
+import { Icontroller, IvariableEffect, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main.js";
 
 // Source
 import * as modelAlert from "../model/Alert";
@@ -70,7 +70,9 @@ export default class Alert implements Icontroller {
         };
     }
 
-    variableEffect(): void {}
+    variableEffect(watch: IvariableEffect): void {
+        watch([]);
+    }
 
     view(): IvirtualNode {
         return viewAlert(this.variableObject, this.methodObject);

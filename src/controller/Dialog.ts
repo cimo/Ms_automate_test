@@ -1,4 +1,4 @@
-import { Icontroller, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main.js";
+import { Icontroller, IvariableEffect, IvirtualNode, variableBind } from "@cimo/jsmvcfw/dist/src/Main.js";
 
 // Source
 import * as modelDialog from "../model/Dialog";
@@ -86,7 +86,9 @@ export default class Dialog implements Icontroller {
         };
     }
 
-    variableEffect(): void {}
+    variableEffect(watch: IvariableEffect): void {
+        watch([]);
+    }
 
     view(): IvirtualNode {
         return viewDialog(this.variableObject, this.methodObject);
