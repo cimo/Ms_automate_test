@@ -9,7 +9,7 @@ export default class Alert implements Icontroller {
     private variableObject: modelAlert.Ivariable;
     private methodObject: modelAlert.Imethod;
 
-    private timeout: NodeJS.Timeout | null;
+    private timeout: NodeJS.Timeout | undefined;
 
     // Method
     private clsEvent = (): void => {
@@ -24,7 +24,7 @@ export default class Alert implements Icontroller {
         this.variableObject = {} as modelAlert.Ivariable;
         this.methodObject = {} as modelAlert.Imethod;
 
-        this.timeout = null;
+        this.timeout = undefined;
     }
 
     open = (className: string, text: string, timeout = -1): void => {

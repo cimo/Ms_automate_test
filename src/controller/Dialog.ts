@@ -9,8 +9,8 @@ export default class Dialog implements Icontroller {
     private variableObject: modelDialog.Ivariable;
     private methodObject: modelDialog.Imethod;
 
-    private callbackAccept: (() => void) | null;
-    private callbackClose: (() => void) | null;
+    private callbackAccept: (() => void) | undefined;
+    private callbackClose: (() => void) | undefined;
 
     // Method
     private clsEvent = (): void => {
@@ -37,8 +37,8 @@ export default class Dialog implements Icontroller {
         this.variableObject = {} as modelDialog.Ivariable;
         this.methodObject = {} as modelDialog.Imethod;
 
-        this.callbackAccept = null;
-        this.callbackClose = null;
+        this.callbackAccept = undefined;
+        this.callbackClose = undefined;
     }
 
     open = (title: string, message: string, isSingleButton = false, callbackAcceptValue?: () => void, callbackCloseValue?: () => void): void => {

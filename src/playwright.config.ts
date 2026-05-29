@@ -8,7 +8,7 @@ export default defineConfig({
     outputDir: `${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}output/artifact/`,
     fullyParallel: false,
     reporter: "line",
-    reportSlowTests: null,
+    reportSlowTests: undefined,
     timeout: 20 * 60 * 1000,
     expect: {
         timeout: 15 * 60 * 1000

@@ -14,8 +14,8 @@ export default class Tester {
 
     private outputList: modelTester.Ioutput[];
     private pidKey: number;
-    private processRun1: ChildProcess | null;
-    private processRun2: ChildProcess | null;
+    private processRun1: ChildProcess | undefined;
+    private processRun2: ChildProcess | undefined;
     private isStopRequested: boolean;
 
     // Method
@@ -130,7 +130,7 @@ export default class Tester {
 
                         this.processRun1 = execFile("/bin/bash", execArgumentList1, { encoding: "utf8" }, (error1, stdout1, stderr1) => {
                             if (this.isStopRequested) {
-                                this.processRun1 = null;
+                                this.processRun1 = undefined;
                                 this.isStopRequested = false;
 
                                 return;
@@ -155,7 +155,7 @@ export default class Tester {
                                     browser: data.browser,
                                     phase: status,
                                     time: helperSrc.localeFormat(new Date()) as string,
-                                    log: helperSrc.deleteAnsiEscape(log)
+                                    log: helperSrc.ansiEscapeDelete(log)
                                 };
 
                                 serverDataBroadcastObject.result = this.outputList;
@@ -171,9 +171,9 @@ export default class Tester {
 
                                 this.pidKey = 0;
 
-                                this.processRun1 = null;
+                                this.processRun1 = undefined;
                             } else {
-                                this.processRun1 = null;
+                                this.processRun1 = undefined;
 
                                 const execCommand2 = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command2.sh`;
                                 const execArgumentList2 = [
@@ -184,7 +184,7 @@ export default class Tester {
 
                                 this.processRun2 = execFile("/bin/bash", execArgumentList2, { encoding: "utf8" }, (error2) => {
                                     if (this.isStopRequested) {
-                                        this.processRun2 = null;
+                                        this.processRun2 = undefined;
                                         this.isStopRequested = false;
 
                                         return;
@@ -206,7 +206,7 @@ export default class Tester {
                                         browser: data.browser,
                                         phase: status,
                                         time: helperSrc.localeFormat(new Date()) as string,
-                                        log: helperSrc.deleteAnsiEscape(log)
+                                        log: helperSrc.ansiEscapeDelete(log)
                                     };
 
                                     serverDataBroadcastObject.result = this.outputList;
@@ -222,7 +222,7 @@ export default class Tester {
 
                                     this.pidKey = 0;
 
-                                    this.processRun2 = null;
+                                    this.processRun2 = undefined;
                                 });
                             }
                         });
@@ -245,13 +245,13 @@ export default class Tester {
             if (this.processRun1) {
                 this.processKill(this.processRun1);
 
-                this.processRun1 = null;
+                this.processRun1 = undefined;
             }
 
             if (this.processRun2) {
                 this.processKill(this.processRun2);
 
-                this.processRun2 = null;
+                this.processRun2 = undefined;
             }
 
             const serverDataBroadcastObject = {} as modelTester.IserverDataBroadcast;
@@ -396,8 +396,8 @@ export default class Tester {
 
         this.outputList = [];
         this.pidKey = 0;
-        this.processRun1 = null;
-        this.processRun2 = null;
+        this.processRun1 = undefined;
+        this.processRun2 = undefined;
         this.isStopRequested = false;
     }
 

@@ -183,21 +183,15 @@ export default class Index implements Icontroller {
             const file = this.hookObject.inputSpecUpload.files[0];
 
             if (file) {
+                const fileDetail = helperSrc.fileDetail(file.name);
+
                 const reader = new FileReader();
 
                 reader.onload = (event) => {
                     if (event.target && event.target.result) {
                         const result = event.target.result as ArrayBuffer;
 
-                        let mimeType = file.type;
-
-                        const fileExtension = file.name.split(".").pop() as string;
-
-                        if (fileExtension.toLowerCase() === "ts") {
-                            mimeType = "application/typescript";
-                        }
-
-                        this.cwsClient.sendDataUpload(mimeType, file.name, result);
+                        this.cwsClient.sendDataUpload(fileDetail.mimeType, fileDetail.fileName, result);
 
                         this.cwsClient.sendMessage("text", "", "spec_file");
 
