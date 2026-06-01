@@ -54,7 +54,7 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                                     result.push(
                                         <li key={key}>
                                             <i
-                                                class="cls_button cls_button_delete cls_icon"
+                                                class="cls_icon cls_button cls_button_delete"
                                                 onclick={() => {
                                                     methodObject.onClickVideoDelete(index, value);
                                                 }}

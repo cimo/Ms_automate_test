@@ -88,7 +88,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                         const result: IvirtualNode[] = [];
 
                                         if (outputPhase === "running") {
-                                            result.push(<i class="cls_button cls_icon icon_loading">cached</i>);
+                                            result.push(<i class="cls_icon cls_button icon_loading">cached</i>);
                                         } else if (outputPhase !== "" && outputPhase !== "running") {
                                             result.push(
                                                 <button
@@ -102,9 +102,9 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                                             const result: IvirtualNode[] = [];
 
                                                             if (outputPhase === "success") {
-                                                                result.push(<i class="cls_button cls_icon icon_success">done</i>);
+                                                                result.push(<i class="cls_icon cls_button icon_success">done</i>);
                                                             } else if (outputPhase === "error") {
-                                                                result.push(<i class="cls_button cls_icon icon_fail">priority_high</i>);
+                                                                result.push(<i class="cls_icon cls_button icon_fail">priority_high</i>);
                                                             }
 
                                                             return result;
