@@ -33,7 +33,7 @@ export const MIME_TYPE = Ce.checkVariable("MS_AT_MIME_TYPE") || (process.env["MS
 export const FILE_SIZE_MB = Ce.checkVariable("MS_AT_FILE_SIZE_MB") || (process.env["MS_AT_FILE_SIZE_MB"] as string);
 
 // Custom
-export const WS_ADRESS = Ce.checkVariable("MS_AT_WS_ADDRESS") || (process.env["MS_AT_WS_ADDRESS"] as string);
+export const WS_ADDRESS = Ce.checkVariable("MS_AT_WS_ADDRESS") || (process.env["MS_AT_WS_ADDRESS"] as string);
 export const WS_KEY = Ce.checkVariable("MS_AT_WS_KEY");
 // Custom
 
@@ -413,7 +413,13 @@ export const fileCheckMimeType = (value: string): boolean => {
 };
 
 export const fileCheckSize = (byte: number): boolean => {
-    const maxSizeByte = parseInt(FILE_SIZE_MB) * 1024 * 1024;
+    const fileSizeMb = parseInt(FILE_SIZE_MB);
+
+    if (isNaN(fileSizeMb)) {
+        return false;
+    }
+
+    const maxSizeByte = fileSizeMb * 1024 * 1024;
 
     if (byte > maxSizeByte) {
         return false;
@@ -587,7 +593,7 @@ export const headerClientIp = (request: Request): string => {
 export const headerBearerToken = (request: Request): string => {
     const authorization = request.headers["authorization"];
 
-    return authorization ? authorization.substring(7) : "";
+    return authorization && authorization.startsWith("Bearer ") ? authorization.substring(7) : "";
 };
 
 export const responseBody = (stdoutValue: string, stderrValue: string | Error, response: Response, mode: number): void => {

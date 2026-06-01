@@ -260,7 +260,7 @@ export default class Index implements Icontroller {
         this.controllerAlert = new ControllerAlert();
         this.controllerDialog = new ControllerDialog();
 
-        this.cwsClient = new CwsClient(helperSrc.WS_ADRESS);
+        this.cwsClient = new CwsClient(helperSrc.WS_ADDRESS);
 
         this.cwsClient.open();
 
