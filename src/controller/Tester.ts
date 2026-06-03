@@ -1,5 +1,5 @@
 import Fs from "fs";
-import { ChildProcess, execFile, spawn } from "child_process";
+import { ChildProcess, spawn } from "child_process";
 import { Cp } from "@cimo/pid/dist/src/Main.js";
 import { CwsServer } from "@cimo/websocket/dist/src/Main.js";
 
@@ -128,79 +128,36 @@ export default class Tester {
                         const execCommand1 = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command1.sh`;
                         const execArgumentList1 = [execCommand1, data.specFileName, browserCheck];
 
-                        this.processRun1 = execFile("/bin/bash", execArgumentList1, { encoding: "utf8" }, (error1, stdout1, stderr1) => {
-                            if (this.isStopRequested) {
-                                this.processRun1 = undefined;
-                                this.isStopRequested = false;
+                        const execution1 = helperSrc.executionFile(execArgumentList1);
+                        this.processRun1 = execution1.process;
 
-                                return;
-                            }
+                        execution1
+                            .then((result1) => {
+                                const error1 = result1.error;
+                                const stdout1 = result1.stdout;
+                                const stderr1 = result1.stderr;
 
-                            if (error1 || stderr1 !== "") {
-                                let log = "";
+                                if (this.isStopRequested) {
+                                    this.processRun1 = undefined;
+                                    this.isStopRequested = false;
 
-                                if (error1) {
-                                    helperSrc.writeLog(`Tester.ts - run() - execFile(1) - error`, error1.message);
-
-                                    log = error1.message;
-                                } else if (stderr1 !== "") {
-                                    helperSrc.writeLog("Tester.ts - run() - execFile(1) - stderr", stderr1);
-
-                                    log = stderr1;
+                                    return;
                                 }
 
-                                const status = "error";
-
-                                this.outputList[data.index] = {
-                                    browser: data.browser,
-                                    phase: status,
-                                    time: helperSrc.localeFormat(new Date()) as string,
-                                    log: helperSrc.ansiEscapeDelete(log)
-                                };
-
-                                serverDataBroadcastObject.result = this.outputList;
-                                this.cwsServer.sendDataBroadcast(serverDataBroadcastObject);
-
-                                this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcastObject));
-
-                                serverDataObject.status = status;
-                                serverDataObject.result = "System error, check the log for more info.";
-                                this.cwsServer.sendMessage("text", serverDataObject, "run", clientId);
-
-                                this.cp.delete(this.pidKey);
-
-                                this.pidKey = 0;
-
-                                this.processRun1 = undefined;
-                            } else {
-                                this.processRun1 = undefined;
-
-                                const execCommand2 = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command2.sh`;
-                                const execArgumentList2 = [
-                                    execCommand2,
-                                    `${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}output/artifact/`,
-                                    `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`
-                                ];
-
-                                this.processRun2 = execFile("/bin/bash", execArgumentList2, { encoding: "utf8" }, (error2) => {
-                                    if (this.isStopRequested) {
-                                        this.processRun2 = undefined;
-                                        this.isStopRequested = false;
-
-                                        return;
-                                    }
-
+                                if (error1 || stderr1 !== "") {
                                     let log = "";
 
-                                    if (error2) {
-                                        helperSrc.writeLog(`Tester.ts - run() - execFile(2) - error`, error2.message);
+                                    if (error1) {
+                                        helperSrc.writeLog(`Tester.ts - run() - executionFile(1) - error`, error1.message);
 
-                                        log = error2.message;
-                                    } else {
-                                        log = stdout1;
+                                        log = error1.message;
+                                    } else if (stderr1 !== "") {
+                                        helperSrc.writeLog("Tester.ts - run() - executionFile(1) - stderr", stderr1);
+
+                                        log = stderr1;
                                     }
 
-                                    const status = /Error:|interrupted|not run/.test(stdout1) ? "error" : "success";
+                                    const status = "error";
 
                                     this.outputList[data.index] = {
                                         browser: data.browser,
@@ -215,17 +172,74 @@ export default class Tester {
                                     this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcastObject));
 
                                     serverDataObject.status = status;
-                                    serverDataObject.result = "Test completed, check the log for more info.";
+                                    serverDataObject.result = "System error, check the log for more info.";
                                     this.cwsServer.sendMessage("text", serverDataObject, "run", clientId);
 
                                     this.cp.delete(this.pidKey);
 
                                     this.pidKey = 0;
 
-                                    this.processRun2 = undefined;
-                                });
-                            }
-                        });
+                                    this.processRun1 = undefined;
+                                } else {
+                                    this.processRun1 = undefined;
+
+                                    const execCommand2 = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command2.sh`;
+                                    const execArgumentList2 = [
+                                        execCommand2,
+                                        `${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}output/artifact/`,
+                                        `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`
+                                    ];
+
+                                    const execution2 = helperSrc.executionFile(execArgumentList2);
+                                    this.processRun2 = execution2.process;
+
+                                    execution2
+                                        .then((result2) => {
+                                            const error2 = result2.error;
+
+                                            if (this.isStopRequested) {
+                                                this.processRun2 = undefined;
+                                                this.isStopRequested = false;
+
+                                                return;
+                                            }
+
+                                            let log = "";
+
+                                            if (error2) {
+                                                helperSrc.writeLog(`Tester.ts - run() - executionFile(2) - error`, error2.message);
+
+                                                log = error2.message;
+                                            } else {
+                                                log = stdout1;
+                                            }
+
+                                            const status = /Error:|interrupted|not run/.test(stdout1) ? "error" : "success";
+
+                                            this.outputList[data.index] = {
+                                                browser: data.browser,
+                                                phase: status,
+                                                time: helperSrc.localeFormat(new Date()) as string,
+                                                log: helperSrc.ansiEscapeDelete(log)
+                                            };
+
+                                            serverDataBroadcastObject.result = this.outputList;
+                                            this.cwsServer.sendDataBroadcast(serverDataBroadcastObject);
+
+                                            this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcastObject));
+
+                                            serverDataObject.status = status;
+                                            serverDataObject.result = "Test completed, check the log for more info.";
+                                            this.cwsServer.sendMessage("text", serverDataObject, "run", clientId);
+
+                                            this.cp.delete(this.pidKey);
+
+                                            this.pidKey = 0;
+
+                                            this.processRun2 = undefined;
+                                        });
+                                }
+                            });
                     } else {
                         serverDataObject.status = "error";
                         serverDataObject.result = "Another process still running.";
@@ -292,32 +306,34 @@ export default class Tester {
                 const execCommand = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command3.sh`;
                 const execArgumentList = [execCommand, `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`, data.name];
 
-                execFile("/bin/bash", execArgumentList, { encoding: "utf8" }, (error, stdout) => {
-                    if (error) {
-                        helperSrc.writeLog(`Tester.ts - video() - error`, error.message);
+                helperSrc
+                    .executionFile(execArgumentList)
+                    .then((result) => {
+                        if (result.error) {
+                            helperSrc.writeLog(`Tester.ts - video() - receiveData(video) - executionFile() - error`, result.error.message);
 
-                        serverData.status = "error";
-                        serverData.result = error.message;
-                    } else if (stdout === "") {
-                        serverData.status = "error";
-                        serverData.result = "File not found.";
-                    } else {
-                        serverData.status = "success";
+                            serverData.status = "error";
+                            serverData.result = result.error.message;
+                        } else if (result.stdout === "") {
+                            serverData.status = "error";
+                            serverData.result = "File not found.";
+                        } else {
+                            serverData.status = "success";
 
-                        const stdoutSplit = stdout.trim().split("\n");
-                        const nameList = [];
+                            const stdoutSplit = result.stdout.trim().split("\n");
+                            const nameList = [];
 
-                        for (let a = 0; a < stdoutSplit.length; a++) {
-                            nameList.push(stdoutSplit[a]);
+                            for (let a = 0; a < stdoutSplit.length; a++) {
+                                nameList.push(stdoutSplit[a]);
+                            }
+
+                            nameList.sort((a, b) => a.localeCompare(b));
+
+                            serverData.result = nameList;
                         }
 
-                        nameList.sort((a, b) => a.localeCompare(b));
-
-                        serverData.result = nameList;
-                    }
-
-                    this.cwsServer.sendMessage("text", serverData, "video", clientId);
-                });
+                        this.cwsServer.sendMessage("text", serverData, "video", clientId);
+                    });
             } else {
                 serverData.status = "error";
                 serverData.result = "Wrong parameter.";
@@ -332,19 +348,21 @@ export default class Tester {
                 const execCommand = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command4.sh`;
                 const execArgumentList = [execCommand, `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`, data.name];
 
-                execFile("/bin/bash", execArgumentList, { encoding: "utf8" }, (error, stdout) => {
-                    if (error) {
-                        helperSrc.writeLog(`Tester.ts - video() - error`, error.message);
+                helperSrc
+                    .executionFile(execArgumentList)
+                    .then((result) => {
+                        if (result.error) {
+                            helperSrc.writeLog(`Tester.ts - video() - receiveData(video_delete) - executionFile() - error`, result.error.message);
 
-                        serverData.status = "error";
-                        serverData.result = error.message;
-                    } else if (stdout === "") {
-                        serverData.status = "success";
-                        serverData.result = "File deleted.";
-                    }
+                            serverData.status = "error";
+                            serverData.result = result.error.message;
+                        } else if (result.stdout === "") {
+                            serverData.status = "success";
+                            serverData.result = "File deleted.";
+                        }
 
-                    this.cwsServer.sendMessage("text", serverData, "video_delete", clientId);
-                });
+                        this.cwsServer.sendMessage("text", serverData, "video_delete", clientId);
+                    });
             } else {
                 serverData.status = "error";
                 serverData.result = "Wrong parameter.";
