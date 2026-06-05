@@ -23,7 +23,7 @@ const viewUpload = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                             <li>If you need a stable file you need create a PR.</li>
                         </ul>
                         <p class="name">{variableObject.uploadFileName.state}</p>
-                        <div class="button_container">
+                        <div class="button_wrapper">
                             <button
                                 class="cls_button cls_button_primary"
                                 onclick={() => {

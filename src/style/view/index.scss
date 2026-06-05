@@ -34,7 +34,7 @@
                 .cell {
                     text-align: center !important;
 
-                    .field_container,
+                    .field_wrapper,
                     .cls_button {
                         display: inline-block !important;
                         vertical-align: middle !important;
@@ -74,7 +74,7 @@
                         }
                     }
 
-                    .field_container {
+                    .field_wrapper {
                         .field_value,
                         .cls_button {
                             display: inline-block !important;
@@ -88,7 +88,7 @@
     .table_client {
         .item {
             li {
-                .clientId_container {
+                .clientId_wrapper {
                     display: inline-block !important;
                     vertical-align: middle !important;
 
@@ -105,7 +105,7 @@
     }
 
     .table_video {
-        .field_container {
+        .field_wrapper {
             text-align: center !important;
 
             .field_value {
@@ -154,7 +154,7 @@
         margin: 10px 0 10px 20px !important;
     }
 
-    .button_container {
+    .button_wrapper {
         margin: 10px !important;
         text-align: center !important;
 
@@ -202,7 +202,7 @@
                 .row {
                     .cell {
                         &.column_action {
-                            .field_container {
+                            .field_wrapper {
                                 margin: 10px 0 5px 0 !important;
                             }
                             .cls_button {

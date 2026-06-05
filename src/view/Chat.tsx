@@ -8,7 +8,7 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
     return (
         <div>
             <div class={`view_chat ${variableObject.isChatVisible.state ? "" : "hidden"}`}>
-                <div class="container">
+                <div class="wrapper">
                     <div class="header">
                         <i
                             class="cls_icon cls_button"
@@ -20,7 +20,7 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
                         </i>
                     </div>
                     <p>Client: {variableObject.clientIdSelected.state}</p>
-                    <div class="message_received_container">
+                    <div class="message_received_wrapper">
                         {(() => {
                             const result: IvirtualNode[] = [];
 
@@ -40,7 +40,7 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
                             return result;
                         })()}
                     </div>
-                    <div class="field_container">
+                    <div class="field_wrapper">
                         <label for="messageSend">Message to send</label>
                         <textarea
                             jsmvcfw-elementHookName="inputChatMessageSend"
@@ -50,7 +50,7 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
                             rows="4"
                         ></textarea>
                     </div>
-                    <div class="button_container">
+                    <div class="button_wrapper">
                         <button
                             class="cls_button cls_button_primary"
                             onclick={() => {

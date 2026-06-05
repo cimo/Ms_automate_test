@@ -42,7 +42,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                     <p title={value}>{value}</p>
                                 </td>
                                 <td class="cell column_action">
-                                    <div class="field_container">
+                                    <div class="field_wrapper">
                                         <label for={`browser_${index}`}></label>
                                         <select
                                             jsmvcfw-elementHookName={`selectBrowserName_${index}`}

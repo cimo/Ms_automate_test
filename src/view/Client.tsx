@@ -27,7 +27,7 @@ const viewClient = (variableObject: modelIndex.Ivariable, methodObject: modelInd
 
                                     result.push(
                                         <li key={key}>
-                                            <div class="clientId_container">
+                                            <div class="clientId_wrapper">
                                                 <i class="cls_icon">person</i>
                                                 <p
                                                     class={`${variableObject.clientIdCurrent.state === value ? "exclude" : ""}`}

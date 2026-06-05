@@ -23,7 +23,7 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                             <li>For search it write the name, present in the "Filename" table column, inside the input and click on the button.</li>
                             <li>Click on the generated list item for load the specific video.</li>
                         </ul>
-                        <div class="field_container">
+                        <div class="field_wrapper">
                             <label for="videoName">Filename</label>
                             <input
                                 jsmvcfw-elementHookName="inputVideoName"
@@ -34,7 +34,7 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                                 value=""
                             />
                         </div>
-                        <div class="button_container">
+                        <div class="button_wrapper">
                             <button
                                 class="cls_button cls_button_primary"
                                 onclick={() => {

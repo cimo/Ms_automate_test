@@ -10,7 +10,7 @@
     left: 0 !important;
     bottom: 0 !important;
 
-    .container {
+    .wrapper {
         position: fixed !important;
         top: 50% !important;
         left: 50% !important;
@@ -30,7 +30,7 @@
             }
         }
 
-        .container_message_received {
+        .message_received_wrapper {
             overflow-y: auto !important;
             width: 100% !important;
             height: 200px !important;
@@ -55,7 +55,7 @@
             }
         }
 
-        .field_container {
+        .field_wrapper {
             margin: 10px 0 !important;
 
             .field_value {

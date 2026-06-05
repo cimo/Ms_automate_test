@@ -12,7 +12,7 @@ const viewLoader = (variableObject: modelIndex.Ivariable): IvirtualNode => {
                 if (variableObject.isLoading.state) {
                     result.push(
                         <aside class="view_loader">
-                            <div class="container">
+                            <div class="wrapper">
                                 <div class="square"></div>
                                 <div class="square"></div>
                                 <div class="square"></div>

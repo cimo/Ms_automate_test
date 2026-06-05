@@ -15,7 +15,7 @@ const viewIndex = (variableObject: modelIndex.Ivariable, methodObject: modelInde
             {viewLoader(variableObject)}
             <aside jsmvcfw-controllerName="Alert" />
             <aside jsmvcfw-controllerName="Dialog" />
-            <div class="page_container view_index">
+            <div class="page_wrapper view_index">
                 <div class="header"></div>
                 <div class="left">{viewSpecFile(variableObject, methodObject)}</div>
                 <div class="right">
