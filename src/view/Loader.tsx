@@ -7,10 +7,10 @@ const viewLoader = (variableObject: modelIndex.Ivariable): IvirtualNode => {
     return (
         <div>
             {(() => {
-                const result: IvirtualNode[] = [];
+                const resultList: IvirtualNode[] = [];
 
                 if (variableObject.isLoading.state) {
-                    result.push(
+                    resultList.push(
                         <aside class="view_loader">
                             <div class="wrapper">
                                 <div class="square"></div>
@@ -23,7 +23,7 @@ const viewLoader = (variableObject: modelIndex.Ivariable): IvirtualNode => {
                     );
                 }
 
-                return result;
+                return resultList;
             })()}
         </div>
     );

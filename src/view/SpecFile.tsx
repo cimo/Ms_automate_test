@@ -25,7 +25,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
             </thead>
             <tbody>
                 {(() => {
-                    const result: IvirtualNode[] = [];
+                    const resultList: IvirtualNode[] = [];
 
                     for (const [key, value] of Object.entries(variableObject.specFileList.state)) {
                         const index = parseInt(key);
@@ -33,7 +33,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                         const outputPhase = variableObject.outputList.state[index] ? variableObject.outputList.state[index].phase : "";
                         const outputTime = variableObject.outputList.state[index] ? variableObject.outputList.state[index].time : "";
 
-                        result.push(
+                        resultList.push(
                             <tr key={index} class="row">
                                 <td class="cell column_id">
                                     <p>{index + 1}</p>
@@ -45,7 +45,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                     <div class="field_wrapper">
                                         <label for={`browser_${index}`}></label>
                                         <select
-                                            jsmvcfw-elementHookName={`selectBrowserName_${index}`}
+                                            jsmvcfw-elementHookName={`selectBrowserNameList_${index}`}
                                             class="cls_select field_value"
                                             id={`browser_${index}`}
                                             name="browser"
@@ -60,11 +60,11 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                         </select>
                                     </div>
                                     {(() => {
-                                        const result: IvirtualNode[] = [];
+                                        const resultList: IvirtualNode[] = [];
 
                                         const label = outputPhase !== "running" ? "start" : "stop";
 
-                                        result.push(
+                                        resultList.push(
                                             <button
                                                 class={`cls_button cls_button_primary ${label}`}
                                                 onclick={() => {
@@ -77,7 +77,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                             </button>
                                         );
 
-                                        return result;
+                                        return resultList;
                                     })()}
                                 </td>
                                 <td class="cell column_time">
@@ -85,12 +85,12 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                 </td>
                                 <td class="cell column_status">
                                     {(() => {
-                                        const result: IvirtualNode[] = [];
+                                        const resultList: IvirtualNode[] = [];
 
                                         if (outputPhase === "running") {
-                                            result.push(<i class="cls_icon cls_button icon_loading">cached</i>);
+                                            resultList.push(<i class="cls_icon cls_button icon_loading">cached</i>);
                                         } else if (outputPhase !== "" && outputPhase !== "running") {
-                                            result.push(
+                                            resultList.push(
                                                 <button
                                                     class="cls_button cls_button_flat"
                                                     onclick={() => {
@@ -99,29 +99,29 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                                 >
                                                     <span class="cls_button_label">
                                                         {(() => {
-                                                            const result: IvirtualNode[] = [];
+                                                            const resultList: IvirtualNode[] = [];
 
                                                             if (outputPhase === "success") {
-                                                                result.push(<i class="cls_icon cls_button icon_success">done</i>);
+                                                                resultList.push(<i class="cls_icon cls_button icon_success">done</i>);
                                                             } else if (outputPhase === "error") {
-                                                                result.push(<i class="cls_icon cls_button icon_fail">priority_high</i>);
+                                                                resultList.push(<i class="cls_icon cls_button icon_fail">priority_high</i>);
                                                             }
 
-                                                            return result;
+                                                            return resultList;
                                                         })()}
                                                     </span>
                                                 </button>
                                             );
                                         }
 
-                                        return result;
+                                        return resultList;
                                     })()}
                                 </td>
                             </tr>
                         );
                     }
 
-                    return result;
+                    return resultList;
                 })()}
             </tbody>
         </table>

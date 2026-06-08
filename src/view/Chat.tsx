@@ -22,12 +22,12 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
                     <p>Client: {variableObject.clientIdSelected.state}</p>
                     <div class="message_received_wrapper">
                         {(() => {
-                            const result: IvirtualNode[] = [];
+                            const resultList: IvirtualNode[] = [];
 
-                            const list = Object.entries(variableObject.chatMessageList.state);
+                            const entryList = Object.entries(variableObject.chatMessageList.state);
 
-                            for (const [key, value] of list) {
-                                result.push(
+                            for (const [key, value] of entryList) {
+                                resultList.push(
                                     <p key={key}>
                                         <span class="time">{helperSrc.localeFormat(new Date(value.time))}</span>
                                         <span class="text">
@@ -37,7 +37,7 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
                                 );
                             }
 
-                            return result;
+                            return resultList;
                         })()}
                     </div>
                     <div class="field_wrapper">

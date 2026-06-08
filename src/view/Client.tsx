@@ -20,12 +20,12 @@ const viewClient = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                     <td class="cell">
                         <ul class="item">
                             {(() => {
-                                const result: IvirtualNode[] = [];
+                                const resultList: IvirtualNode[] = [];
 
                                 for (const [key, value] of Object.entries(variableObject.clientList.state)) {
                                     const index = parseInt(key);
 
-                                    result.push(
+                                    resultList.push(
                                         <li key={key}>
                                             <div class="clientId_wrapper">
                                                 <i class="cls_icon">person</i>
@@ -40,10 +40,10 @@ const viewClient = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                                             </div>
 
                                             {(() => {
-                                                const result: IvirtualNode[] = [];
+                                                const resultList: IvirtualNode[] = [];
 
                                                 if (variableObject.clientIdCurrent.state === value && !variableObject.isClientConnected.state) {
-                                                    result.push(
+                                                    resultList.push(
                                                         <button
                                                             class="cls_button cls_button_primary"
                                                             onclick={() => {
@@ -57,13 +57,13 @@ const viewClient = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                                                     );
                                                 }
 
-                                                return result;
+                                                return resultList;
                                             })()}
                                         </li>
                                     );
                                 }
 
-                                return result;
+                                return resultList;
                             })()}
                         </ul>
                     </td>

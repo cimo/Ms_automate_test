@@ -104,7 +104,7 @@ export default class Index implements Icontroller {
             const clientData: modelTester.IclientDataRun = {
                 index,
                 specFileName,
-                browser: this.hookObject.selectBrowserName[index].value
+                browser: this.hookObject.selectBrowserNameList[index].value
             };
             this.cwsClient.sendMessage("text", clientData, "run");
         } else {

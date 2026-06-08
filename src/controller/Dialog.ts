@@ -97,9 +97,9 @@ export default class Dialog implements Icontroller {
     event(): void {}
 
     subControllerList(): Icontroller[] {
-        const list: Icontroller[] = [];
+        const resultList: Icontroller[] = [];
 
-        return list;
+        return resultList;
     }
 
     rendered(): void {

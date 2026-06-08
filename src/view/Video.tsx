@@ -46,12 +46,12 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                         </div>
                         <ul class="item">
                             {(() => {
-                                const result: IvirtualNode[] = [];
+                                const resultList: IvirtualNode[] = [];
 
                                 for (const [key, value] of Object.entries(variableObject.videoList.state)) {
                                     const index = parseInt(key);
 
-                                    result.push(
+                                    resultList.push(
                                         <li key={key}>
                                             <i
                                                 class="cls_icon cls_button cls_button_delete"
@@ -72,14 +72,14 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                                     );
                                 }
 
-                                return result;
+                                return resultList;
                             })()}
                         </ul>
                         {(() => {
-                            const result: IvirtualNode[] = [];
+                            const resultList: IvirtualNode[] = [];
 
                             if (variableObject.videoSrc.state !== "") {
-                                result.push(
+                                resultList.push(
                                     <div>
                                         <p class="name">{variableObject.videoSrc.state.split("/").pop()}</p>
                                         <video
@@ -93,7 +93,7 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                                 );
                             }
 
-                            return result;
+                            return resultList;
                         })()}
                     </td>
                 </tr>

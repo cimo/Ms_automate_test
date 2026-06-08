@@ -35,7 +35,7 @@ export interface Imethod {
 }
 
 export interface IelementHook extends Record<string, Element | Element[]> {
-    selectBrowserName: HTMLSelectElement[];
+    selectBrowserNameList: HTMLSelectElement[];
     inputVideoName: HTMLInputElement;
     inputSpecUpload: HTMLInputElement;
     inputChatMessageSend: HTMLTextAreaElement;
