@@ -68,21 +68,21 @@ export default class Tester {
                     return;
                 }
 
-                const fileFilteredList: string[] = [];
+                const filteredList: string[] = [];
 
                 for (let a = 0; a < fileList.length; a++) {
                     if (fileList[a].endsWith(".spec.ts")) {
-                        fileFilteredList.push(fileList[a]);
+                        filteredList.push(fileList[a]);
                     }
                 }
 
-                const resultList: string[] = [];
+                const finalList: string[] = [];
 
-                for (let a = 0; a < fileFilteredList.length; a++) {
-                    resultList.push(fileFilteredList[a].replace(/\.spec\.ts$/, ""));
+                for (let a = 0; a < filteredList.length; a++) {
+                    finalList.push(filteredList[a].replace(/\.spec\.ts$/, ""));
                 }
 
-                const serverDataObject: modelTester.IserverDataBroadcast = { label: "spec_file", status: "", result: resultList };
+                const serverDataObject: modelTester.IserverDataBroadcast = { label: "spec_file", status: "", result: finalList };
                 this.cwsServer.sendDataBroadcast(serverDataObject);
             });
         });
