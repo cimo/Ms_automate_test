@@ -18,6 +18,9 @@ export default defineConfig({
         testIdAttribute: "data-at_id",
         ignoreHTTPSErrors: true,
         video: "on",
+        extraHTTPHeaders: {
+            isAtTest: "0"
+        },
         launchOptions: {
             slowMo: 1500
         }
@@ -28,7 +31,10 @@ export default defineConfig({
             use: {
                 ...devices["Desktop Chrome"],
                 viewport: { width: 1920, height: 1080 },
-                channel: "chrome"
+                channel: "chrome",
+                extraHTTPHeaders: {
+                    isAtTest: "1"
+                }
             }
         },
         {
@@ -36,30 +42,49 @@ export default defineConfig({
             use: {
                 ...devices["Desktop Edge"],
                 viewport: { width: 1920, height: 1080 },
-                channel: "msedge"
+                channel: "msedge",
+                extraHTTPHeaders: {
+                    isAtTest: "1"
+                }
             }
         },
         {
             name: "desktop_firefox",
             use: {
                 ...devices["Desktop firefox"],
-                viewport: { width: 1920, height: 1080 }
+                viewport: { width: 1920, height: 1080 },
+                extraHTTPHeaders: {
+                    isAtTest: "1"
+                }
             }
         },
         {
             name: "desktop_safari",
             use: {
                 ...devices["Desktop safari"],
-                viewport: { width: 1920, height: 1080 }
+                viewport: { width: 1920, height: 1080 },
+                extraHTTPHeaders: {
+                    isAtTest: "1"
+                }
             }
         },
         {
             name: "mobile_android",
-            use: { ...devices["Pixel 5"] }
+            use: {
+                ...devices["Pixel 5"],
+                extraHTTPHeaders: {
+                    isAtTest: "1"
+                }
+            }
         },
         {
             name: "mobile_ios",
-            use: { ...devices["iPhone 12"] }
+            use: {
+                ...devices["iPhone 12"],
+                extraHTTPHeaders: {
+                    isAtTest: "1"
+                }
+            }
         }
     ]
 });
