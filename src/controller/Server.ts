@@ -91,8 +91,9 @@ export default class Server {
             const cp = new Cp();
             const cwsServer = new CwsServer(server, helperSrc.WS_KEY);
 
-            const controllerTester = new ControllerTester(cp, cwsServer);
+            const controllerTester = new ControllerTester(cp, cwsServer, this.app, this.limiter);
             controllerTester.websocket();
+            controllerTester.api();
 
             helperSrc.writeLog("Server.ts - createServer() - listen() - Port", helperSrc.SERVER_PORT);
 

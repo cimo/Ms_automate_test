@@ -1,7 +1,10 @@
 import Fs from "fs";
+import Express, { Request, Response } from "express";
+import { RateLimitRequestHandler } from "express-rate-limit";
 import { ChildProcess, spawn } from "child_process";
 import { Cp } from "@cimo/pid/dist/src/Main.js";
 import { CwsServer } from "@cimo/websocket/dist/src/Main.js";
+import { Ca } from "@cimo/authentication/dist/src/Main.js";
 
 // Source
 import * as helperSrc from "../HelperSrc.js";
@@ -11,6 +14,9 @@ export default class Tester {
     // Variable
     private cp: Cp;
     private cwsServer: CwsServer;
+
+    private app: Express.Express;
+    private limiter: RateLimitRequestHandler;
 
     private outputList: modelTester.Ioutput[];
     private pidKey: number;
@@ -58,28 +64,13 @@ export default class Tester {
 
     private specFile = (): void => {
         this.cwsServer.receiveData("spec_file", () => {
-            Fs.readdir(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`, (error, fileList) => {
-                if (error) {
-                    helperSrc.writeLog("Tester.ts - specFile() - receiveData() - readdir() - Error", error.message);
-
-                    const serverDataObject: modelTester.IserverDataBroadcast = { label: "spec_file", status: "", result: [] };
-                    this.cwsServer.sendDataBroadcast(serverDataObject);
-
-                    return;
-                }
-
-                const filteredList: string[] = [];
-
-                for (let a = 0; a < fileList.length; a++) {
-                    if (fileList[a].endsWith(".spec.ts")) {
-                        filteredList.push(fileList[a]);
-                    }
-                }
-
+            helperSrc.findInDirectoryRecursive(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`, ".spec.ts").then((pathFileList) => {
                 const finalList: string[] = [];
 
-                for (let a = 0; a < filteredList.length; a++) {
-                    finalList.push(filteredList[a].replace(/\.spec\.ts$/, ""));
+                for (let a = 0; a < pathFileList.length; a++) {
+                    const fileDetail = helperSrc.fileDetail(pathFileList[a], undefined, false);
+
+                    finalList.push(fileDetail.fileName.replace(/\.spec\.ts$/, ""));
                 }
 
                 const serverDataObject: modelTester.IserverDataBroadcast = { label: "spec_file", status: "", result: finalList };
@@ -402,9 +393,12 @@ export default class Tester {
         });
     };
 
-    constructor(cp: Cp, cwsServer: CwsServer) {
+    constructor(cp: Cp, cwsServer: CwsServer, app: Express.Express, limiter: RateLimitRequestHandler) {
         this.cp = cp;
         this.cwsServer = cwsServer;
+
+        this.app = app;
+        this.limiter = limiter;
 
         this.outputList = [];
         this.pidKey = 0;
@@ -429,5 +423,107 @@ export default class Tester {
         this.video();
 
         this.upload();
+    };
+
+    api = (): void => {
+        this.app.get("/api/list-test", this.limiter, Ca.authenticationMiddleware, (_, response: Response) => {
+            const nameList: string[] = [];
+
+            helperSrc.findInDirectoryRecursive(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`, ".spec.ts").then((pathFileList) => {
+                for (let a = 0; a < pathFileList.length; a++) {
+                    const fileDetail = helperSrc.fileDetail(pathFileList[a], undefined, false);
+
+                    nameList.push(fileDetail.fileName);
+                }
+
+                helperSrc.responseBody(JSON.stringify({ action: "listTest", nameList: nameList }), "", response, 200);
+            });
+        });
+
+        this.app.post("/api/run", this.limiter, Ca.authenticationMiddleware, (request: Request, response: Response) => {
+            const body = request.body as modelTester.IapiRunBody;
+
+            const file = body.file.replace(/\.spec\.ts$/, "");
+            const browser = body.browser;
+
+            const execCommand1 = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command1.sh`;
+            const execArgumentList1 = [execCommand1, file, browser];
+
+            helperSrc.executionFile(execArgumentList1).then((result1) => {
+                const error1 = result1.error;
+                const stdout = result1.stdout;
+                const stderr = result1.stderr;
+
+                if (error1) {
+                    helperSrc.writeLog("Tester.ts - api() - run - executionFile(1) - error", error1.message);
+
+                    helperSrc.responseBody("", error1.message, response, 500);
+
+                    return;
+                }
+
+                if ((stdout !== "" && stderr === "") || (stdout !== "" && stderr !== "")) {
+                    const execCommand2 = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command2.sh`;
+                    const execArgumentList2 = [
+                        execCommand2,
+                        `${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}output/artifact/`,
+                        `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`
+                    ];
+
+                    helperSrc.executionFile(execArgumentList2).then((result2) => {
+                        const error2 = result2.error;
+
+                        if (error2) {
+                            helperSrc.writeLog("Tester.ts - api() - run - executionFile(2) - error", error2.message);
+
+                            helperSrc.responseBody("", error2.message, response, 500);
+
+                            return;
+                        }
+
+                        helperSrc.responseBody(JSON.stringify({ action: "run", stdout: helperSrc.ansiEscapeDelete(stdout) }), "", response, 200);
+                    });
+                } else if (stdout === "" && stderr !== "") {
+                    helperSrc.writeLog("Tester.ts - api() - run - executionFile(1) - stderr", stderr);
+
+                    helperSrc.responseBody("", stderr, response, 500);
+                }
+            });
+        });
+
+        this.app.post("/api/list-video", this.limiter, Ca.authenticationMiddleware, (request: Request, response: Response) => {
+            const nameList: string[] = [];
+
+            const body = request.body as modelTester.IapiListVideoBody;
+
+            const video = body.video;
+
+            const execCommand = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command3.sh`;
+            const execArgumentList = [execCommand, `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`, video];
+
+            helperSrc.executionFile(execArgumentList).then((result) => {
+                if (result.error) {
+                    helperSrc.writeLog("Tester.ts - api() - list-video - executionFile() - error", result.error.message);
+
+                    helperSrc.responseBody("", "ko", response, 500);
+
+                    return;
+                }
+
+                const stdoutSplit = result.stdout.trim().split("\n");
+
+                for (let a = 0; a < stdoutSplit.length; a++) {
+                    if (stdoutSplit[a].toLowerCase().includes(video.toLowerCase())) {
+                        nameList.push(stdoutSplit[a]);
+                    }
+                }
+
+                const nameListSorted = nameList.sort((a, b) => {
+                    return a.localeCompare(b);
+                });
+
+                helperSrc.responseBody(JSON.stringify({ action: "listVideo", nameList: nameListSorted }), "", response, 200);
+            });
+        });
     };
 }

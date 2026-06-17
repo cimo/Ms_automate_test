@@ -1,3 +1,12 @@
+export interface IapiRunBody {
+    file: string;
+    browser: string;
+}
+
+export interface IapiListVideoBody {
+    video: string;
+}
+
 export interface Ioutput {
     browser: string;
     phase: string;
