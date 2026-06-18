@@ -109,16 +109,24 @@ export default class Server {
                 helperSrc.responseBody(`Client ip: ${request.clientIp || ""}`, "", response, 200);
             });
 
-            this.app.get("/login", this.limiter, (_, response: Response) => {
+            this.app.get("/login", this.limiter, (request: Request, response: Response) => {
                 Ca.writeCookie(`${helperSrc.LABEL}_authentication`, response);
 
-                response.redirect(`${helperSrc.URL_ROOT}/`);
+                if (request.accepts("html")) {
+                    response.redirect(`${helperSrc.URL_ROOT}/`);
+                } else {
+                    helperSrc.responseBody("ok", "", response, 200);
+                }
             });
 
             this.app.get("/logout", this.limiter, Ca.authenticationMiddleware, (request: Request, response: Response) => {
                 Ca.deleteCookie(`${helperSrc.LABEL}_authentication`, request, response);
 
-                response.redirect(`${helperSrc.URL_ROOT}/info`);
+                if (request.accepts("html")) {
+                    response.redirect(`${helperSrc.URL_ROOT}/info`);
+                } else {
+                    helperSrc.responseBody("ok", "", response, 200);
+                }
             });
         });
     };
