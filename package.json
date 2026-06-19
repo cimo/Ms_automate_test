@@ -26,7 +26,7 @@
         "@cimo/environment": "1.0.30",
         "@cimo/pid": "1.1.29",
         "@cimo/websocket": "1.5.70",
-        "@cimo/jsmvcfw": "1.6.46",
+        "@cimo/jsmvcfw": "1.6.47",
         "express": "5.2.1",
         "express-rate-limit": "8.5.2",
         "cookie-parser": "1.4.7",
