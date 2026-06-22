@@ -12,7 +12,7 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
                     <div class="header">
                         <i
                             class="cls_icon cls_button"
-                            onclick={() => {
+                            onClick{() => {
                                 methodObject.onClickChatClose();
                             }}
                         >
@@ -53,7 +53,7 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
                     <div class="button_wrapper">
                         <button
                             class="cls_button cls_button_primary"
-                            onclick={() => {
+                            onClick{() => {
                                 methodObject.onSendChatMessage();
                             }}
                         >
