@@ -37,7 +37,7 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                         <div class="button_wrapper">
                             <button
                                 class="cls_button cls_button_primary"
-                                onClick{() => {
+                                onClick={() => {
                                     methodObject.onClickVideoLoad();
                                 }}
                             >
@@ -55,14 +55,14 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                                         <li key={key}>
                                             <i
                                                 class="cls_icon cls_button cls_button_delete"
-                                                onClick{() => {
+                                                onClick={() => {
                                                     methodObject.onClickVideoDelete(index, value);
                                                 }}
                                             >
                                                 delete
                                             </i>
                                             <p
-                                                onClick{() => {
+                                                onClick={() => {
                                                     methodObject.onClickVideoShow(value);
                                                 }}
                                             >

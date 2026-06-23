@@ -12,7 +12,7 @@ const viewDialog = (variableObject: modelDialog.Ivariable, methodObject: modelDi
                 <div class="cls_dialog_action">
                     <button
                         class="cls_button cls_button_primary"
-                        onClick{() => {
+                        onClick={() => {
                             methodObject.onClickAccept();
                         }}
                     >
@@ -20,7 +20,7 @@ const viewDialog = (variableObject: modelDialog.Ivariable, methodObject: modelDi
                     </button>
                     <button
                         class={`cls_button_flat ${variableObject.isSingleButton.state ? "hidden" : ""}`}
-                        onClick{() => {
+                        onClick={() => {
                             methodObject.onClickClose();
                         }}
                     >

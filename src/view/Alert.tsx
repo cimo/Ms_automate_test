@@ -11,7 +11,7 @@ const viewAlert = (variableObject: modelAlert.Ivariable, methodObject: modelAler
                 <div class="cls_alert_action">
                     <i
                         class="cls_icon cls_button"
-                        onClick{() => {
+                        onClick={() => {
                             methodObject.onClickClose();
                         }}
                     >

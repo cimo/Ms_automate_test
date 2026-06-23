@@ -67,7 +67,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                         resultList.push(
                                             <button
                                                 class={`cls_button cls_button_primary ${label}`}
-                                                onClick{() => {
+                                                onClick={() => {
                                                     methodObject.onClickRun(index, value);
                                                 }}
                                             >
@@ -93,7 +93,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                             resultList.push(
                                                 <button
                                                     class="cls_button cls_button_flat"
-                                                    onClick{() => {
+                                                    onClick={() => {
                                                         methodObject.onClickLogRun(index);
                                                     }}
                                                 >

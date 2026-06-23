@@ -31,7 +31,7 @@ const viewClient = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                                                 <i class="cls_icon">person</i>
                                                 <p
                                                     class={`${variableObject.clientIdCurrent.state === value ? "exclude" : ""}`}
-                                                    onClick{() => {
+                                                    onClick={() => {
                                                         methodObject.onClickClient(index, value);
                                                     }}
                                                 >
@@ -46,7 +46,7 @@ const viewClient = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                                                     resultList.push(
                                                         <button
                                                             class="cls_button cls_button_primary"
-                                                            onClick{() => {
+                                                            onClick={() => {
                                                                 methodObject.onClickConnect();
                                                             }}
                                                         >

@@ -26,7 +26,7 @@ const viewUpload = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                         <div class="button_wrapper">
                             <button
                                 class="cls_button cls_button_primary"
-                                onClick{() => {
+                                onClick={() => {
                                     methodObject.onClickChooseFile();
                                 }}
                             >
@@ -34,7 +34,7 @@ const viewUpload = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                             </button>
                             <button
                                 class="cls_button cls_button_primary"
-                                onClick{() => {
+                                onClick={() => {
                                     methodObject.onClickUpload();
                                 }}
                             >
