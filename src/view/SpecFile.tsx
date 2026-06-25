@@ -24,7 +24,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                 </tr>
             </thead>
             <tbody>
-                {(() => {
+                {() => {
                     const resultList: IvirtualNode[] = [];
 
                     for (const [key, value] of Object.entries(variableObject.specFileList.state)) {
@@ -59,7 +59,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                             <option value="mobile_ios">Mobile - Ios</option>
                                         </select>
                                     </div>
-                                    {(() => {
+                                    {() => {
                                         const resultList: IvirtualNode[] = [];
 
                                         const label = outputPhase !== "running" ? "start" : "stop";
@@ -78,13 +78,13 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                         );
 
                                         return resultList;
-                                    })()}
+                                    }}
                                 </td>
                                 <td class="cell column_time">
                                     <p>{outputTime}</p>
                                 </td>
                                 <td class="cell column_status">
-                                    {(() => {
+                                    {() => {
                                         const resultList: IvirtualNode[] = [];
 
                                         if (outputPhase === "running") {
@@ -98,7 +98,7 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                                     }}
                                                 >
                                                     <span class="cls_button_label">
-                                                        {(() => {
+                                                        {() => {
                                                             const resultList: IvirtualNode[] = [];
 
                                                             if (outputPhase === "success") {
@@ -108,21 +108,21 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                                             }
 
                                                             return resultList;
-                                                        })()}
+                                                        }}
                                                     </span>
                                                 </button>
                                             );
                                         }
 
                                         return resultList;
-                                    })()}
+                                    }}
                                 </td>
                             </tr>
                         );
                     }
 
                     return resultList;
-                })()}
+                }}
             </tbody>
         </table>
     );

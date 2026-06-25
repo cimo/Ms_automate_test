@@ -45,7 +45,7 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                             </button>
                         </div>
                         <ul class="item">
-                            {(() => {
+                            {() => {
                                 const resultList: IvirtualNode[] = [];
 
                                 for (const [key, value] of Object.entries(variableObject.videoList.state)) {
@@ -73,18 +73,18 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                                 }
 
                                 return resultList;
-                            })()}
+                            }}
                         </ul>
-                        {(() => {
+                        {() => {
                             const resultList: IvirtualNode[] = [];
 
                             if (variableObject.videoSrc.state !== "") {
                                 resultList.push(
                                     <div>
-                                        <p class="name">{variableObject.videoSrc.state.split("/").pop()}</p>
+                                        <p class="name">{() => variableObject.videoSrc.state.split("/").pop()}</p>
                                         <video
                                             controls
-                                            src={`${variableObject.videoSrc.state}?nocache=${Date.now()}`}
+                                            src={() => `${variableObject.videoSrc.state}?nocache=${Date.now()}`}
                                             onerror={() => {
                                                 methodObject.onErrorVideo();
                                             }}
@@ -94,7 +94,7 @@ const viewVideo = (variableObject: modelIndex.Ivariable, methodObject: modelInde
                             }
 
                             return resultList;
-                        })()}
+                        }}
                     </td>
                 </tr>
             </tbody>

@@ -6,7 +6,7 @@ import * as modelIndex from "../model/Index";
 const viewLoader = (variableObject: modelIndex.Ivariable): IvirtualNode => {
     return (
         <div>
-            {(() => {
+            {() => {
                 const resultList: IvirtualNode[] = [];
 
                 if (variableObject.isLoading.state) {
@@ -24,7 +24,7 @@ const viewLoader = (variableObject: modelIndex.Ivariable): IvirtualNode => {
                 }
 
                 return resultList;
-            })()}
+            }}
         </div>
     );
 };

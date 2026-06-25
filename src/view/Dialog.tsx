@@ -7,8 +7,8 @@ const viewDialog = (variableObject: modelDialog.Ivariable, methodObject: modelDi
     return (
         <div jsmvcfw-elementHookName="clsDialog" class="view_dialog">
             <div class="cls_dialog_surface">
-                <h2 class="cls_dialog_title">{variableObject.title.state}</h2>
-                <div class="cls_dialog_content">{variableObject.content.state}</div>
+                <h2 class="cls_dialog_title">{() => variableObject.title.state}</h2>
+                <div class="cls_dialog_content">{() => variableObject.content.state}</div>
                 <div class="cls_dialog_action">
                     <button
                         class="cls_button cls_button_primary"
@@ -19,7 +19,7 @@ const viewDialog = (variableObject: modelDialog.Ivariable, methodObject: modelDi
                         <span class="cls_button_label">OK</span>
                     </button>
                     <button
-                        class={`cls_button_flat ${variableObject.isSingleButton.state ? "hidden" : ""}`}
+                        class={() => `cls_button_flat ${variableObject.isSingleButton.state ? "hidden" : ""}`}
                         onClick={() => {
                             methodObject.onClickClose();
                         }}

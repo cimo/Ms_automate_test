@@ -7,7 +7,7 @@ import * as modelIndex from "../model/Index";
 const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex.Imethod): IvirtualNode => {
     return (
         <div>
-            <div class={`view_chat ${variableObject.isChatVisible.state ? "" : "hidden"}`}>
+            <div class={() => `view_chat ${variableObject.isChatVisible.state ? "" : "hidden"}`}>
                 <div class="wrapper">
                     <div class="header">
                         <i
@@ -19,9 +19,9 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
                             close
                         </i>
                     </div>
-                    <p>Client: {variableObject.clientIdSelected.state}</p>
+                    <p>Client: {() => variableObject.clientIdSelected.state}</p>
                     <div class="message_received_wrapper">
-                        {(() => {
+                        {() => {
                             const resultList: IvirtualNode[] = [];
 
                             const entryList = Object.entries(variableObject.chatMessageList.state);
@@ -31,14 +31,16 @@ const viewChat = (variableObject: modelIndex.Ivariable, methodObject: modelIndex
                                     <p key={key}>
                                         <span class="time">{helperSrc.localeFormat(new Date(value.time))}</span>
                                         <span class="text">
-                                            {value.fromClientId === variableObject.clientIdCurrent.state ? `You: ${value.content}` : value.content}
+                                            {() =>
+                                                value.fromClientId === variableObject.clientIdCurrent.state ? `You: ${value.content}` : value.content
+                                            }
                                         </span>
                                     </p>
                                 );
                             }
 
                             return resultList;
-                        })()}
+                        }}
                     </div>
                     <div class="field_wrapper">
                         <label for="messageSend">Message to send</label>

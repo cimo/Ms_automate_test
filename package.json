@@ -22,11 +22,11 @@
         "execute": "nodemon --config nodemon.json"
     },
     "dependencies": {
-        "@cimo/authentication": "1.1.40",
-        "@cimo/environment": "1.0.30",
-        "@cimo/pid": "1.1.29",
-        "@cimo/websocket": "1.5.70",
-        "@cimo/jsmvcfw": "1.6.47",
+        "@cimo/authentication": "1.1.41",
+        "@cimo/environment": "1.0.31",
+        "@cimo/pid": "1.1.30",
+        "@cimo/websocket": "1.5.71",
+        "@cimo/jsmvcfw": "1.7.48",
         "express": "5.2.1",
         "express-rate-limit": "8.5.2",
         "cookie-parser": "1.4.7",

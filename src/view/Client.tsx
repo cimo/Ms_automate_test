@@ -19,7 +19,7 @@ const viewClient = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                 <tr class="row not_hover">
                     <td class="cell">
                         <ul class="item">
-                            {(() => {
+                            {() => {
                                 const resultList: IvirtualNode[] = [];
 
                                 for (const [key, value] of Object.entries(variableObject.clientList.state)) {
@@ -30,16 +30,16 @@ const viewClient = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                                             <div class="clientId_wrapper">
                                                 <i class="cls_icon">person</i>
                                                 <p
-                                                    class={`${variableObject.clientIdCurrent.state === value ? "exclude" : ""}`}
+                                                    class={() => `${variableObject.clientIdCurrent.state === value ? "exclude" : ""}`}
                                                     onClick={() => {
                                                         methodObject.onClickClient(index, value);
                                                     }}
                                                 >
-                                                    {variableObject.clientIdCurrent.state === value ? "You" : value}
+                                                    {() => (variableObject.clientIdCurrent.state === value ? "You" : value)}
                                                 </p>
                                             </div>
 
-                                            {(() => {
+                                            {() => {
                                                 const resultList: IvirtualNode[] = [];
 
                                                 if (variableObject.clientIdCurrent.state === value && !variableObject.isClientConnected.state) {
@@ -58,13 +58,13 @@ const viewClient = (variableObject: modelIndex.Ivariable, methodObject: modelInd
                                                 }
 
                                                 return resultList;
-                                            })()}
+                                            }}
                                         </li>
                                     );
                                 }
 
                                 return resultList;
-                            })()}
+                            }}
                         </ul>
                     </td>
                 </tr>
