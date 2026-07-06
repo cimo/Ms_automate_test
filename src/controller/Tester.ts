@@ -116,10 +116,10 @@ export default class Tester {
 
                         this.cp.update(this.pidKey, JSON.stringify(serverDataBroadcastObject));
 
-                        const execCommand1 = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command1.sh`;
-                        const execArgumentList1 = [execCommand1, data.specFileName, browserCheck];
+                        const executionCommand1 = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command1.sh`;
+                        const executionArgumentList1 = [executionCommand1, data.specFileName, browserCheck];
 
-                        const execution1 = helperSrc.executionFile(execArgumentList1);
+                        const execution1 = helperSrc.executionFile(executionArgumentList1);
                         this.processRun1 = execution1.process;
 
                         execution1.then((result1) => {
@@ -173,14 +173,14 @@ export default class Tester {
                             } else {
                                 this.processRun1 = undefined;
 
-                                const execCommand2 = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command2.sh`;
-                                const execArgumentList2 = [
-                                    execCommand2,
+                                const executionCommand2 = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command2.sh`;
+                                const executionArgumentList2 = [
+                                    executionCommand2,
                                     `${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}output/artifact/`,
                                     `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`
                                 ];
 
-                                const execution2 = helperSrc.executionFile(execArgumentList2);
+                                const execution2 = helperSrc.executionFile(executionArgumentList2);
                                 this.processRun2 = execution2.process;
 
                                 execution2.then((result2) => {
@@ -292,10 +292,10 @@ export default class Tester {
             const serverData = {} as modelTester.IserverData;
 
             if (data.name !== "") {
-                const execCommand = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command3.sh`;
-                const execArgumentList = [execCommand, `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`, data.name];
+                const executionCommand = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command3.sh`;
+                const executionArgumentList = [executionCommand, `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`, data.name];
 
-                helperSrc.executionFile(execArgumentList).then((result) => {
+                helperSrc.executionFile(executionArgumentList).then((result) => {
                     if (result.error) {
                         helperSrc.writeLog(`Tester.ts - video() - receiveData(video) - executionFile() - error`, result.error.message);
 
@@ -332,10 +332,10 @@ export default class Tester {
             const serverData = {} as modelTester.IserverData;
 
             if (data.name !== "") {
-                const execCommand = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command4.sh`;
-                const execArgumentList = [execCommand, `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`, data.name];
+                const executionCommand = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command4.sh`;
+                const executionArgumentList = [executionCommand, `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`, data.name];
 
-                helperSrc.executionFile(execArgumentList).then((result) => {
+                helperSrc.executionFile(executionArgumentList).then((result) => {
                     if (result.error) {
                         helperSrc.writeLog(`Tester.ts - video() - receiveData(video_delete) - executionFile() - error`, result.error.message);
 
@@ -446,10 +446,10 @@ export default class Tester {
             const file = body.file.replace(/\.spec\.ts$/, "");
             const browser = body.browser;
 
-            const execCommand1 = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command1.sh`;
-            const execArgumentList1 = [execCommand1, file, browser];
+            const executionCommand1 = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command1.sh`;
+            const executionArgumentList1 = [executionCommand1, file, browser];
 
-            helperSrc.executionFile(execArgumentList1).then((result1) => {
+            helperSrc.executionFile(executionArgumentList1).then((result1) => {
                 const error1 = result1.error;
                 const stdout = result1.stdout;
                 const stderr = result1.stderr;
@@ -463,14 +463,14 @@ export default class Tester {
                 }
 
                 if ((stdout !== "" && stderr === "") || (stdout !== "" && stderr !== "")) {
-                    const execCommand2 = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command2.sh`;
-                    const execArgumentList2 = [
-                        execCommand2,
+                    const executionCommand2 = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command2.sh`;
+                    const executionArgumentList2 = [
+                        executionCommand2,
                         `${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}output/artifact/`,
                         `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`
                     ];
 
-                    helperSrc.executionFile(execArgumentList2).then((result2) => {
+                    helperSrc.executionFile(executionArgumentList2).then((result2) => {
                         const error2 = result2.error;
 
                         if (error2) {
@@ -498,10 +498,10 @@ export default class Tester {
 
             const video = body.video;
 
-            const execCommand = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command3.sh`;
-            const execArgumentList = [execCommand, `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`, video];
+            const executionCommand = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command3.sh`;
+            const executionArgumentList = [executionCommand, `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`, video];
 
-            helperSrc.executionFile(execArgumentList).then((result) => {
+            helperSrc.executionFile(executionArgumentList).then((result) => {
                 if (result.error) {
                     helperSrc.writeLog("Tester.ts - api() - list-video - executionFile() - error", result.error.message);
 
