@@ -54,6 +54,7 @@ export default {
         extensions: [".ts", ".tsx", ".js", ".jsx"],
         fallback: {
             fs: false,
+            path: false,
             crypto: false,
             http: false,
             https: false,
