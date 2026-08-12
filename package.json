@@ -27,7 +27,7 @@
         "@cimo/websocket": "1.5.72",
         "@cimo/jsmvcfw": "1.7.50",
         "express": "5.2.1",
-        "express-rate-limit": "8.5.2",
+        "express-rate-limit": "8.6.2",
         "cookie-parser": "1.4.7",
         "cors": "2.8.6",
         "@playwright/test": "latest",
