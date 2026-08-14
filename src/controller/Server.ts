@@ -12,7 +12,7 @@ import { CwsServer } from "@cimo/websocket/dist/src/Main.js";
 // Source
 import * as helperSrc from "../HelperSrc.js";
 import * as modelServer from "../model/Server.js";
-import ControllerTester from "./Tester.js";
+import ControllerService from "./Service.js";
 
 export default class Server {
     // Variable
@@ -91,17 +91,17 @@ export default class Server {
             const cp = new Cp();
             const cwsServer = new CwsServer(server, helperSrc.WS_KEY);
 
-            const controllerTester = new ControllerTester(cp, cwsServer, this.app, this.limiter);
-            controllerTester.websocket();
-            controllerTester.api();
+            const controllerService = new ControllerService(cp, cwsServer, this.app, this.limiter);
+            controllerService.websocket();
+            controllerService.api();
 
             helperSrc.writeLog("Server.ts - createServer() - listen() - Port", helperSrc.SERVER_PORT);
 
             this.app.get("/", this.limiter, Ca.authenticationMiddleware, (request: Request, response: Response) => {
-                if (request.accepts("html")) {
-                    response.sendFile(`${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}index.html`);
-                } else {
+                if (!request.accepts("html")) {
                     response.status(404).send("/: html not found!");
+                } else {
+                    response.sendFile(`${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}index.html`);
                 }
             });
 

@@ -101,10 +101,10 @@ const viewSpecFile = (variableObject: modelIndex.Ivariable, methodObject: modelI
                                                         {() => {
                                                             const resultList: IvirtualNode[] = [];
 
-                                                            if (outputPhase === "success") {
-                                                                resultList.push(<i class="cls_icon cls_button icon_success">done</i>);
-                                                            } else if (outputPhase === "error") {
+                                                            if (outputPhase === "error") {
                                                                 resultList.push(<i class="cls_icon cls_button icon_fail">priority_high</i>);
+                                                            } else if (outputPhase === "success") {
+                                                                resultList.push(<i class="cls_icon cls_button icon_success">done</i>);
                                                             }
 
                                                             return resultList;

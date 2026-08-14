@@ -4,7 +4,7 @@ import { CwsClient, CwsClientModel } from "@cimo/websocket/dist/src/Main.js";
 // Source
 import * as helperSrc from "../HelperSrc";
 import * as modelIndex from "../model/Index";
-import * as modelTester from "../model/Tester";
+import * as modelService from "../model/Service";
 import viewIndex from "../view/Index";
 import ControllerAlert from "./Alert";
 import ControllerDialog from "./Dialog";
@@ -30,7 +30,7 @@ export default class Index implements Icontroller {
     };
 
     private broadcast = (): void => {
-        this.cwsClient.receiveData<modelTester.IserverDataBroadcast>("broadcast", (data) => {
+        this.cwsClient.receiveData<modelService.IserverDataBroadcast>("broadcast", (data) => {
             if (data.label === "connection") {
                 this.cwsClient.sendMessage("text", "", "client");
             } else if (data.label === "disconnection") {
@@ -40,7 +40,7 @@ export default class Index implements Icontroller {
             } else if (data.label === "spec_file") {
                 this.variableObject.specFileList.state = data.result as string[];
             } else if (data.label === "output") {
-                this.variableObject.outputList.state = data.result as modelTester.Ioutput[];
+                this.variableObject.outputList.state = data.result as modelService.Ioutput[];
             }
         });
     };
@@ -60,19 +60,19 @@ export default class Index implements Icontroller {
     };
 
     private receiveDataRun = (): void => {
-        this.cwsClient.receiveData<modelTester.IserverData>("run", (data) => {
+        this.cwsClient.receiveData<modelService.IserverData>("run", (data) => {
             this.controllerAlert.open(data.status, data.result as string);
         });
     };
 
     private receiveDataLog = (): void => {
-        this.cwsClient.receiveData<modelTester.IserverData>("log_run", (data) => {
+        this.cwsClient.receiveData<modelService.IserverData>("log_run", (data) => {
             this.controllerDialog.open(data.status, data.result as string, true);
         });
     };
 
     private receiveDataVideo = (): void => {
-        this.cwsClient.receiveData<modelTester.IserverData>("video", (data) => {
+        this.cwsClient.receiveData<modelService.IserverData>("video", (data) => {
             if (data.status === "error") {
                 this.controllerAlert.open(data.status, data.result as string);
 
@@ -82,13 +82,13 @@ export default class Index implements Icontroller {
             }
         });
 
-        this.cwsClient.receiveData<modelTester.IserverData>("video_delete", (data) => {
+        this.cwsClient.receiveData<modelService.IserverData>("video_delete", (data) => {
             this.controllerAlert.open(data.status, data.result as string);
         });
     };
 
     private receiveDataUpload = (): void => {
-        this.cwsClient.receiveData<modelTester.IserverData>("upload", (data) => {
+        this.cwsClient.receiveData<modelService.IserverData>("upload", (data) => {
             this.controllerAlert.open(data.status, data.result as string);
         });
     };
@@ -101,14 +101,14 @@ export default class Index implements Icontroller {
         }
 
         if (!this.variableObject.outputList.state[index] || this.variableObject.outputList.state[index].phase !== "running") {
-            const clientData: modelTester.IclientDataRun = {
+            const clientData: modelService.IclientDataRun = {
                 index,
                 specFileName,
                 browser: this.hookObject.selectBrowserNameList[index].value
             };
             this.cwsClient.sendMessage("text", clientData, "run");
         } else {
-            const clientData: modelTester.IclientDataStop = { index };
+            const clientData: modelService.IclientDataStop = { index };
             this.cwsClient.sendMessage("text", clientData, "stop");
         }
     };
@@ -120,7 +120,7 @@ export default class Index implements Icontroller {
             return;
         }
 
-        const clientData: modelTester.IclientDataLog = { index };
+        const clientData: modelService.IclientDataLog = { index };
         this.cwsClient.sendMessage("text", clientData, "log_run");
     };
 
@@ -133,7 +133,7 @@ export default class Index implements Icontroller {
             return;
         }
 
-        const clientData: modelTester.IclientDataVideo = { name: this.hookObject.inputVideoName.value };
+        const clientData: modelService.IclientDataVideo = { name: this.hookObject.inputVideoName.value };
         this.cwsClient.sendMessage("text", clientData, "video");
     };
 
@@ -153,7 +153,7 @@ export default class Index implements Icontroller {
             return;
         }
 
-        const clientData: modelTester.IclientDataVideo = { name };
+        const clientData: modelService.IclientDataVideo = { name };
         this.cwsClient.sendMessage("text", clientData, "video_delete");
     };
 
@@ -182,7 +182,9 @@ export default class Index implements Icontroller {
         if (this.hookObject.inputSpecUpload && this.hookObject.inputSpecUpload.files) {
             const file = this.hookObject.inputSpecUpload.files[0];
 
-            if (file) {
+            if (!file) {
+                this.controllerAlert.open("error", "Select a file.");
+            } else {
                 const fileDetail = helperSrc.fileDetail(file.name);
 
                 const reader = new FileReader();
@@ -202,8 +204,6 @@ export default class Index implements Icontroller {
                 };
 
                 reader.readAsArrayBuffer(file);
-            } else {
-                this.controllerAlert.open("error", "Select a file.");
             }
         }
     };

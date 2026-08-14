@@ -8,9 +8,9 @@ import { Ca } from "@cimo/authentication/dist/src/Main.js";
 
 // Source
 import * as helperSrc from "../HelperSrc.js";
-import * as modelTester from "../model/Tester.js";
+import * as modelService from "../model/Service.js";
 
-export default class Tester {
+export default class Service {
     // Variable
     private cp: Cp;
     private cwsServer: CwsServer;
@@ -18,7 +18,7 @@ export default class Tester {
     private app: Express.Express;
     private limiter: RateLimitRequestHandler;
 
-    private outputList: modelTester.Ioutput[];
+    private outputList: modelService.Ioutput[];
     private pidKey: number;
     private processRun1: ChildProcess | undefined;
     private processRun2: ChildProcess | undefined;
@@ -49,7 +49,7 @@ export default class Tester {
         const killer = spawn("/bin/bash", ["-lc", killScript], { detached: true, stdio: "ignore" });
 
         killer.on("error", (error: Error) => {
-            helperSrc.writeLog("Tester.ts - processKill() - spawn() - Error", error.message);
+            helperSrc.writeLog("Service.ts - processKill() - spawn() - Error", error.message);
         });
 
         killer.unref();
@@ -57,7 +57,7 @@ export default class Tester {
 
     private client = (): void => {
         this.cwsServer.receiveData("client", () => {
-            const serverDataObject: modelTester.IserverDataBroadcast = { label: "client", status: "", result: this.cwsServer.clientIdList() };
+            const serverDataObject: modelService.IserverDataBroadcast = { label: "client", status: "", result: this.cwsServer.clientIdList() };
             this.cwsServer.sendDataBroadcast(serverDataObject);
         });
     };
@@ -73,7 +73,7 @@ export default class Tester {
                     finalList.push(fileDetail.fileName.replace(/\.spec\.ts$/, ""));
                 }
 
-                const serverDataObject: modelTester.IserverDataBroadcast = { label: "spec_file", status: "", result: finalList };
+                const serverDataObject: modelService.IserverDataBroadcast = { label: "spec_file", status: "", result: finalList };
                 this.cwsServer.sendDataBroadcast(serverDataObject);
             });
         });
@@ -81,19 +81,19 @@ export default class Tester {
 
     private output = (): void => {
         this.cwsServer.receiveData("output", () => {
-            const serverDataObject: modelTester.IserverDataBroadcast = { label: "output", status: "", result: this.outputList };
+            const serverDataObject: modelService.IserverDataBroadcast = { label: "output", status: "", result: this.outputList };
             this.cwsServer.sendDataBroadcast(serverDataObject);
         });
     };
 
     private run = (): void => {
-        this.cwsServer.receiveData<modelTester.IclientDataRun>("run", (data, clientId) => {
+        this.cwsServer.receiveData<modelService.IclientDataRun>("run", (data, clientId) => {
             const browserCheck = data.browser.match("^(desktop_chrome|desktop_edge|desktop_firefox|desktop_safari|mobile_android|mobile_ios)$")
                 ? data.browser
                 : "";
 
-            const serverDataBroadcastObject = {} as modelTester.IserverDataBroadcast;
-            const serverDataObject = {} as modelTester.IserverData;
+            const serverDataBroadcastObject = {} as modelService.IserverDataBroadcast;
+            const serverDataObject = {} as modelService.IserverData;
 
             if (data.index >= 0 && data.specFileName !== "" && browserCheck !== "") {
                 serverDataBroadcastObject.label = "output";
@@ -138,11 +138,11 @@ export default class Tester {
                                 let log = "";
 
                                 if (error1) {
-                                    helperSrc.writeLog(`Tester.ts - run() - executionFile(1) - error`, error1.message);
+                                    helperSrc.writeLog(`Service.ts - run() - executionFile(1) - error`, error1.message);
 
                                     log = error1.message;
                                 } else if (stderr1 !== "") {
-                                    helperSrc.writeLog("Tester.ts - run() - executionFile(1) - stderr", stderr1);
+                                    helperSrc.writeLog("Service.ts - run() - executionFile(1) - stderr", stderr1);
 
                                     log = stderr1;
                                 }
@@ -196,7 +196,7 @@ export default class Tester {
                                     let log = "";
 
                                     if (error2) {
-                                        helperSrc.writeLog(`Tester.ts - run() - executionFile(2) - error`, error2.message);
+                                        helperSrc.writeLog(`Service.ts - run() - executionFile(2) - error`, error2.message);
 
                                         log = error2.message;
                                     } else {
@@ -244,7 +244,7 @@ export default class Tester {
     };
 
     private stop = (): void => {
-        this.cwsServer.receiveData<modelTester.IclientDataStop>("stop", (data) => {
+        this.cwsServer.receiveData<modelService.IclientDataStop>("stop", (data) => {
             if (this.processRun1) {
                 this.processKill(this.processRun1);
 
@@ -257,7 +257,7 @@ export default class Tester {
                 this.processRun2 = undefined;
             }
 
-            const serverDataBroadcastObject = {} as modelTester.IserverDataBroadcast;
+            const serverDataBroadcastObject = {} as modelService.IserverDataBroadcast;
 
             if (data.index >= 0 && this.outputList[data.index]) {
                 this.outputList[data.index] = {
@@ -281,23 +281,27 @@ export default class Tester {
     };
 
     private log = (): void => {
-        this.cwsServer.receiveData<modelTester.IclientDataLog>("log_run", (data, clientId) => {
-            const serverData: modelTester.IserverData = { status: "Log run", result: this.outputList[data.index].log };
+        this.cwsServer.receiveData<modelService.IclientDataLog>("log_run", (data, clientId) => {
+            const serverData: modelService.IserverData = { status: "Log run", result: this.outputList[data.index].log };
             this.cwsServer.sendMessage("text", serverData, "log_run", clientId);
         });
     };
 
     private video = (): void => {
-        this.cwsServer.receiveData<modelTester.IclientDataVideo>("video", (data, clientId) => {
-            const serverData = {} as modelTester.IserverData;
+        this.cwsServer.receiveData<modelService.IclientDataVideo>("video", (data, clientId) => {
+            const serverData = {} as modelService.IserverData;
 
-            if (data.name !== "") {
+            if (data.name === "") {
+                serverData.status = "error";
+                serverData.result = "Wrong parameter.";
+                this.cwsServer.sendMessage("text", serverData, "video", clientId);
+            } else {
                 const executionCommand = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command3.sh`;
                 const executionArgumentList = [executionCommand, `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`, data.name];
 
                 helperSrc.executionFile(executionArgumentList).then((result) => {
                     if (result.error) {
-                        helperSrc.writeLog(`Tester.ts - video() - receiveData(video) - executionFile() - error`, result.error.message);
+                        helperSrc.writeLog(`Service.ts - video() - receiveData(video) - executionFile() - error`, result.error.message);
 
                         serverData.status = "error";
                         serverData.result = result.error.message;
@@ -321,23 +325,23 @@ export default class Tester {
 
                     this.cwsServer.sendMessage("text", serverData, "video", clientId);
                 });
-            } else {
-                serverData.status = "error";
-                serverData.result = "Wrong parameter.";
-                this.cwsServer.sendMessage("text", serverData, "video", clientId);
             }
         });
 
-        this.cwsServer.receiveData<modelTester.IclientDataVideo>("video_delete", (data, clientId) => {
-            const serverData = {} as modelTester.IserverData;
+        this.cwsServer.receiveData<modelService.IclientDataVideo>("video_delete", (data, clientId) => {
+            const serverData = {} as modelService.IserverData;
 
-            if (data.name !== "") {
+            if (data.name === "") {
+                serverData.status = "error";
+                serverData.result = "Wrong parameter.";
+                this.cwsServer.sendMessage("text", serverData, "video_delete", clientId);
+            } else {
                 const executionCommand = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command4.sh`;
                 const executionArgumentList = [executionCommand, `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`, data.name];
 
                 helperSrc.executionFile(executionArgumentList).then((result) => {
                     if (result.error) {
-                        helperSrc.writeLog(`Tester.ts - video() - receiveData(video_delete) - executionFile() - error`, result.error.message);
+                        helperSrc.writeLog(`Service.ts - video() - receiveData(video_delete) - executionFile() - error`, result.error.message);
 
                         serverData.status = "error";
                         serverData.result = result.error.message;
@@ -348,10 +352,6 @@ export default class Tester {
 
                     this.cwsServer.sendMessage("text", serverData, "video_delete", clientId);
                 });
-            } else {
-                serverData.status = "error";
-                serverData.result = "Wrong parameter.";
-                this.cwsServer.sendMessage("text", serverData, "video_delete", clientId);
             }
         });
     };
@@ -363,7 +363,7 @@ export default class Tester {
             const isMimeTypeOk = helperSrc.fileCheckMimeType(mimeType);
             const isSizeOk = helperSrc.fileCheckSize(file.length);
 
-            let serverData = {} as modelTester.IserverData;
+            let serverData = {} as modelService.IserverData;
 
             if (!isMimeTypeOk) {
                 serverData = { status: "error", result: "Only .ts file are allowed." };
@@ -381,7 +381,7 @@ export default class Tester {
 
             Fs.writeFile(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/${fileName}`, file, (error) => {
                 if (error) {
-                    helperSrc.writeLog("Tester.ts - upload() - writeFile() - Error", error.message);
+                    helperSrc.writeLog("Service.ts - upload() - writeFile() - Error", error.message);
 
                     serverData = { status: "error", result: "Upload failed." };
                 } else {
@@ -441,7 +441,7 @@ export default class Tester {
         });
 
         this.app.post("/api/run", this.limiter, Ca.authenticationMiddleware, (request: Request, response: Response) => {
-            const body = request.body as modelTester.IapiRunBody;
+            const body = request.body as modelService.IapiRunBody;
 
             const file = body.file.replace(/\.spec\.ts$/, "");
             const browser = body.browser;
@@ -455,14 +455,18 @@ export default class Tester {
                 const stderr = result1.stderr;
 
                 if (error1) {
-                    helperSrc.writeLog("Tester.ts - api() - run - executionFile(1) - error", error1.message);
+                    helperSrc.writeLog("Service.ts - api() - run - executionFile(1) - error", error1.message);
 
                     helperSrc.responseBody("", error1.message, response, 500);
 
                     return;
                 }
 
-                if ((stdout !== "" && stderr === "") || (stdout !== "" && stderr !== "")) {
+                if (stdout === "" && stderr !== "") {
+                    helperSrc.writeLog("Service.ts - api() - run - executionFile(1) - stderr", stderr);
+
+                    helperSrc.responseBody("", stderr, response, 500);
+                } else if ((stdout !== "" && stderr === "") || (stdout !== "" && stderr !== "")) {
                     const executionCommand2 = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command2.sh`;
                     const executionArgumentList2 = [
                         executionCommand2,
@@ -474,7 +478,7 @@ export default class Tester {
                         const error2 = result2.error;
 
                         if (error2) {
-                            helperSrc.writeLog("Tester.ts - api() - run - executionFile(2) - error", error2.message);
+                            helperSrc.writeLog("Service.ts - api() - run - executionFile(2) - error", error2.message);
 
                             helperSrc.responseBody("", error2.message, response, 500);
 
@@ -483,10 +487,6 @@ export default class Tester {
 
                         helperSrc.responseBody(JSON.stringify({ action: "run", stdout: helperSrc.ansiEscapeDelete(stdout) }), "", response, 200);
                     });
-                } else if (stdout === "" && stderr !== "") {
-                    helperSrc.writeLog("Tester.ts - api() - run - executionFile(1) - stderr", stderr);
-
-                    helperSrc.responseBody("", stderr, response, 500);
                 }
             });
         });
@@ -494,7 +494,7 @@ export default class Tester {
         this.app.post("/api/list-video", this.limiter, Ca.authenticationMiddleware, (request: Request, response: Response) => {
             const nameList: string[] = [];
 
-            const body = request.body as modelTester.IapiListVideoBody;
+            const body = request.body as modelService.IapiListVideoBody;
 
             const video = body.video;
 
@@ -503,7 +503,7 @@ export default class Tester {
 
             helperSrc.executionFile(executionArgumentList).then((result) => {
                 if (result.error) {
-                    helperSrc.writeLog("Tester.ts - api() - list-video - executionFile() - error", result.error.message);
+                    helperSrc.writeLog("Service.ts - api() - list-video - executionFile() - error", result.error.message);
 
                     helperSrc.responseBody("", "ko", response, 500);
 

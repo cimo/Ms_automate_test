@@ -2,13 +2,13 @@ import { IvariableBind } from "@cimo/jsmvcfw/dist/src/Main.js";
 import { CwsClientModel } from "@cimo/websocket/dist/src/Main.js";
 
 // Source
-import * as modelTester from "../model/Tester";
+import * as modelService from "../model/Service";
 
 export interface Ivariable {
     isLoading: IvariableBind<boolean>;
     clientList: IvariableBind<string[]>;
     specFileList: IvariableBind<string[]>;
-    outputList: IvariableBind<modelTester.Ioutput[]>;
+    outputList: IvariableBind<modelService.Ioutput[]>;
     videoList: IvariableBind<string[]>;
     videoSrc: IvariableBind<string>;
     uploadFileName: IvariableBind<string>;
