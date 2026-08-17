@@ -1,11 +1,17 @@
 import Fs from /* webpackIgnore: true */ "fs";
 import Path from /* webpackIgnore: true */ "path";
 import { exec, execFile, ChildProcess } from /* webpackIgnore: true */ "child_process";
-import { Request, Response } from /* webpackIgnore: true */ "express";
 import { Ce } from "@cimo/environment/dist/src/Main.js";
+
+// Custom
+import { Request, Response } from /* webpackIgnore: true */ "express";
+// Custom
 
 // Source
 import * as modelHelperSrc from "./model/HelperSrc.js";
+
+// Custom
+// Custom
 
 export const ENV_NAME = Ce.checkVariable("ENV_NAME") || (process.env["ENV_NAME"] as string);
 
@@ -22,7 +28,6 @@ export const IS_DEBUG = Ce.checkVariable("MS_AT_IS_DEBUG") || (process.env["MS_A
 export const NODE_ENV = Ce.checkVariable("MS_AT_NODE_ENV") || (process.env["MS_AT_NODE_ENV"] as string);
 export const URL_ROOT = Ce.checkVariable("MS_AT_URL_ROOT") || (process.env["MS_AT_URL_ROOT"] as string);
 export const URL_CORS_ORIGIN = Ce.checkVariable("MS_AT_URL_CORS_ORIGIN") || (process.env["MS_AT_URL_CORS_ORIGIN"] as string);
-export const URL_TEST = Ce.checkVariable("MS_AT_URL_TEST") || (process.env["MS_AT_URL_TEST"] as string);
 export const PATH_CERTIFICATE_KEY = Ce.checkVariable("MS_AT_PATH_CERTIFICATE_KEY");
 export const PATH_CERTIFICATE_CRT = Ce.checkVariable("MS_AT_PATH_CERTIFICATE_CRT");
 export const PATH_CERTIFICATE_PEM = Ce.checkVariable("MS_AT_PATH_CERTIFICATE_PEM");
@@ -34,6 +39,7 @@ export const MIME_TYPE = Ce.checkVariable("MS_AT_MIME_TYPE") || (process.env["MS
 export const FILE_SIZE_MB = Ce.checkVariable("MS_AT_FILE_SIZE_MB") || (process.env["MS_AT_FILE_SIZE_MB"] as string);
 
 // Custom
+export const URL_TEST = Ce.checkVariable("MS_AT_URL_TEST") || (process.env["MS_AT_URL_TEST"] as string);
 export const WS_ADDRESS = Ce.checkVariable("MS_AT_WS_ADDRESS") || (process.env["MS_AT_WS_ADDRESS"] as string);
 export const WS_KEY = Ce.checkVariable("MS_AT_WS_KEY");
 // Custom
@@ -510,6 +516,20 @@ export const fileOrFolderDelete = (path: string): Promise<boolean | NodeJS.Errno
     });
 };
 
+export const fileOrFolderMove = (pathCurrent: string, pathTarget: string): Promise<boolean | NodeJS.ErrnoException> => {
+    return new Promise((resolve) => {
+        Fs.rename(pathCurrent, pathTarget, (error) => {
+            if (error) {
+                resolve(error);
+
+                return;
+            }
+
+            resolve(true);
+        });
+    });
+};
+
 export const keepProcess = (): void => {
     const eventList = ["uncaughtException", "unhandledRejection"];
 
@@ -528,7 +548,7 @@ export const ansiEscapeDelete = (text: string): string => {
     return text.replace(regex, "");
 };
 
-export const findInDirectoryRecursive = (path: string, extension: string): Promise<string[]> => {
+export const findPathFileRecursive = (path: string, extension: string): Promise<string[]> => {
     return new Promise((resolve) => {
         const resultList: string[] = [];
 
@@ -560,7 +580,7 @@ export const findInDirectoryRecursive = (path: string, extension: string): Promi
 
                     Fs.stat(pathData, (errorStat, statData) => {
                         if (!errorStat && statData.isDirectory()) {
-                            findInDirectoryRecursive(`${pathData}/`, extension).then((dataSubList) => {
+                            findPathFileRecursive(`${pathData}/`, extension).then((dataSubList) => {
                                 for (let a = 0; a < dataSubList.length; a++) {
                                     const dataSub = dataSubList[a];
 
@@ -569,7 +589,7 @@ export const findInDirectoryRecursive = (path: string, extension: string): Promi
 
                                 next();
                             });
-                        } else if (!errorStat && statData.isFile() && (data.endsWith(extension) || extension === ".*")) {
+                        } else if (!errorStat && statData.isFile() && (data.endsWith(`.${extension}`) || extension === "*")) {
                             resultList.push(pathData);
 
                             next();
@@ -581,6 +601,111 @@ export const findInDirectoryRecursive = (path: string, extension: string): Promi
 
                 next();
             });
+        });
+    });
+};
+
+export const findPathDirnameRecursive = async (path: string, fileName: string): Promise<string> => {
+    let result = "";
+
+    const detail = fileDetail(fileName);
+
+    const pathFileList = await findPathFileRecursive(path, detail.extension);
+
+    for (let a = 0; a < pathFileList.length; a++) {
+        const pathFile = pathFileList[a];
+
+        if (pathFile.endsWith(fileName)) {
+            result = `${Path.dirname(pathFile)}/`;
+
+            break;
+        }
+    }
+
+    return result;
+};
+
+export const readFirstLevelRecursive = (path: string, extension: string, pathPrevious?: string): Promise<string[]> => {
+    return new Promise((resolve) => {
+        const resultList: string[] = [];
+
+        Fs.access(path, Fs.constants.F_OK, (errorAccess) => {
+            if (errorAccess) {
+                resolve(resultList);
+
+                return;
+            }
+
+            Fs.readdir(path, (errorReadDir, dataList) => {
+                if (errorReadDir) {
+                    resolve(resultList);
+
+                    return;
+                }
+
+                let count = 0;
+
+                const next = () => {
+                    if (count >= dataList.length) {
+                        resolve(resultList);
+
+                        return;
+                    }
+
+                    const data = dataList[count++];
+                    const pathData = `${path}${data}`;
+
+                    Fs.stat(pathData, (errorStat, statData) => {
+                        if (!errorStat && statData.isDirectory()) {
+                            if (!pathPrevious) {
+                                resultList.push(pathData);
+
+                                readFirstLevelRecursive(`${pathData}/`, extension, path).then((dataSubList) => {
+                                    for (let a = 0; a < dataSubList.length; a++) {
+                                        const dataSub = dataSubList[a];
+
+                                        resultList.push(dataSub);
+                                    }
+
+                                    next();
+                                });
+                            } else {
+                                next();
+                            }
+                        } else if (!errorStat && statData.isFile() && (data.endsWith(`.${extension}`) || extension === "*")) {
+                            resultList.push(pathData);
+
+                            next();
+                        } else {
+                            next();
+                        }
+                    });
+                };
+
+                next();
+            });
+        });
+    });
+};
+
+export const readAllLevelPathFileRecursive = async (path: string): Promise<string[]> => {
+    return new Promise<string[]>((resolve) => {
+        findPathFileRecursive(path, "*").then((pathFileList) => {
+            const resultList: string[] = [];
+
+            for (let a = 0; a < pathFileList.length; a++) {
+                const pathRelative = pathFileList[a].replace(path, "");
+                const pathRelativeSplit = pathRelative.split("/");
+
+                if (
+                    pathRelativeSplit.length > 1 &&
+                    pathRelativeSplit[pathRelativeSplit.length - 1].startsWith(pathRelativeSplit[pathRelativeSplit.length - 2])
+                ) {
+                    resultList.push(pathRelative);
+                }
+            }
+
+            resolve(resultList);
         });
     });
 };
@@ -607,6 +732,7 @@ export const executionFile = (argumentList: string[]): Promise<modelHelperSrc.Ie
     };
 };
 
+// Custom
 export const headerClientIp = (request: Request): string => {
     let result = "";
 
@@ -632,6 +758,4 @@ export const responseBody = (stdoutValue: string, stderrValue: string | Error, r
 
     response.status(mode).send(responseBody);
 };
-
-// Custom
 // Custom

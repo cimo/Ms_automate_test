@@ -64,7 +64,7 @@ export default class Service {
 
     private specFile = (): void => {
         this.cwsServer.receiveData("spec_file", () => {
-            helperSrc.findInDirectoryRecursive(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`, ".spec.ts").then((pathFileList) => {
+            helperSrc.findPathFileRecursive(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`, ".spec.ts").then((pathFileList) => {
                 const finalList: string[] = [];
 
                 for (let a = 0; a < pathFileList.length; a++) {
@@ -429,7 +429,7 @@ export default class Service {
         this.app.get("/api/list-test", this.limiter, Ca.authenticationMiddleware, (_, response: Response) => {
             const nameList: string[] = [];
 
-            helperSrc.findInDirectoryRecursive(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`, ".spec.ts").then((pathFileList) => {
+            helperSrc.findPathFileRecursive(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`, ".spec.ts").then((pathFileList) => {
                 for (let a = 0; a < pathFileList.length; a++) {
                     const fileDetail = helperSrc.fileDetail(pathFileList[a], undefined, false);
 
