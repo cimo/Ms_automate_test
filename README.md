@@ -12,12 +12,12 @@ Just add it to the "/certificate/custom/" folder and change the env variable bef
 - Playwright
 
 ## Installation
-1. For build and up write on terminal:
+1. For build and up write on host terminal:
 ```
 bash docker/container_execute.sh "local" "build-up"
 ```
 
-2. Just for up write on terminal:
+2. Just for up write on host terminal:
 ```
 bash docker/container_execute.sh "local" "up"
 ```
@@ -35,23 +35,20 @@ bash docker/container_execute.sh "local" "up"
 
 2. Follow the "Installation" instructions.
 
-## Command
-1. For execute "Playwright" GUI test (execute test with debug) write on terminal:
+## Url
+1. Write on the browser url:
+
+    - https://localhost:1044/info
+    - https://localhost:1044/login
+    - https://localhost:1044/logout
+
+## Gui
+1. For execute "Playwright" GUI test (execute test with debug) write on container terminal:
 ```
 bash script/playwright.sh "test"
 ```
 
-2. For execute "Playwright" GUI codegen (recording and generate test directly in the browser) write on terminal:
+2. For execute "Playwright" GUI codegen (recording and generate test directly in the browser) write on container terminal:
 ```
 bash script/playwright.sh "codegen"
 ```
-
-## UI
-1. Write on the browser url:
-
-    https://localhost:1044/login
-
-## Url
-- /info
-- /login
-- /logout
