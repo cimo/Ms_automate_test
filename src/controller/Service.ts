@@ -1,4 +1,3 @@
-import Fs from "fs";
 import Express, { Request, Response } from "express";
 import { RateLimitRequestHandler } from "express-rate-limit";
 import { ChildProcess, spawn } from "child_process";
@@ -72,7 +71,7 @@ export default class Service {
                     for (let a = 0; a < pathFileList.length; a++) {
                         const fileDetail = await helperSrc.fileDetail(pathFileList[a], undefined, false);
 
-                        finalList.push(fileDetail.fileName.replace(/\.spec\.ts$/, ""));
+                        finalList.push(fileDetail.name.replace(/\.spec\.ts$/, ""));
                     }
 
                     const serverDataObject: modelService.IserverDataBroadcast = { label: "spec_file", status: "", result: finalList };
@@ -384,9 +383,9 @@ export default class Service {
                 return;
             }
 
-            Fs.writeFile(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/${fileName}`, file, (error) => {
-                if (error) {
-                    helperSrc.writeLog("Service.ts - upload() - writeFile() - Error", error.message);
+            helperSrc.fileWriteStream(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/${fileName}`, file).then((resultFileWriteStream) => {
+                if (typeof resultFileWriteStream !== "boolean") {
+                    helperSrc.writeLog("Service.ts - upload() - fileWriteStream()", resultFileWriteStream.toString());
 
                     serverData = { status: "error", result: "Upload failed." };
                 } else {
@@ -440,7 +439,7 @@ export default class Service {
                     for (let a = 0; a < pathFileList.length; a++) {
                         const fileDetail = await helperSrc.fileDetail(pathFileList[a], undefined, false);
 
-                        nameList.push(fileDetail.fileName);
+                        nameList.push(fileDetail.name);
                     }
 
                     helperSrc.responseBody(JSON.stringify({ action: "listTest", nameList: nameList }), "", response, 200);
