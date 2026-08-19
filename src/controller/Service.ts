@@ -64,18 +64,23 @@ export default class Service {
 
     private specFile = (): void => {
         this.cwsServer.receiveData("spec_file", () => {
-            helperSrc.findPathFileRecursive(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`, "spec.ts").then((pathFileList) => {
-                const finalList: string[] = [];
+            helperSrc
+                .findPathFileRecursive(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`, "spec.ts")
+                .then(async (pathFileList) => {
+                    const finalList: string[] = [];
 
-                for (let a = 0; a < pathFileList.length; a++) {
-                    const fileDetail = helperSrc.fileDetail(pathFileList[a], undefined, false);
+                    for (let a = 0; a < pathFileList.length; a++) {
+                        const fileDetail = await helperSrc.fileDetail(pathFileList[a], undefined, false);
 
-                    finalList.push(fileDetail.fileName.replace(/\.spec\.ts$/, ""));
-                }
+                        finalList.push(fileDetail.fileName.replace(/\.spec\.ts$/, ""));
+                    }
 
-                const serverDataObject: modelService.IserverDataBroadcast = { label: "spec_file", status: "", result: finalList };
-                this.cwsServer.sendDataBroadcast(serverDataObject);
-            });
+                    const serverDataObject: modelService.IserverDataBroadcast = { label: "spec_file", status: "", result: finalList };
+                    this.cwsServer.sendDataBroadcast(serverDataObject);
+                })
+                .catch((error: Error) => {
+                    helperSrc.writeLog("Service.ts - specFile() - receiveData(spec_file) - findPathFileRecursive() - catch()", error.message);
+                });
         });
     };
 
@@ -429,15 +434,22 @@ export default class Service {
         this.app.get("/api/list-test", this.limiter, Ca.authenticationMiddleware, (_, response: Response) => {
             const nameList: string[] = [];
 
-            helperSrc.findPathFileRecursive(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`, "spec.ts").then((pathFileList) => {
-                for (let a = 0; a < pathFileList.length; a++) {
-                    const fileDetail = helperSrc.fileDetail(pathFileList[a], undefined, false);
+            helperSrc
+                .findPathFileRecursive(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`, "spec.ts")
+                .then(async (pathFileList) => {
+                    for (let a = 0; a < pathFileList.length; a++) {
+                        const fileDetail = await helperSrc.fileDetail(pathFileList[a], undefined, false);
 
-                    nameList.push(fileDetail.fileName);
-                }
+                        nameList.push(fileDetail.fileName);
+                    }
 
-                helperSrc.responseBody(JSON.stringify({ action: "listTest", nameList: nameList }), "", response, 200);
-            });
+                    helperSrc.responseBody(JSON.stringify({ action: "listTest", nameList: nameList }), "", response, 200);
+                })
+                .catch((error: Error) => {
+                    helperSrc.writeLog("Service.ts - api() - get(/api/list-test) - findPathFileRecursive() - catch()", error.message);
+
+                    helperSrc.responseBody("", "ko", response, 500);
+                });
         });
 
         this.app.post("/api/run", this.limiter, Ca.authenticationMiddleware, (request: Request, response: Response) => {

@@ -26,7 +26,7 @@ export interface Imethod {
     onClickVideoShow: (name: string) => void;
     onClickVideoDelete: (index: number, name: string) => void;
     onClickChooseFile: () => void;
-    onClickUpload: () => void;
+    onClickUpload: () => Promise<void>;
     onClickClient: (index: number, clientId: string) => void;
     onSendChatMessage: () => void;
     onClickChatClose: () => void;

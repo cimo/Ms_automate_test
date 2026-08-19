@@ -172,7 +172,7 @@ export default class Index implements Icontroller {
         }
     };
 
-    private onClickUpload = (): void => {
+    private onClickUpload = async (): Promise<void> => {
         const check = this.checkCwsConnection();
 
         if (!check) {
@@ -185,7 +185,7 @@ export default class Index implements Icontroller {
             if (!file) {
                 this.controllerAlert.open("error", "Select a file.");
             } else {
-                const fileDetail = helperSrc.fileDetail(file.name);
+                const fileDetail = await helperSrc.fileDetail(file.name);
 
                 const reader = new FileReader();
 
