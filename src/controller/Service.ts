@@ -442,12 +442,16 @@ export default class Service {
                         nameList.push(fileDetail.name);
                     }
 
-                    helperSrc.responseBody(JSON.stringify({ action: "listTest", nameList: nameList }), "", response, 200);
+                    helperSrc.responseBody(
+                        { state: "ok", message: "", data: JSON.stringify({ action: "listTest", nameList: nameList }) },
+                        response,
+                        200
+                    );
                 })
                 .catch((error: Error) => {
                     helperSrc.writeLog("Service.ts - api() - get(/api/list-test) - findPathFileRecursive() - catch()", error.message);
 
-                    helperSrc.responseBody("", "ko", response, 500);
+                    helperSrc.responseBody({ state: "ko", message: error.message }, response, 500);
                 });
         });
 
@@ -468,7 +472,7 @@ export default class Service {
                 if (error1) {
                     helperSrc.writeLog("Service.ts - api() - run - executionFile(1) - error", error1.message);
 
-                    helperSrc.responseBody("", error1.message, response, 500);
+                    helperSrc.responseBody({ state: "ko", message: error1.message }, response, 500);
 
                     return;
                 }
@@ -476,7 +480,7 @@ export default class Service {
                 if (stdout === "" && stderr !== "") {
                     helperSrc.writeLog("Service.ts - api() - run - executionFile(1) - stderr", stderr);
 
-                    helperSrc.responseBody("", stderr, response, 500);
+                    helperSrc.responseBody({ state: "ko", message: stderr }, response, 500);
                 } else if ((stdout !== "" && stderr === "") || (stdout !== "" && stderr !== "")) {
                     const executionCommand2 = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command2.sh`;
                     const executionArgumentList2 = [
@@ -491,12 +495,16 @@ export default class Service {
                         if (error2) {
                             helperSrc.writeLog("Service.ts - api() - run - executionFile(2) - error", error2.message);
 
-                            helperSrc.responseBody("", error2.message, response, 500);
+                            helperSrc.responseBody({ state: "ko", message: error2.message }, response, 500);
 
                             return;
                         }
 
-                        helperSrc.responseBody(JSON.stringify({ action: "run", stdout: helperSrc.ansiEscapeDelete(stdout) }), "", response, 200);
+                        helperSrc.responseBody(
+                            { state: "ok", message: "", data: JSON.stringify({ action: "run", stdout: helperSrc.ansiEscapeDelete(stdout) }) },
+                            response,
+                            200
+                        );
                     });
                 }
             });
@@ -516,7 +524,7 @@ export default class Service {
                 if (result.error) {
                     helperSrc.writeLog("Service.ts - api() - list-video - executionFile() - error", result.error.message);
 
-                    helperSrc.responseBody("", "ko", response, 500);
+                    helperSrc.responseBody({ state: "ko", message: result.error.message }, response, 500);
 
                     return;
                 }
@@ -533,7 +541,11 @@ export default class Service {
                     return a.localeCompare(b);
                 });
 
-                helperSrc.responseBody(JSON.stringify({ action: "listVideo", nameList: nameListSorted }), "", response, 200);
+                helperSrc.responseBody(
+                    { state: "ok", message: "", data: JSON.stringify({ action: "listVideo", nameList: nameListSorted }) },
+                    response,
+                    200
+                );
             });
         });
     };

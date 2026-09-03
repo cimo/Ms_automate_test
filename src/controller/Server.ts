@@ -106,7 +106,7 @@ export default class Server {
             });
 
             this.app.get("/info", (request: modelServer.Irequest, response: Response) => {
-                helperSrc.responseBody(`Client ip: ${request.clientIp || ""}`, "", response, 200);
+                helperSrc.responseBody({ state: "ok", message: `Client ip: ${request.clientIp || ""}` }, response, 200);
             });
 
             this.app.get("/login", this.limiter, (request: Request, response: Response) => {
@@ -115,7 +115,7 @@ export default class Server {
                 if (request.accepts("html")) {
                     response.redirect(`${helperSrc.URL_ROOT}/`);
                 } else {
-                    helperSrc.responseBody("ok", "", response, 200);
+                    helperSrc.responseBody({ state: "ok", message: "" }, response, 200);
                 }
             });
 
@@ -125,7 +125,7 @@ export default class Server {
                 if (request.accepts("html")) {
                     response.redirect(`${helperSrc.URL_ROOT}/info`);
                 } else {
-                    helperSrc.responseBody("ok", "", response, 200);
+                    helperSrc.responseBody({ state: "ok", message: "" }, response, 200);
                 }
             });
         });
