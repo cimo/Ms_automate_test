@@ -21,11 +21,11 @@
         "execute": "nodemon --config nodemon.json"
     },
     "dependencies": {
-        "@cimo/authentication": "1.1.42",
-        "@cimo/environment": "1.0.32",
-        "@cimo/pid": "1.1.31",
-        "@cimo/websocket": "1.5.73",
-        "@cimo/jsmvcfw": "1.7.51",
+        "@cimo/authentication": "1.1.43",
+        "@cimo/environment": "1.0.33",
+        "@cimo/pid": "1.1.32",
+        "@cimo/websocket": "1.5.74",
+        "@cimo/jsmvcfw": "1.7.52",
         "express": "5.2.1",
         "express-rate-limit": "8.6.2",
         "cookie-parser": "1.4.7",
@@ -43,7 +43,7 @@
         "typescript": "5.7.2",
         "nodemon": "3.1.14",
         "prettier": "3.4.2",
-        "eslint": "10.8.0",
+        "eslint": "10.10.0",
         "eslint-plugin-prettier": "5.5.6",
         "sass": "1.102.0",
         "webpack": "5.105.0",
@@ -53,7 +53,5 @@
         "compression-webpack-plugin": "12.0.0",
         "esbuild-loader": "4.5.0"
     },
-    "overrides": {
-        "fast-uri": "3.1.5"
-    }
+    "overrides": {}
 }

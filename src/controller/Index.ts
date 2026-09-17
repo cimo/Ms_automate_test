@@ -24,7 +24,7 @@ export default class Index implements Icontroller {
             return true;
         }
 
-        this.controllerAlert.open("error", "Need connect to the server.", 5000);
+        this.controllerAlert.open("error", "Need connect to the server.", 5);
 
         return false;
     };

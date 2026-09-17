@@ -27,7 +27,7 @@ export default class Alert implements Icontroller {
         this.timeout = undefined;
     }
 
-    open = (className: string, text: string, timeout = -1): void => {
+    open = (className: string, text: string, timeoutSecond = -1): void => {
         this.close();
 
         this.hookObject.clsAlert.classList.remove("hidden");
@@ -36,10 +36,10 @@ export default class Alert implements Icontroller {
         this.variableObject.label.state = text;
         this.variableObject.isOpen.state = true;
 
-        if (timeout > 0) {
+        if (timeoutSecond > 0) {
             this.timeout = setTimeout(() => {
                 this.close();
-            }, timeout);
+            }, timeoutSecond * 1000);
         }
     };
 
