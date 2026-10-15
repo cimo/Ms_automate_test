@@ -1,7 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
 // Source
-import * as helperSrc from "./HelperSrc";
+import * as helperSrc from "./HelperSrc.js";
 
 export default defineConfig({
     testDir: `${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`,

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-p1=$(printf '%s' "${1}" | xargs)
-p2=$(printf '%s' "${2}" | xargs)
+p1="${1}"
+p2="${2}"
 
 if [ "$#" -lt 2 ] || [ -z "${p1}" ] || [ -z "${p2}" ]
 then

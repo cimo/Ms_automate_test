@@ -1,6 +1,7 @@
 import Express, { Request, Response } from "express";
 import { RateLimitRequestHandler } from "express-rate-limit";
 import { ChildProcess, spawn } from "child_process";
+import Path from "path";
 import { Cp } from "@cimo/pid/dist/src/Main.js";
 import { CwsServer } from "@cimo/websocket/dist/src/Main.js";
 import { Ca } from "@cimo/authentication/dist/src/Main.js";
@@ -8,6 +9,7 @@ import { Ca } from "@cimo/authentication/dist/src/Main.js";
 // Source
 import * as helperSrc from "../HelperSrc.js";
 import * as modelService from "../model/Service.js";
+import playwrightConfig from "../playwright.config.js";
 
 export default class Service {
     // Variable
@@ -24,6 +26,24 @@ export default class Service {
     private isStopRequested: boolean;
 
     // Method
+    private projectNameList = (): string[] => {
+        const resultList: string[] = [];
+
+        const projectList = playwrightConfig.projects;
+
+        if (projectList) {
+            for (let a = 0; a < projectList.length; a++) {
+                const name = projectList[a].name;
+
+                if (name) {
+                    resultList.push(name);
+                }
+            }
+        }
+
+        return resultList;
+    };
+
     private processKill = (processRun: ChildProcess): void => {
         this.isStopRequested = true;
 
@@ -91,15 +111,25 @@ export default class Service {
     };
 
     private run = (): void => {
-        this.cwsServer.receiveData<modelService.IclientDataRun>("run", (data, clientId) => {
-            const browserCheck = data.browser.match("^(desktop_chrome|desktop_edge|desktop_firefox|desktop_safari|mobile_android|mobile_ios)$")
-                ? data.browser
-                : "";
+        this.cwsServer.receiveData<modelService.IclientDataRun>("run", async (data, clientId) => {
+            const browserCheck = this.projectNameList().includes(data.browser) ? data.browser : "";
+
+            const pathFileList = await helperSrc.findPathFileRecursive(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`, "spec.ts");
+
+            let isFileExists = false;
+
+            for (let a = 0; a < pathFileList.length; a++) {
+                if (typeof data.specFileName === "string" && Path.basename(pathFileList[a]) === `${data.specFileName}.spec.ts`) {
+                    isFileExists = true;
+                }
+            }
+
+            const isIndexValid = Number.isInteger(data.index) && data.index >= 0 && data.index < pathFileList.length;
 
             const serverDataBroadcastObject = {} as modelService.IserverDataBroadcast;
             const serverDataObject = {} as modelService.IserverData;
 
-            if (data.index >= 0 && data.specFileName !== "" && browserCheck !== "") {
+            if (isIndexValid && isFileExists && browserCheck !== "") {
                 serverDataBroadcastObject.label = "output";
 
                 this.cp.add("run", JSON.stringify(serverDataBroadcastObject), 0, (pidIsRunning, pidKey) => {
@@ -286,6 +316,13 @@ export default class Service {
 
     private log = (): void => {
         this.cwsServer.receiveData<modelService.IclientDataLog>("log_run", (data, clientId) => {
+            if (!Number.isInteger(data.index) || !this.outputList[data.index]) {
+                const serverData: modelService.IserverData = { status: "error", result: "Wrong parameter." };
+                this.cwsServer.sendMessage("text", serverData, "log_run", clientId);
+
+                return;
+            }
+
             const serverData: modelService.IserverData = { status: "Log run", result: this.outputList[data.index].log };
             this.cwsServer.sendMessage("text", serverData, "log_run", clientId);
         });
@@ -295,7 +332,7 @@ export default class Service {
         this.cwsServer.receiveData<modelService.IclientDataVideo>("video", (data, clientId) => {
             const serverData = {} as modelService.IserverData;
 
-            if (data.name === "") {
+            if (typeof data.name !== "string" || data.name === "") {
                 serverData.status = "error";
                 serverData.result = "Wrong parameter.";
                 this.cwsServer.sendMessage("text", serverData, "video", clientId);
@@ -335,7 +372,7 @@ export default class Service {
         this.cwsServer.receiveData<modelService.IclientDataVideo>("video_delete", (data, clientId) => {
             const serverData = {} as modelService.IserverData;
 
-            if (data.name === "") {
+            if (typeof data.name !== "string" || !/^[A-Za-z0-9._-]+\.webm$/.test(data.name)) {
                 serverData.status = "error";
                 serverData.result = "Wrong parameter.";
                 this.cwsServer.sendMessage("text", serverData, "video_delete", clientId);
@@ -361,13 +398,31 @@ export default class Service {
     };
 
     private upload = (): void => {
-        this.cwsServer.receiveDataUpload((data, mimeType, fileName, clientId) => {
-            const file = Buffer.concat(data);
-
-            const isMimeTypeOk = helperSrc.fileCheckMimeType(mimeType);
-            const isSizeOk = helperSrc.fileCheckSize(file.length);
+        this.cwsServer.receiveDataUpload(async (data, _, fileName, clientId) => {
+            const pathInput = `${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`;
 
             let serverData = {} as modelService.IserverData;
+
+            if (!helperSrc.checkPathChild(pathInput, fileName)) {
+                serverData = { status: "error", result: "Invalid path." };
+                this.cwsServer.sendMessage("text", serverData, "upload", clientId);
+
+                return;
+            }
+
+            if (!fileName.endsWith(".spec.ts")) {
+                serverData = { status: "error", result: "Only .spec.ts file are allowed." };
+                this.cwsServer.sendMessage("text", serverData, "upload", clientId);
+
+                return;
+            }
+
+            const file = Buffer.concat(data);
+
+            const fileDetail = await helperSrc.fileDetail(fileName, file);
+
+            const isMimeTypeOk = helperSrc.fileCheckMimeType(fileDetail.mimeType);
+            const isSizeOk = helperSrc.fileCheckSize(file.length);
 
             if (!isMimeTypeOk) {
                 serverData = { status: "error", result: "Only .ts file are allowed." };
@@ -383,7 +438,7 @@ export default class Service {
                 return;
             }
 
-            helperSrc.fileWriteStream(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/${fileName}`, file).then((resultFileWriteStream) => {
+            helperSrc.fileWriteStream(`${pathInput}${fileName}`, file).then((resultFileWriteStream) => {
                 if (typeof resultFileWriteStream !== "boolean") {
                     helperSrc.writeLog("Service.ts - upload() - fileWriteStream()", resultFileWriteStream.toString());
 
@@ -455,8 +510,24 @@ export default class Service {
                 });
         });
 
-        this.app.post("/api/run", this.limiter, Ca.authenticationMiddleware, (request: Request, response: Response) => {
+        this.app.post("/api/run", this.limiter, Ca.authenticationMiddleware, async (request: Request, response: Response) => {
             const body = request.body as modelService.IapiRunBody;
+
+            const pathFileList = await helperSrc.findPathFileRecursive(`${helperSrc.PATH_ROOT}${helperSrc.PATH_FILE}input/`, "spec.ts");
+
+            let isFileExists = false;
+
+            for (let a = 0; a < pathFileList.length; a++) {
+                if (Path.basename(pathFileList[a]) === body.file) {
+                    isFileExists = true;
+                }
+            }
+
+            if (!isFileExists || !this.projectNameList().includes(body.browser)) {
+                helperSrc.responseBody({ state: "ko", message: "Invalid parameter." }, response, 200);
+
+                return;
+            }
 
             const file = body.file.replace(/\.spec\.ts$/, "");
             const browser = body.browser;
@@ -516,6 +587,12 @@ export default class Service {
             const body = request.body as modelService.IapiListVideoBody;
 
             const video = body.video;
+
+            if (typeof video !== "string" || video === "") {
+                helperSrc.responseBody({ state: "ko", message: "Invalid parameter." }, response, 200);
+
+                return;
+            }
 
             const executionCommand = `${helperSrc.PATH_ROOT}${helperSrc.PATH_SCRIPT}command3.sh`;
             const executionArgumentList = [executionCommand, `${helperSrc.PATH_ROOT}${helperSrc.PATH_PUBLIC}`, video];
